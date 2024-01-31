@@ -1,0 +1,51 @@
+package com.play.java.bbgeducation.integration.programs.commandtests;
+
+import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
+import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommand;
+import com.play.java.bbgeducation.integration.programs.DataUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class ProgramGetAllCommandHandlerTests {
+    private final Pipeline underTest;
+
+    @Autowired
+    public ProgramGetAllCommandHandlerTests(Pipeline pipeline){
+        this.underTest = pipeline;
+    }
+
+    @Test
+    public void GetAllHandler_ShouldReturnAll() {
+        ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
+        ProgramResult saved1 = underTest.send(createCmd1);
+        ProgramCreateCommand createCmd2 = DataUtils.buildCreateCommandII();
+        ProgramResult saved2 = underTest.send(createCmd2);
+
+        List<ProgramResult> programs = underTest.send(ProgramGetAllCommand.builder().build());
+
+        assertThat(programs).hasSize(2);
+    }
+
+    @Test
+    public void GetAllHandler_CanReturnZero() {
+        List<ProgramResult> programs = underTest.send(ProgramGetAllCommand.builder().build());
+
+        assertThat(programs).hasSize(0);
+    }
+
+}
