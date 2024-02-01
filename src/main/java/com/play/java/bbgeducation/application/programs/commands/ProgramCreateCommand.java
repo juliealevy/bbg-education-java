@@ -18,9 +18,5 @@ public class ProgramCreateCommand implements Command<OneOf2<ProgramResult, Valid
     private String description;
 
 }
-//public class ProgramCreateCommand implements Request<ProgramResult> {
-//    private String name;
-//    private String description;
-//
-//}
+
 

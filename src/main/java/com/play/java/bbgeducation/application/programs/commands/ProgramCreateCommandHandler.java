@@ -11,11 +11,8 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProgramCreateCommandHandler
-//        implements RequestHandler<ProgramCreateCommand, ProgramResult>
-            implements Command.Handler<ProgramCreateCommand, OneOf2<ProgramResult, ValidationFailed>>
+public class ProgramCreateCommandHandler implements Command.Handler<ProgramCreateCommand, OneOf2<ProgramResult, ValidationFailed>>
 {
-
     private final ProgramRepository programRepository;
 
     public ProgramCreateCommandHandler(ProgramRepository programRepository) {
