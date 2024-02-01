@@ -19,6 +19,7 @@ Some sample code in Java/Spring Boot to show the following:
 - Commands/Handlers
 - Repository Pattern
 - Start of error handling
+  -- adding oneOf union classes for returns to replace throwing exceptions or returning nulls (in progress)
 
 
 
