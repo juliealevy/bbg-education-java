@@ -1,10 +1,13 @@
 package com.play.java.bbgeducation.api.programs;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.commands.*;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +25,7 @@ public class ProgramController {
     }
 
     @PostMapping(path="")
-    public ResponseEntity<ProgramResult> createProgram(
+    public ResponseEntity createProgram(
         @RequestBody ProgramRequest programRequest)  {
 
         ProgramCreateCommand command = ProgramCreateCommand.builder()
@@ -30,9 +33,13 @@ public class ProgramController {
                 .description(programRequest.getDescription())
                 .build();
 
+        OneOf2<ProgramResult, ValidationFailed> createdProgram = pipeline.send(command);
+        return createdProgram.fold(
+                program -> new ResponseEntity<>(program, HttpStatus.CREATED),
+                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
+                        HttpStatus.CONFLICT)
+        );
 
-        ProgramResult newProgram = pipeline.send(command);
-        return new ResponseEntity<>(newProgram, HttpStatus.CREATED);
 
     }
 

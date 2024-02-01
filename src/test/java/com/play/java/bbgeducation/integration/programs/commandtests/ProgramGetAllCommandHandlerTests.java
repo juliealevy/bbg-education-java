@@ -1,7 +1,9 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommand;
@@ -32,9 +34,9 @@ public class ProgramGetAllCommandHandlerTests {
     @Test
     public void GetAllHandler_ShouldReturnAll() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCmd1);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
         ProgramCreateCommand createCmd2 = DataUtils.buildCreateCommandII();
-        ProgramResult saved2 = underTest.send(createCmd2);
+        OneOf2<ProgramResult, ValidationFailed> saved2 = underTest.send(createCmd2);
 
         List<ProgramResult> programs = underTest.send(ProgramGetAllCommand.builder().build());
 

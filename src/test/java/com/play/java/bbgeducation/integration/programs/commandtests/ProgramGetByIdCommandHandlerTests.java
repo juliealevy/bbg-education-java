@@ -1,6 +1,8 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommand;
@@ -32,25 +34,25 @@ public class ProgramGetByIdCommandHandlerTests {
     @Test
     public void GetByIdHandler_ShouldReturnProgram_WhenIdValid() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCmd1);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
 
         ProgramGetByIdCommand programCommand = ProgramGetByIdCommand.builder()
-                .id(saved1.getId())
+                .id(saved1.asOption1().getId())
                 .build();
 
         Optional<ProgramResult> programResult = underTest.send(programCommand);
 
         assertThat(programResult).isPresent();
-        assertThat(programResult.get()).isEqualTo(saved1);
+        assertThat(programResult.get()).isEqualTo(saved1.asOption1());
     }
 
     @Test
     public void GetByIdHandler_ShouldReturnEmpty_WhenIdInValid() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCmd1);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
 
         ProgramGetByIdCommand programCommand = ProgramGetByIdCommand.builder()
-                .id(saved1.getId() + 100L)
+                .id(saved1.asOption1().getId() + 100L)
                 .build();
 
         Optional<ProgramResult> programResult = underTest.send(programCommand);

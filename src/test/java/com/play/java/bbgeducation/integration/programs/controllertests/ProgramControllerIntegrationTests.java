@@ -3,6 +3,8 @@ package com.play.java.bbgeducation.integration.programs.controllertests;
 import an.awesome.pipelinr.Pipeline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
+import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
@@ -72,7 +74,7 @@ public class ProgramControllerIntegrationTests {
     @Test
     public void ProgramCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram1 = pipeline.send(createCommand1);
+        OneOf2<ProgramResult, ValidationFailed> savedProgram1 = pipeline.send(createCommand1);
 
         ProgramRequest createRequest = buildRequestI();
 
@@ -99,10 +101,8 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramGetAll_ReturnsList_WhenSuccess() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult saved1 = pipeline.send(createCommand1);
-        ProgramCreateCommand createCommand2 = buildCreateCommandII();
-        ProgramResult saved2 = pipeline.send(createCommand2);
+        ProgramResult saved1 = createAndSaveProgramI();
+        ProgramResult saved2 = createAndSaveProgramII();
 
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,8 +123,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramGetById_Returns200_WhenIdExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult program = pipeline.send(createCommand1);
+        ProgramResult program = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,8 +134,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramGetById_ReturnsProgram_WhenIdExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult program = pipeline.send(createCommand1);
+        ProgramResult program = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -151,8 +149,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramGetById_Returns404_WhenIdNotExist() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult program = pipeline.send(createCommand1);
+        ProgramResult program = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId() + 100L))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -163,8 +160,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramUpdate_Returns200_WhenInputValid() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram = pipeline.send(createCommand1);
+        ProgramResult savedProgram = createAndSaveProgramI();
 
         ProgramRequest updateRequest = ProgramRequest.builder()
                 .name(savedProgram.getName() + "updated")
@@ -182,8 +178,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramUpdate_ReturnsUpdatedProgram_WhenInputValid() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram = pipeline.send(createCommand1);
+        ProgramResult savedProgram = createAndSaveProgramI();
 
         ProgramRequest updateRequest = ProgramRequest.builder()
                 .name(savedProgram.getName() + "updated")
@@ -205,8 +200,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramUpdate_ReturnsNotFound_WhenIdNotExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram1 = pipeline.send(createCommand1);
+        ProgramResult savedProgram1 = createAndSaveProgramI();
 
         ProgramRequest updateRequest = ProgramRequest.builder()
                 .name(savedProgram1.getName())
@@ -225,10 +219,8 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramUpdate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram1 = pipeline.send(createCommand1);
-        ProgramCreateCommand createCommand2 = buildCreateCommandII();
-        ProgramResult savedProgram2 = pipeline.send(createCommand2);
+        ProgramResult savedProgram1 = createAndSaveProgramI();
+        ProgramResult savedProgram2 = createAndSaveProgramII();
 
         ProgramRequest updateRequest = ProgramRequest.builder()
                 .name(savedProgram2.getName())
@@ -249,8 +241,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram1 = pipeline.send(createCommand1);
+        ProgramResult savedProgram1 = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.delete(getProgramsPath(savedProgram1.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -261,8 +252,7 @@ public class ProgramControllerIntegrationTests {
 
     @Test
     public void ProgramDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
-        ProgramCreateCommand createCommand1 = buildCreateCommandI();
-        ProgramResult savedProgram1 = pipeline.send(createCommand1);
+        ProgramResult savedProgram1 = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.delete(getProgramsPath(savedProgram1.getId() + 100L))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -278,5 +268,16 @@ public class ProgramControllerIntegrationTests {
             path += ("/" + programId);
         }
         return path;
+    }
+
+    private ProgramResult createAndSaveProgramI(){
+        ProgramCreateCommand createCommand1 = buildCreateCommandI();
+        OneOf2<ProgramResult, ValidationFailed> savedProgram1 = pipeline.send(createCommand1);
+        return savedProgram1.asOption1();
+    }
+    private ProgramResult createAndSaveProgramII(){
+        ProgramCreateCommand createCommand1 = buildCreateCommandII();
+        OneOf2<ProgramResult, ValidationFailed> savedProgram1 = pipeline.send(createCommand1);
+        return savedProgram1.asOption1();
     }
 }

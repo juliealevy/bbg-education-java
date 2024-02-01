@@ -1,7 +1,9 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
@@ -32,16 +34,16 @@ public class ProgramUpdateCommandHandlerTests {
     @Test
     public void UpdateHandler_ShouldSucceed_WhenInputValid() {
         ProgramCreateCommand createCommand = DataUtils.buildCreateCommandI();
-        ProgramResult saved = underTest.send(createCommand);
+        OneOf2<ProgramResult, ValidationFailed> saved = underTest.send(createCommand);
         ProgramUpdateCommand updateCommand = ProgramUpdateCommand.builder()
-                .id(saved.getId())
-                .name(saved.getName() + " updated")
-                .description(saved.getDescription() + " updated")
+                .id(saved.asOption1().getId())
+                .name(saved.asOption1().getName() + " updated")
+                .description(saved.asOption1().getDescription() + " updated")
                 .build();
         Optional<ProgramResult> updated = underTest.send(updateCommand);
 
         assertThat(updated).isPresent();
-        assertThat(updated.get().getId()).isEqualTo(saved.getId());
+        assertThat(updated.get().getId()).isEqualTo(saved.asOption1().getId());
         assertThat(updated.get().getName()).isEqualTo(updateCommand.getName());
         assertThat(updated.get().getDescription()).isEqualTo(updateCommand.getDescription());
     }
@@ -49,15 +51,15 @@ public class ProgramUpdateCommandHandlerTests {
     @Test
     public void UpdateHandler_ShouldFail_WhenNameExists() {
         ProgramCreateCommand createCommand = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCommand);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCommand);
         ProgramCreateCommand createCommand2 = DataUtils.buildCreateCommandII();
-        ProgramResult saved2 = underTest.send(createCommand2);
+        OneOf2<ProgramResult, ValidationFailed> saved2 = underTest.send(createCommand2);
 
         //update saved1 with name of saved2
         ProgramUpdateCommand updated = ProgramUpdateCommand.builder()
-                .id(saved1.getId())
-                .name(saved2.getName())
-                .description(saved1.getDescription())
+                .id(saved1.asOption1().getId())
+                .name(saved2.asOption1().getName())
+                .description(saved1.asOption1().getDescription())
                 .build();
 
         assertThatThrownBy(() -> underTest.send(updated))

@@ -1,6 +1,8 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommand;
@@ -33,14 +35,14 @@ public class ProgramDeleteByIdCommandHandlerTests {
     @Test
     public void DeleteByIdHandler_ShouldDeletedProgram_WhenIdValid() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCmd1);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
 
         ProgramDeleteByIdCommand deleteCommand = ProgramDeleteByIdCommand.builder()
-                .id(saved1.getId())
+                .id(saved1.asOption1().getId())
                 .build();
         underTest.send(deleteCommand);
 
-        ProgramGetByIdCommand getByIdCommand = ProgramGetByIdCommand.builder().id(saved1.getId()).build();
+        ProgramGetByIdCommand getByIdCommand = ProgramGetByIdCommand.builder().id(saved1.asOption1().getId()).build();
         Optional<ProgramResult> checkForDeleted = underTest.send(getByIdCommand);
 
         assertThat(checkForDeleted).isEmpty();
@@ -50,10 +52,10 @@ public class ProgramDeleteByIdCommandHandlerTests {
     @Test
     public void DeleteByIdHandler_ShouldReturnEmpty_WhenIdInvalid() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
-        ProgramResult saved1 = underTest.send(createCmd1);
+        OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
 
         ProgramDeleteByIdCommand programCommand = ProgramDeleteByIdCommand.builder()
-                .id(saved1.getId() + 100L)
+                .id(saved1.asOption1().getId() + 100L)
                 .build();
 
         Optional<ProgramResult> programResult = underTest.send(programCommand);
