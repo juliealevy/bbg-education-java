@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.mapping;
+package com.play.java.bbgeducation.application.common.mapping;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

@@ -1,12 +1,11 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.exceptions.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.oneof.OneOf2;
-import com.play.java.bbgeducation.application.exceptions.NameExistsException;
-import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
-import com.play.java.bbgeducation.application.oneof.OneOf3;
-import com.play.java.bbgeducation.application.oneof.OneOfTypes;
+import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOf3;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

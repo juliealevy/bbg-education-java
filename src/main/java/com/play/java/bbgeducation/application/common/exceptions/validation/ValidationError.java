@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.exceptions;
+package com.play.java.bbgeducation.application.common.exceptions.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

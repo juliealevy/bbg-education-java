@@ -1,9 +1,7 @@
-package com.play.java.bbgeducation.application.mapping.impl;
+package com.play.java.bbgeducation.application.common.mapping.impl;
 
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
-import com.play.java.bbgeducation.application.mapping.MapFrom;
-import com.play.java.bbgeducation.application.mapping.MapTo;
-import com.play.java.bbgeducation.application.mapping.Mapper;
+import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.domain.ProgramEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

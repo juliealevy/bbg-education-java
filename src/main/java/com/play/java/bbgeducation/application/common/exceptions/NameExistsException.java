@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.exceptions;
+package com.play.java.bbgeducation.application.common.exceptions;
 
 import javax.naming.Name;
 

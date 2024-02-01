@@ -1,13 +1,10 @@
 package com.play.java.bbgeducation.application.programs.commands;
 
 import an.awesome.pipelinr.Command;
-import com.play.java.bbgeducation.application.exceptions.NameExistsException;
-import com.play.java.bbgeducation.application.exceptions.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
-import com.play.java.bbgeducation.application.oneof.OneOf2;
-import com.play.java.bbgeducation.application.oneof.OneOf3;
-import com.play.java.bbgeducation.application.oneof.OneOfTypes;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
+import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOf3;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.domain.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import lombok.SneakyThrows;

@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.oneof;
+package com.play.java.bbgeducation.application.common.oneof;
 
 import java.util.function.Function;
 

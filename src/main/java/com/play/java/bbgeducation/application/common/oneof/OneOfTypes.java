@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.oneof;
+package com.play.java.bbgeducation.application.common.oneof;
 
 public class OneOfTypes {
     public static class NotFound{}

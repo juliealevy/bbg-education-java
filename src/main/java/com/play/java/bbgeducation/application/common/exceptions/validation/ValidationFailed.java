@@ -1,12 +1,10 @@
-package com.play.java.bbgeducation.application.exceptions;
+package com.play.java.bbgeducation.application.common.exceptions.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Array;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
