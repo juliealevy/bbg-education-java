@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,17 +16,20 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="program")
-public class ProgramEntity {
+@Table(name="user_details")
+public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "program_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     private Long id;
 
     @Column(unique = true)
-    private String name;
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
+    private String email;
 
-    private String description;
+    private String password;
+    private String firstName;
+    private String lastName;
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
@@ -35,6 +39,5 @@ public class ProgramEntity {
     @Column(name = "updated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @UpdateTimestamp
     private OffsetDateTime updatedDateTime;
-
 
 }

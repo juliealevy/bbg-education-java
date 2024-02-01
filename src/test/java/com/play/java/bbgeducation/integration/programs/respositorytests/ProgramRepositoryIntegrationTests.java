@@ -27,7 +27,7 @@ public class ProgramRepositoryIntegrationTests {
     }
 
     @Test
-    public void CreateProgram_ShouldSucceedAndFetch_WhenInputValid(){
+    public void CreateProgram_ShouldSucceedAndFetch_WhenInputValid() {
         ProgramEntity program = DataUtils.buildProgramI();
         ProgramEntity saved = underTest.save(program);
 
