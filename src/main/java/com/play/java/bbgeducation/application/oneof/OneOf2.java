@@ -1,21 +1,21 @@
 package com.play.java.bbgeducation.application.oneof;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 public class OneOf2<T1,T2> {
-    private final Optional<T1> _opt1;
-    private final Optional<T2> _opt2;
+    private final T1 _option1;
+    private final T2 _option2;
 
-    public OneOf2(T1 option1, T2 option2){
-        this._opt1 = Optional.ofNullable(option1);
-        this._opt2 = Optional.ofNullable(option2);
+    private OneOf2(T1 option1, T2 option2){
+        this._option1 = option1;
+        this._option2 = option2;
 
-        if (this._opt1.isEmpty() && this._opt2.isEmpty()){
+        //do i need to check this?  static instance creators prevent this?
+        if (!this.hasOption1() && !this.hasOption2()) {
             throw new IllegalArgumentException("OneOf must contain at least one option");
         }
 
-        if (this._opt1.isPresent() && this._opt2.isPresent()){
+        if (this.hasOption1() && this.hasOption2()){
             throw new IllegalArgumentException("OneOf may only contain one option");
         }
     }
@@ -28,35 +28,37 @@ public class OneOf2<T1,T2> {
         return new OneOf2<>(null,option);
     }
 
+
     public boolean hasOption1(){
-        return _opt1.isPresent();
+        return _option1 != null;
     }
 
     public boolean hasOption2(){
-        return _opt2.isPresent();
+        return _option2 != null;
     }
 
     public T1 asOption1(){
-        if (_opt1.isEmpty()){
+        if (!this.hasOption1()){
             throw new RuntimeException("Option 1 has no value");
         }
-        return _opt1.get();
+        return _option1;
     }
 
     public T2 asOption2(){
-        if (_opt2.isEmpty()){
+        if (!this.hasOption2()){
             throw new RuntimeException("Option 2 has no value");
         }
-        return _opt2.get();
+        return _option2;
     }
-    public <R> R match(final Function<T1,R> mapper1, final Function<T2,R> mapper2)
+    public <TResult> TResult match(final Function<T1,TResult> mapper1, final Function<T2,TResult> mapper2)
     {
-        return _opt1.map(mapper1)
-                .orElseGet(() -> _opt2.map(mapper2)
-                    .orElseThrow(() -> new RuntimeException("All values are null")
-                    )
-                );
+        if (this.hasOption1()){
+            return mapper1.apply(_option1);
+        }
+        if (this.hasOption2()){
+            return mapper2.apply(_option2);
+        }
+        throw new RuntimeException("All values are null");
+
     }
-
-
 }
