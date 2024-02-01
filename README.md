@@ -19,14 +19,14 @@ Some sample code in Java/Spring Boot to show the following:
 - Commands/Handlers
 - Repository Pattern
 - Start of error handling
-  - adding oneOf union classes for returns to replace throwing exceptions or returning nulls (in progress)
+  - added oneOf union classes for returns to replace throwing exceptions or returning nulls
+- Basic jwt bearer authentication (in progress)
 
 
 
 ## Coming soon
 In progress, coming soon:
-- HAL/HATEOS responses
-- Basic jwt bearer authentication- 
+- HAL/HATEOS responses- 
 - Logging
 - more error handling - better problem responses
 - validation
