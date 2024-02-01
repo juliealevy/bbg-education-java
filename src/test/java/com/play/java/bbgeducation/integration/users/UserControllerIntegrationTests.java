@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.integration.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.api.users.UserRequest;
@@ -7,12 +8,14 @@ import com.play.java.bbgeducation.application.common.exceptions.validation.Valid
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
+import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,9 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.play.java.bbgeducation.integration.programs.DataUtils.buildCreateCommandI;
-import static com.play.java.bbgeducation.integration.programs.DataUtils.buildRequestI;
+import static com.play.java.bbgeducation.integration.programs.DataUtils.*;
 import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest1;
+import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest2;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -89,5 +92,53 @@ public class UserControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
         );
+    }
+
+    @Test
+    public void UserUpdate_ShouldReturn200_WhenInputValid() throws Exception {
+        Pair<UserResult, String> created = createAndSaveUser1();
+
+
+        UserRequest updatedRequest = UserRequest.builder()
+                .firstName(created.getFirst().getFirstName())
+                .lastName(created.getFirst().getLastName() + " updated")
+                .email(created.getFirst().getEmail())
+                .password(created.getSecond())
+                .build();
+
+
+        String requestJson = objectMapper.writeValueAsString(updatedRequest);
+
+        underTest.perform(MockMvcRequestBuilders.put(getPath(created.getFirst().getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+
+
+
+    }
+
+    private String getPath(Long Id){
+        String path = USERS_PATH;
+        if (Id != null){
+            path += ("/" + Id);
+        }
+        return path;
+    }
+
+    private Pair<UserResult, String> createAndSaveUser1(){
+        UserRequest request = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created = userService.createUser(request.getFirstName(),
+                request.getLastName(), request.getEmail(), request.getPassword());
+        return  Pair.of(created.asOption1(), request.getPassword());
+    }
+
+    private Pair<UserResult, String> createAndSaveUser2(){
+        UserRequest request = buildUserRequest2();
+        OneOf2<UserResult, ValidationFailed> created = userService.createUser(request.getFirstName(),
+                request.getLastName(), request.getEmail(), request.getPassword());
+        return Pair.of(created.asOption1(), request.getPassword());
     }
 }

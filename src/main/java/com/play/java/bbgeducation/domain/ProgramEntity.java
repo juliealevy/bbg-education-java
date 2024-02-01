@@ -19,6 +19,7 @@ import java.time.OffsetDateTime;
 public class ProgramEntity {
 
     @Id
+    @SequenceGenerator(name = "program_id_seq", sequenceName = "PROGRAM_ID_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "program_id_seq")
     private Long id;
 
