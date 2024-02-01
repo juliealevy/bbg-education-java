@@ -30,6 +30,7 @@ In progress, coming soon:
 - HAL/HATEOS responses- 
 - Logging
 - more error handling - better problem responses
+- proper handling of password in rest calls
 - validation
 - Next domain object:  BBGSession (Many to One with BBGProgram) with service 
 - Unit Testing
