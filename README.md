@@ -14,7 +14,7 @@ Some sample code in Java/Spring Boot to show the following:
   - application (business logic commands/services, etc)
   - domain (domain entities)
   - infrastructure (DB repositories, etc)
-- First domain CRUD implementation:  BBGProgram
+- First domain CRUD implementation:  BBGProgram with commands
 - Integration Testing of Repositories, Commands, Controllers
 - Commands/Handlers
 - Repository Pattern
@@ -26,11 +26,11 @@ Some sample code in Java/Spring Boot to show the following:
 ## Coming soon
 In progress, coming soon:
 - HAL/HATEOS responses
-- Basic jwt bearer authentication
+- Basic jwt bearer authentication- 
 - Logging
-- more error handling
+- more error handling - better problem responses
 - validation
-- Next domain object:  BBGSession (Many to One with BBGProgram)
+- Next domain object:  BBGSession (Many to One with BBGProgram) with service 
 - Unit Testing
 - Next domain object:  Courses (many to one with bbgSession)
 - TBD
