@@ -2,7 +2,7 @@ package com.play.java.bbgeducation.application.common.oneof;
 
 import java.util.function.Function;
 
-public class OneOf2<T1,T2> {
+public class OneOf2<T1,T2> implements OneOf {
     private final T1 _option1;
     private final T2 _option2;
 
@@ -60,5 +60,16 @@ public class OneOf2<T1,T2> {
         }
         throw new RuntimeException("All values are null");
 
+    }
+
+    @Override
+    public Object getValue() {
+        if (this.hasOption1()){
+            return _option1;
+        }
+        if (this.hasOption2()){
+            return _option2;
+        }
+        throw new RuntimeException("All values are null");
     }
 }

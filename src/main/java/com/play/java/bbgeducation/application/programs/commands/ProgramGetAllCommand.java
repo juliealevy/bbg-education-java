@@ -11,4 +11,9 @@ import java.util.List;
 @Builder
 public class ProgramGetAllCommand implements Command<List<ProgramResult>> {
 
+    /****
+     for now leaving return as just the list, not a OneOf.   If there is a need for common
+     handling for these responses in the pipeline, then i will switch to OneOf2<List<ProgramResult>, Voidy>>
+     or something like that
+     *****/
 }

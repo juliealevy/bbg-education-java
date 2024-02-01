@@ -70,12 +70,14 @@ public class ProgramController {
     ResponseEntity<ProgramResult> getById (
             @PathVariable("id") Long id) {
 
-        Optional<ProgramResult> results = pipeline.send(ProgramGetByIdCommand.builder()
+        OneOf2<ProgramResult, OneOfTypes.NotFound> result = pipeline.send(ProgramGetByIdCommand.builder()
                 .id(id)
                 .build());
 
-        return results.map(programResult -> new ResponseEntity<>(programResult, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return result.match(
+                program -> new ResponseEntity<>(program, HttpStatus.OK),
+                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
     }
 
     @GetMapping(path="")

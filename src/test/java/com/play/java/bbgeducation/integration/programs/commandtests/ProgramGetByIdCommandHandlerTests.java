@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.integration.programs.commandtests;
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommand;
@@ -38,10 +39,11 @@ public class ProgramGetByIdCommandHandlerTests {
                 .id(saved1.asOption1().getId())
                 .build();
 
-        Optional<ProgramResult> programResult = underTest.send(programCommand);
+        OneOf2<ProgramResult, OneOfTypes.NotFound> result = underTest.send(programCommand);
 
-        assertThat(programResult).isPresent();
-        assertThat(programResult.get()).isEqualTo(saved1.asOption1());
+        assertThat(result).isNotNull();
+        assertThat(result.hasOption1()).isTrue();
+        assertThat(result.asOption1()).isEqualTo(saved1.asOption1());
     }
 
     @Test
@@ -53,9 +55,10 @@ public class ProgramGetByIdCommandHandlerTests {
                 .id(saved1.asOption1().getId() + 100L)
                 .build();
 
-        Optional<ProgramResult> programResult = underTest.send(programCommand);
+        OneOf2<ProgramResult, OneOfTypes.NotFound> result = underTest.send(programCommand);
 
-        assertThat(programResult).isEmpty();
+        assertThat(result).isNotNull();
+        assertThat(result.hasOption2()).isTrue();
     }
 
 
