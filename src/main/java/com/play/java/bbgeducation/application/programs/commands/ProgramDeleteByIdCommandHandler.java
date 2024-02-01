@@ -1,6 +1,8 @@
 package com.play.java.bbgeducation.application.programs.commands;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.domain.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 @Component
 public class ProgramDeleteByIdCommandHandler
-        implements Command.Handler<ProgramDeleteByIdCommand, Optional<ProgramResult>> {
+        implements Command.Handler<ProgramDeleteByIdCommand, OneOf2<OneOfTypes.Success, OneOfTypes.NotFound>> {
     private final ProgramRepository programRepository;
 
     public ProgramDeleteByIdCommandHandler(ProgramRepository programRepository) {
@@ -18,19 +20,13 @@ public class ProgramDeleteByIdCommandHandler
     }
 
     @Override
-    public Optional<ProgramResult> handle(ProgramDeleteByIdCommand command) {
+    public OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> handle(ProgramDeleteByIdCommand command) {
 
         Optional<ProgramEntity> found = programRepository.findById(command.getId());
         if (found.isEmpty()){
-            return Optional.empty();
+            return OneOf2.fromOption2(new OneOfTypes.NotFound());
         }
         programRepository.deleteById(command.getId());
-
-        return Optional.of(ProgramResult.builder()
-                .id(found.get().getId())
-                .name(found.get().getName())
-                .description(found.get().getDescription())
-                .build());
-
+        return OneOf2.fromOption1(new OneOfTypes.Success());
     }
 }

@@ -88,12 +88,15 @@ public class ProgramController {
     ResponseEntity<Object> deleteProgramById(
             @PathVariable("id") Long id) {
 
-        Optional<ProgramResult> deleted = pipeline.send(ProgramDeleteByIdCommand.builder()
+        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = pipeline.send(
+                ProgramDeleteByIdCommand.builder()
                 .id(id)
                 .build());
 
-        return deleted.map(programResult -> new ResponseEntity<>(HttpStatus.NO_CONTENT))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return deleted.match(
+                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
+                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
 
     }
 

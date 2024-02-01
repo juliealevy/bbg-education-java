@@ -1,6 +1,8 @@
 package com.play.java.bbgeducation.application.programs.commands;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProgramDeleteByIdCommand implements Command<Optional<ProgramResult>> {
+public class ProgramDeleteByIdCommand implements Command<OneOf2<OneOfTypes.Success, OneOfTypes.NotFound>> {
     private Long id;
 
     //temporarily return programResult optional until get validation objects returning commandhandlers

@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.integration.programs.commandtests;
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommand;
@@ -40,27 +41,26 @@ public class ProgramDeleteByIdCommandHandlerTests {
         ProgramDeleteByIdCommand deleteCommand = ProgramDeleteByIdCommand.builder()
                 .id(saved1.asOption1().getId())
                 .build();
-        underTest.send(deleteCommand);
+        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = underTest.send(deleteCommand);
 
-        ProgramGetByIdCommand getByIdCommand = ProgramGetByIdCommand.builder().id(saved1.asOption1().getId()).build();
-        Optional<ProgramResult> checkForDeleted = underTest.send(getByIdCommand);
-
-        assertThat(checkForDeleted).isEmpty();
+        assertThat(deleted).isNotNull();
+        assertThat(deleted.hasOption1()).isTrue();
 
     }
 
     @Test
-    public void DeleteByIdHandler_ShouldReturnEmpty_WhenIdInvalid() {
+    public void DeleteByIdHandler_ShouldReturnNotFound_WhenIdInvalid() {
         ProgramCreateCommand createCmd1 = DataUtils.buildCreateCommandI();
         OneOf2<ProgramResult, ValidationFailed> saved1 = underTest.send(createCmd1);
 
-        ProgramDeleteByIdCommand programCommand = ProgramDeleteByIdCommand.builder()
+        ProgramDeleteByIdCommand deleteCommand = ProgramDeleteByIdCommand.builder()
                 .id(saved1.asOption1().getId() + 100L)
                 .build();
 
-        Optional<ProgramResult> programResult = underTest.send(programCommand);
+        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = underTest.send(deleteCommand);
 
-        assertThat(programResult).isEmpty();
+        assertThat(deleted).isNotNull();
+        assertThat(deleted.hasOption2()).isTrue();
     }
 
 
