@@ -1,13 +1,13 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommand;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +39,7 @@ public class ProgramDeleteByIdCommandHandlerTests {
         ProgramDeleteByIdCommand deleteCommand = ProgramDeleteByIdCommand.builder()
                 .id(saved1.asOption1().getId())
                 .build();
-        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = underTest.send(deleteCommand);
+        OneOf2<Success, NotFound> deleted = underTest.send(deleteCommand);
 
         assertThat(deleted).isNotNull();
         assertThat(deleted.hasOption1()).isTrue();
@@ -57,7 +55,7 @@ public class ProgramDeleteByIdCommandHandlerTests {
                 .id(saved1.asOption1().getId() + 100L)
                 .build();
 
-        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = underTest.send(deleteCommand);
+        OneOf2<Success, NotFound> deleted = underTest.send(deleteCommand);
 
         assertThat(deleted).isNotNull();
         assertThat(deleted.hasOption2()).isTrue();

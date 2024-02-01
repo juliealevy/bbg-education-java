@@ -1,9 +1,9 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommand;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +37,7 @@ public class ProgramGetByIdCommandHandlerTests {
                 .id(saved1.asOption1().getId())
                 .build();
 
-        OneOf2<ProgramResult, OneOfTypes.NotFound> result = underTest.send(programCommand);
+        OneOf2<ProgramResult, NotFound> result = underTest.send(programCommand);
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
@@ -55,7 +53,7 @@ public class ProgramGetByIdCommandHandlerTests {
                 .id(saved1.asOption1().getId() + 100L)
                 .build();
 
-        OneOf2<ProgramResult, OneOfTypes.NotFound> result = underTest.send(programCommand);
+        OneOf2<ProgramResult, NotFound> result = underTest.send(programCommand);
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption2()).isTrue();

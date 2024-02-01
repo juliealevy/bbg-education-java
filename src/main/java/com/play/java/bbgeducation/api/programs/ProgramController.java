@@ -1,19 +1,19 @@
 package com.play.java.bbgeducation.api.programs;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
-import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
-import com.play.java.bbgeducation.application.programs.commands.*;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.programs.commands.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/programs")
@@ -55,7 +55,7 @@ public class ProgramController {
                 .description(programRequest.getDescription())
                 .build();
 
-        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> updated = pipeline.send(command);
+        OneOf3<Success, NotFound, ValidationFailed> updated = pipeline.send(command);
 
         return updated.match(
                 success -> new ResponseEntity<>(HttpStatus.OK),
@@ -70,7 +70,7 @@ public class ProgramController {
     ResponseEntity<ProgramResult> getById (
             @PathVariable("id") Long id) {
 
-        OneOf2<ProgramResult, OneOfTypes.NotFound> result = pipeline.send(ProgramGetByIdCommand.builder()
+        OneOf2<ProgramResult, NotFound> result = pipeline.send(ProgramGetByIdCommand.builder()
                 .id(id)
                 .build());
 
@@ -90,7 +90,7 @@ public class ProgramController {
     ResponseEntity<Object> deleteProgramById(
             @PathVariable("id") Long id) {
 
-        OneOf2<OneOfTypes.Success, OneOfTypes.NotFound> deleted = pipeline.send(
+        OneOf2<Success, NotFound> deleted = pipeline.send(
                 ProgramDeleteByIdCommand.builder()
                 .id(id)
                 .build());

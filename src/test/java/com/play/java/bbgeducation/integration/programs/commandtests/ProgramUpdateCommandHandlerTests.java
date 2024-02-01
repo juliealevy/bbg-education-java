@@ -2,10 +2,11 @@ package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
-import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
@@ -18,7 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -40,7 +40,7 @@ public class ProgramUpdateCommandHandlerTests {
                 .name(saved.asOption1().getName() + " updated")
                 .description(saved.asOption1().getDescription() + " updated")
                 .build();
-        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> updated = underTest.send(updateCommand);
+        OneOf3<Success, NotFound, ValidationFailed> updated = underTest.send(updateCommand);
 
         assertThat(updated).isNotNull();
         assertThat(updated.hasOption1()).isTrue();
@@ -56,7 +56,7 @@ public class ProgramUpdateCommandHandlerTests {
                 .name(saved.asOption1().getName())
                 .description(saved.asOption1().getDescription() + " updated")
                 .build();
-        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> updated = underTest.send(updateCommand);
+        OneOf3<Success, NotFound, ValidationFailed> updated = underTest.send(updateCommand);
 
         assertThat(updated).isNotNull();
         assertThat(updated.hasOption2()).isTrue();
@@ -76,7 +76,7 @@ public class ProgramUpdateCommandHandlerTests {
                 .description(saved1.asOption1().getDescription())
                 .build();
 
-        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> result = underTest.send(update);
+        OneOf3<Success, NotFound, ValidationFailed> result = underTest.send(update);
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption3()).isTrue();

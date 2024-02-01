@@ -4,7 +4,8 @@ import an.awesome.pipelinr.Command;
 import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
-import com.play.java.bbgeducation.application.common.oneof.OneOfTypes;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.domain.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import lombok.SneakyThrows;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Component
 public class ProgramUpdateCommandHandler implements Command.Handler<ProgramUpdateCommand,
-        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed>>{
+        OneOf3<Success, NotFound, ValidationFailed>>{
     private final ProgramRepository programRepository;
 
     public ProgramUpdateCommandHandler(ProgramRepository programRepository) {
@@ -23,11 +24,11 @@ public class ProgramUpdateCommandHandler implements Command.Handler<ProgramUpdat
 
     @SneakyThrows
     @Override
-    public OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> handle(ProgramUpdateCommand command) {
+    public OneOf3<Success, NotFound, ValidationFailed> handle(ProgramUpdateCommand command) {
 
         Optional<ProgramEntity> found = programRepository.findById(command.getId());
         if (found.isEmpty()){
-            return OneOf3.fromOption2(new OneOfTypes.NotFound());
+            return OneOf3.fromOption2(new NotFound());
         }
 
         if (!found.get().getName().equals(command.getName())){
@@ -44,7 +45,7 @@ public class ProgramUpdateCommandHandler implements Command.Handler<ProgramUpdat
 
         ProgramEntity saved = programRepository.save(entityToSave);
 
-        return OneOf3.fromOption1(new OneOfTypes.Success());
+        return OneOf3.fromOption1(new Success());
 
     }
 }
