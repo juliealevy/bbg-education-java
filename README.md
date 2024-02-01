@@ -10,16 +10,16 @@ Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, 
 Some sample code in Java/Spring Boot to show the following:
 - Vertical Slice ish
 - Architecture Boundaries/Packages:
-  -- api (rest api controllers)
-  -- application (business logic commands/services, etc)
-  -- domain (domain entities)
-  -- infrastructure (DB repositories, etc)
+  - api (rest api controllers)
+  - application (business logic commands/services, etc)
+  - domain (domain entities)
+  - infrastructure (DB repositories, etc)
 - First domain CRUD implementation:  BBGProgram
 - Integration Testing of Repositories, Commands, Controllers
 - Commands/Handlers
 - Repository Pattern
 - Start of error handling
-  -- adding oneOf union classes for returns to replace throwing exceptions or returning nulls (in progress)
+  - adding oneOf union classes for returns to replace throwing exceptions or returning nulls (in progress)
 
 
 
