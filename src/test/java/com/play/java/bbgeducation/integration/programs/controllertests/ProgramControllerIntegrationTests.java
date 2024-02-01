@@ -3,11 +3,10 @@ package com.play.java.bbgeducation.integration.programs.controllertests;
 import an.awesome.pipelinr.Pipeline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
-import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.oneof.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,28 +172,6 @@ public class ProgramControllerIntegrationTests {
                 .content(requestJson)
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
-        );
-    }
-
-    @Test
-    public void ProgramUpdate_ReturnsUpdatedProgram_WhenInputValid() throws Exception {
-        ProgramResult savedProgram = createAndSaveProgramI();
-
-        ProgramRequest updateRequest = ProgramRequest.builder()
-                .name(savedProgram.getName() + "updated")
-                .description(savedProgram.getDescription() + " updated").build();
-
-        String requestJson = objectMapper.writeValueAsString(updateRequest);
-
-        mockMvc.perform(MockMvcRequestBuilders.put(getProgramsPath(savedProgram.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(savedProgram.getId())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.name").value(updateRequest.getName())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.description").value(updateRequest.getDescription())
         );
     }
 

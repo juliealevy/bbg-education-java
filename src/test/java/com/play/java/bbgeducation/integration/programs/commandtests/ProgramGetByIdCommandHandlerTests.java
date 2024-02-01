@@ -1,11 +1,10 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.oneof.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommand;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

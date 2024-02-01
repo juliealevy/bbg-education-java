@@ -1,9 +1,10 @@
 package com.play.java.bbgeducation.api.programs;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.OneOf2;
-import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.oneof.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
+import com.play.java.bbgeducation.application.oneof.OneOf3;
+import com.play.java.bbgeducation.application.oneof.OneOfTypes;
 import com.play.java.bbgeducation.application.programs.commands.*;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class ProgramController {
                 .build();
 
         OneOf2<ProgramResult, ValidationFailed> createdProgram = pipeline.send(command);
-        return createdProgram.fold(
+        return createdProgram.match(
                 program -> new ResponseEntity<>(program, HttpStatus.CREATED),
                 fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
                         HttpStatus.CONFLICT)
@@ -44,7 +45,7 @@ public class ProgramController {
     }
 
     @PutMapping(path="{id}")
-    public ResponseEntity<ProgramResult> updateProgram(
+    public ResponseEntity updateProgram(
             @PathVariable("id") Long id,
             @RequestBody ProgramRequest programRequest)  {
 
@@ -54,9 +55,14 @@ public class ProgramController {
                 .description(programRequest.getDescription())
                 .build();
 
-        Optional<ProgramResult> newProgram = pipeline.send(command);
-        return newProgram.map(programResult -> new ResponseEntity<>(programResult, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        OneOf3<OneOfTypes.Success, OneOfTypes.NotFound, ValidationFailed> updated = pipeline.send(command);
+
+        return updated.match(
+                success -> new ResponseEntity<>(HttpStatus.OK),
+                notfound -> new ResponseEntity<>(HttpStatus.NOT_FOUND),
+                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
+                        HttpStatus.CONFLICT)
+        );
 
     }
 

@@ -1,8 +1,7 @@
 package com.play.java.bbgeducation.application.programs.commands;
 
 import an.awesome.pipelinr.Command;
-import com.play.java.bbgeducation.application.OneOf2;
-import com.play.java.bbgeducation.application.exceptions.NameExistsException;
+import com.play.java.bbgeducation.application.oneof.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
@@ -30,7 +29,7 @@ public class ProgramCreateCommandHandler
         //data validation
         //check whether program with name already exists
         if (programRepository.existsByName(createProgramCommand.getName())){
-                return OneOf2.option2(new NameExistsValidationFailed("program"));
+                return OneOf2.fromOption2(new NameExistsValidationFailed("program"));
         }
         ProgramEntity programEntity = ProgramEntity.builder()
                 .name(createProgramCommand.getName())
@@ -38,7 +37,7 @@ public class ProgramCreateCommandHandler
                 .build();
         ProgramEntity newProgram = programRepository.save(programEntity);
 
-        return OneOf2.option1(ProgramResult.builder()
+        return OneOf2.fromOption1(ProgramResult.builder()
                 .id(newProgram.getId())
                 .name(newProgram.getName())
                 .description(newProgram.getDescription())

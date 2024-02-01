@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.OneOf2;
+import com.play.java.bbgeducation.application.oneof.OneOf2;
 import com.play.java.bbgeducation.application.exceptions.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
