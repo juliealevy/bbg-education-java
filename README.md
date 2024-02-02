@@ -21,7 +21,8 @@ Some sample code in Java/Spring Boot to show the following:
 - Start of error handling
   - added oneOf union classes for returns to replace throwing exceptions or returning nulls
 - Basic jwt bearer authentication (in progress)
-  -   adding UserEntity first, trying out Service pattern instead of Command to compare
+  -   added UserEntity - trying out Service pattern instead of Command to compare
+  -   adding jwt security config, etc. (in progress)
 
 
 
