@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,6 +42,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserCreate_Returns201_WhenSuccess() throws Exception {
         UserRequest request = buildUserRequest1();
         String requestJson = objectMapper.writeValueAsString(request);
@@ -54,6 +56,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserCreate_ReturnsSavedProgram_WhenSuccess() throws Exception {
         UserRequest request = buildUserRequest1();
         String requestJson = objectMapper.writeValueAsString(request);
@@ -73,6 +76,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         UserRequest request = buildUserRequest1();
         userService.createUser(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword());
@@ -90,6 +94,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserUpdate_ShouldReturn200_WhenInputValid() throws Exception {
         Pair<UserResult, String> created = createAndSaveUser1();
 
@@ -113,6 +118,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserGetById_Returns200_WhenIdExists() throws Exception {
         Pair<UserResult, String> created = createAndSaveUser1();
 
@@ -124,6 +130,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserGetById_ReturnsUser_WhenIdExists() throws Exception {
         Pair<UserResult, String> created = createAndSaveUser1();
 
@@ -141,6 +148,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserGetById_Returns404_WhenIdNotExists() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.get(getPath(100L))
@@ -151,6 +159,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
@@ -161,6 +170,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void GetAll_ReturnsList_WhenSuccess() throws Exception {
         Pair<UserResult, String> created = createAndSaveUser1();
         Pair<UserResult, String> created2 = createAndSaveUser2();
@@ -187,6 +197,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
         Pair<UserResult, String> created = createAndSaveUser1();
 
@@ -198,6 +209,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void UserDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.delete(getPath(100L))

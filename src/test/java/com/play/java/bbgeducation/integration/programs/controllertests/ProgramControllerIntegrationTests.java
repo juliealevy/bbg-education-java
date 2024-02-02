@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,6 +42,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramCreate_Returns201_WhenSuccess() throws Exception {
         ProgramRequest testRequest = buildRequestI();
         String programJson = objectMapper.writeValueAsString(testRequest);
@@ -54,6 +56,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramCreate_ReturnsSavedProgram_WhenSuccess() throws Exception {
         ProgramRequest testRequest = buildRequestI();
         String programJson = objectMapper.writeValueAsString(testRequest);
@@ -71,6 +74,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         ProgramCreateCommand createCommand1 = buildCreateCommandI();
         OneOf2<ProgramResult, ValidationFailed> savedProgram1 = pipeline.send(createCommand1);
@@ -89,6 +93,7 @@ public class ProgramControllerIntegrationTests {
         );
     }
     @Test
+    @WithMockUser("test")
     public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
@@ -99,6 +104,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramGetAll_ReturnsList_WhenSuccess() throws Exception {
         ProgramResult saved1 = createAndSaveProgramI();
         ProgramResult saved2 = createAndSaveProgramII();
@@ -121,6 +127,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramGetById_Returns200_WhenIdExists() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -132,6 +139,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramGetById_ReturnsProgram_WhenIdExists() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -147,6 +155,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramGetById_Returns404_WhenIdNotExist() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -158,6 +167,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramUpdate_Returns200_WhenInputValid() throws Exception {
         ProgramResult savedProgram = createAndSaveProgramI();
 
@@ -176,6 +186,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramUpdate_ReturnsNotFound_WhenIdNotExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
@@ -195,6 +206,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramUpdate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
         ProgramResult savedProgram2 = createAndSaveProgramII();
@@ -217,6 +229,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
@@ -228,6 +241,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
+    @WithMockUser("test")
     public void ProgramDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
