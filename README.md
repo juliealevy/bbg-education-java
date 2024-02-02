@@ -20,18 +20,19 @@ Some sample code in Java/Spring Boot to show the following:
 - Repository Pattern
 - Start of error handling
   - added oneOf union classes for returns to replace throwing exceptions or returning nulls
-- Basic jwt bearer authentication (in progress)
+- Basic jwt bearer authentication 
   -   added UserEntity - trying out Service pattern instead of Command to compare
-  -   adding jwt security config, etc. (in progress)
-
-
+  -   added jwt security config, auth filter, register/login apis, etc.
+- Added more entities and attached a schema diagram  
+- HAL/HATEOS responses (in progress)
 
 ## Coming soon
 In progress, coming soon:
-- HAL/HATEOS responses- 
 - Logging
-- more error handling - better problem responses
-- proper handling of password in rest calls
+- more error handling
+  - better problem responses
+  - authentication needs better error handling
+- clean up user controller - remove unneccesary api calls handled by auth
 - validation
 - Next domain object:  BBGSession (Many to One with BBGProgram) with service 
 - Unit Testing
