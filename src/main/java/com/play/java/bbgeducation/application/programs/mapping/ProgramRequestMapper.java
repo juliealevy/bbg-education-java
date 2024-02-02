@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.common.mapping.impl;
+package com.play.java.bbgeducation.application.programs.mapping;
 
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;

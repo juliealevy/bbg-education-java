@@ -12,6 +12,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/users")
 public class UserController {
@@ -25,8 +27,11 @@ public class UserController {
     public ResponseEntity createUser(
             @RequestBody UserRequest userRequest) {
 
-        OneOf2<UserResult, ValidationFailed> created = userService.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        OneOf2<UserResult, ValidationFailed> created = userService.createUser(
+                userRequest.getFirstName(),
+                userRequest.getLastName(),
+                userRequest.getEmail(),
+                userRequest.getPassword());
 
         return created.match(
                 user -> new ResponseEntity<>(user, HttpStatus.CREATED),
@@ -41,14 +46,48 @@ public class UserController {
             @PathVariable("id") Long id,
             @RequestBody UserRequest userRequest) {
 
-        OneOf3<Success, NotFound, ValidationFailed> updated = userService.updateUser(id, userRequest.getFirstName(), userRequest.getLastName(),
-                    userRequest.getEmail(), userRequest.getPassword());
+        OneOf3<Success, NotFound, ValidationFailed> updated = userService.updateUser(
+                id,
+                userRequest.getFirstName(),
+                userRequest.getLastName(),
+                userRequest.getEmail(),
+                userRequest.getPassword());
 
         return updated.match(
                 success -> new ResponseEntity<>(HttpStatus.OK),
                 notfound -> new ResponseEntity<>(HttpStatus.NOT_FOUND),
                 fail ->  new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
                         HttpStatus.CONFLICT)
+        );
+    }
+
+    @GetMapping(path="")
+    public ResponseEntity<List<UserResult>> getAll() {
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(path="{id}")
+    public ResponseEntity getById(
+            @PathVariable("id") Long id
+    ) {
+        OneOf2<UserResult, NotFound> result = userService.getById(id);
+
+        return result.match(
+                user -> new ResponseEntity<>(user, HttpStatus.OK),
+                notfound ->  new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
+
+    }
+
+    @DeleteMapping(path="{id}")
+    public ResponseEntity deleteById(
+            @PathVariable("id") Long id
+    ) {
+        OneOf2<Success, NotFound> result = userService.deleteUser(id);
+
+        return result.match(
+                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
+                notfound ->  new ResponseEntity<>(HttpStatus.NOT_FOUND)
         );
 
     }

@@ -1,13 +1,9 @@
 package com.play.java.bbgeducation.integration.users;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.api.users.UserRequest;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import org.junit.jupiter.api.Test;
@@ -23,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.play.java.bbgeducation.integration.programs.DataUtils.*;
 import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest1;
 import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest2;
 
@@ -115,9 +110,101 @@ public class UserControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
+    }
 
+    @Test
+    public void UserGetById_Returns200_WhenIdExists() throws Exception {
+        Pair<UserResult, String> created = createAndSaveUser1();
 
+        underTest.perform(MockMvcRequestBuilders.get(getPath(created.getFirst().getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
 
+    @Test
+    public void UserGetById_ReturnsUser_WhenIdExists() throws Exception {
+        Pair<UserResult, String> created = createAndSaveUser1();
+
+        underTest.perform(MockMvcRequestBuilders.get(getPath(created.getFirst().getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(created.getFirst().getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.firstName").value(created.getFirst().getFirstName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.lastName").value(created.getFirst().getLastName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.email").value(created.getFirst().getEmail())
+        );
+    }
+
+    @Test
+    public void UserGetById_Returns404_WhenIdNotExists() throws Exception {
+
+        underTest.perform(MockMvcRequestBuilders.get(getPath(100L))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
+
+        underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void GetAll_ReturnsList_WhenSuccess() throws Exception {
+        Pair<UserResult, String> created = createAndSaveUser1();
+        Pair<UserResult, String> created2 = createAndSaveUser2();
+
+        underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].id").value(created.getFirst().getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].firstName").value(created.getFirst().getFirstName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].lastName").value(created.getFirst().getLastName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].email").value(created.getFirst().getEmail())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].id").value(created2.getFirst().getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].firstName").value(created2.getFirst().getFirstName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].lastName").value(created2.getFirst().getLastName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].email").value(created2.getFirst().getEmail())
+        );
+    }
+
+    @Test
+    public void UserDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
+        Pair<UserResult, String> created = createAndSaveUser1();
+
+        underTest.perform(MockMvcRequestBuilders.delete(getPath(created.getFirst().getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+    }
+
+    @Test
+    public void UserDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
+
+        underTest.perform(MockMvcRequestBuilders.delete(getPath(100L))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
     }
 
     private String getPath(Long Id){

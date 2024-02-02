@@ -1,8 +1,8 @@
 package com.play.java.bbgeducation.application.users;
 
 import com.play.java.bbgeducation.application.common.exceptions.validation.EmailExistsValidationFailed;
-import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -13,14 +13,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final Mapper<UserEntity, UserResult> userMapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, Mapper<UserEntity, UserResult> userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
 
@@ -38,19 +42,14 @@ public class UserServiceImpl implements UserService{
                 .password(password)
                 .build()
         );
-        return OneOf2.fromOption1(UserResult.builder()
-                        .id(saved.getId())
-                        .firstName(saved.getFirstName())
-                        .lastName(saved.getLastName())
-                        .email(saved.getEmail())
-                        .build());
+        return OneOf2.fromOption1(userMapper.mapTo(saved));
     }
 
     @Override
     public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email, String password) {
 
         Optional<UserEntity> found = userRepository.findById(id);
-        if (found.isEmpty()){
+        if (found.isEmpty()) {
             return OneOf3.fromOption2(new NotFound());
         }
 
@@ -60,10 +59,10 @@ public class UserServiceImpl implements UserService{
 
         userRepository.save(UserEntity.builder()
                 .id(id)
-                        .firstName(firstName)
-                        .lastName(lastName)
-                        .email(email)
-                        .password(password)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .password(password)
                 .build());
 
         return OneOf3.fromOption1(new Success());
@@ -71,38 +70,44 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public OneOf2<Success, NotFound> deleteUser(Long id) {
-        return null;
+        Optional<UserEntity> find = userRepository.findById(id);
+        if (find.isEmpty()){
+            return OneOf2.fromOption2(new NotFound());
+        }
+        userRepository.deleteById(id);
+        return OneOf2.fromOption1(new Success());
     }
 
     @Override
     public List<UserResult> getAll() {
-        return null;
+        Iterable<UserEntity> userEntities = userRepository.findAll();
+        return StreamSupport.stream(userEntities.spliterator(), false)
+                .map(userMapper::mapTo)
+                .collect(Collectors.toList());
     }
 
     @Override
     public OneOf2<UserResult, NotFound> getById(Long id) {
 
         Optional<UserEntity> foundUser = userRepository.findById(id);
-        if (foundUser.isEmpty()){
-            return OneOf2.fromOption2(new NotFound());
-        }
-        UserResult result = UserResult.builder()
-                .id(foundUser.get().getId())
-                .firstName(foundUser.get().getFirstName())
-                .lastName(foundUser.get().getLastName())
-                .email(foundUser.get().getEmail())
-                .build();
-        return OneOf2.fromOption1(result);
 
+        return foundUser.<OneOf2<UserResult, NotFound>>map(
+                userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
+                .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
     }
 
     @Override
     public OneOf2<UserResult, NotFound> getByEmail(String email) {
-        return null;
+
+        Optional<UserEntity> found = userRepository.findByEmail(email);
+
+        return found.<OneOf2<UserResult, NotFound>>map(
+                userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
+                .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
     }
 
     @Override
     public boolean emailExists(String email) {
-        return false;
+        return userRepository.existsByEmail(email);
     }
 }

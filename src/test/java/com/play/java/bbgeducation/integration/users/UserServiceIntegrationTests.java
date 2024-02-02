@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest1;
 import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest2;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,5 +116,69 @@ public class UserServiceIntegrationTests {
         assertThat(updated).isNotNull();
         assertThat(updated.hasOption3()).isTrue();
         assertThat(updated.asOption3().getClass()).isEqualTo(EmailExistsValidationFailed.class);
+    }
+
+    @Test
+    public void GetAll_CanReturnZero() {
+        List<UserResult> all = underTest.getAll();
+
+        assertThat(all).hasSize(0);
+    }
+
+    @Test
+    public void GetAll_ReturnsList() {
+        UserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
+                userRequest.getEmail(), userRequest.getPassword());
+        UserRequest userRequest2 = buildUserRequest2();
+        OneOf2<UserResult, ValidationFailed> created2 = underTest.createUser(userRequest2.getFirstName(), userRequest2.getLastName(),
+                userRequest2.getEmail(), userRequest2.getPassword());
+
+        List<UserResult> all = underTest.getAll();
+        assertThat(all).hasSize(2);
+    }
+
+    @Test
+    public void GetById_ReturnsUser_WhenIdExists(){
+        UserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
+                userRequest.getEmail(), userRequest.getPassword());
+
+        OneOf2<UserResult, NotFound> fetch = underTest.getById(created1.asOption1().getId());
+
+        assertThat(fetch).isNotNull();
+        assertThat(fetch.hasOption1()).isTrue();
+        assertThat(fetch.asOption1().getEmail()).isEqualTo(userRequest.getEmail());
+    }
+
+    @Test
+    public void GetById_ReturnsNotFound_WhenIdNotExists(){
+        OneOf2<UserResult, NotFound> fetch = underTest.getById(100L);
+
+        assertThat(fetch).isNotNull();
+        assertThat(fetch.hasOption2()).isTrue();
+    }
+
+    @Test
+    public void Delete_ReturnsNoContent_WhenIdExists(){
+        UserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
+                userRequest.getEmail(), userRequest.getPassword());
+
+        OneOf2<Success, NotFound> deleted = underTest.deleteUser(created1.asOption1().getId());
+
+        assertThat(deleted).isNotNull();
+        assertThat(deleted.hasOption1()).isTrue();
+
+    }
+
+    @Test
+    public void Delete_ReturnsNotFound_WhenIdNotExists(){
+
+        OneOf2<Success, NotFound> deleted = underTest.deleteUser(100L);
+
+        assertThat(deleted).isNotNull();
+        assertThat(deleted.hasOption2()).isTrue();
+
     }
 }
