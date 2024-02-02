@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.infrastructure.repositories;
 
-import com.play.java.bbgeducation.domain.ProgramEntity;
+import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

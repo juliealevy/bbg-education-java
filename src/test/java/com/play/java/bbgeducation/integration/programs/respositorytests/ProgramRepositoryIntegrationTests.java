@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.integration.programs.respositorytests;
 
-import com.play.java.bbgeducation.domain.ProgramEntity;
+import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.junit.jupiter.api.Test;

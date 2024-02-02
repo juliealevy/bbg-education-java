@@ -6,7 +6,7 @@ import com.play.java.bbgeducation.application.common.exceptions.validation.Valid
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.domain.ProgramEntity;
+import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;

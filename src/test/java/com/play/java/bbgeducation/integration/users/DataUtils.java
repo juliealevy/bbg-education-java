@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.integration.users;
 
 import com.play.java.bbgeducation.api.users.UserRequest;
-import com.play.java.bbgeducation.domain.UserEntity;
+import com.play.java.bbgeducation.domain.users.UserEntity;
 
 public class DataUtils {
 

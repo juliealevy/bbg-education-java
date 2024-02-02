@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.integration.users;
 
-import com.play.java.bbgeducation.domain.UserEntity;
+import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

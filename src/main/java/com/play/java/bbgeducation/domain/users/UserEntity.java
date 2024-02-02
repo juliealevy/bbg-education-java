@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.domain;
+package com.play.java.bbgeducation.domain.users;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

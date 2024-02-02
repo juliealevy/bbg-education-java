@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.application.users;
 
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
-import com.play.java.bbgeducation.domain.UserEntity;
+import com.play.java.bbgeducation.domain.users.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component

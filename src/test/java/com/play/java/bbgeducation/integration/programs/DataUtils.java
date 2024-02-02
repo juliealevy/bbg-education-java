@@ -2,7 +2,7 @@ package com.play.java.bbgeducation.integration.programs;
 
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
-import com.play.java.bbgeducation.domain.ProgramEntity;
+import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 
 public final class DataUtils {
 

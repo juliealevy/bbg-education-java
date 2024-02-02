@@ -3,7 +3,7 @@ package com.play.java.bbgeducation.application.programs.mapping;
 import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.domain.ProgramEntity;
+import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
