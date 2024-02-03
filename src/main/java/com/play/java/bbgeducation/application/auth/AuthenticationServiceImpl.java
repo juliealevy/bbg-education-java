@@ -15,9 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
-import java.io.Console;
 import java.util.Optional;
 
 @Service
@@ -36,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public OneOf2<LoginResponse, ValidationFailed> login(String email, String password) {
+    public OneOf2<LoginResult, ValidationFailed> login(String email, String password) {
 
         UserDetails userDetails = User.builder()
                 .username(email)
@@ -53,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             throw new RuntimeException("An unknown authentication error occurred");
         }
         String token = jwtUtil.generateToken(user.get());
-        return OneOf2.fromOption1(LoginResponse.builder()
+        return OneOf2.fromOption1(LoginResult.builder()
                 .accessToken(token)
                 .build());
     }

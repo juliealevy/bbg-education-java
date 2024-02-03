@@ -112,17 +112,17 @@ public class ProgramControllerIntegrationTests {
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].id").value(saved1.getId())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[0].id").value(saved1.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].name").value(saved1.getName())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[0].name").value(saved1.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].description").value(saved1.getDescription())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[0].description").value(saved1.getDescription())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].id").value(saved2.getId())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[1].id").value(saved2.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].name").value(saved2.getName())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[1].name").value(saved2.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].description").value(saved2.getDescription())
+                MockMvcResultMatchers.jsonPath("$._embedded.programs.[1].description").value(saved2.getDescription())
         );
     }
 

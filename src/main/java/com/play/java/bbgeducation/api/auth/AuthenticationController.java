@@ -1,13 +1,14 @@
 package com.play.java.bbgeducation.api.auth;
 
 
+import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
-import com.play.java.bbgeducation.application.auth.LoginResponse;
+import com.play.java.bbgeducation.application.auth.LoginResult;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.users.UserResult;
-import com.play.java.bbgeducation.application.users.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final UserService userService;
+    private final AuthenticationLinkProvider authLinkProvider;
 
-    public AuthenticationController(AuthenticationService authenticationService, UserService userService) {
+    public AuthenticationController(AuthenticationService authenticationService, AuthenticationLinkProvider authenticationLinkProvider) {
         this.authenticationService = authenticationService;
-        this.userService = userService;
+        this.authLinkProvider = authenticationLinkProvider;
     }
 
     @PostMapping(path="/register")
     public ResponseEntity registerUser(
-            @RequestBody RegisterRequest request){
+            @RequestBody RegisterRequest request,
+            HttpServletRequest httpRequest){
 
         OneOf2<Success, ValidationFailed> newUser = authenticationService.register(
                 request.getEmail(),
@@ -36,7 +38,13 @@ public class AuthenticationController {
                 request.getLastName());
 
         return newUser.match(
-                success -> new ResponseEntity<>(HttpStatus.CREATED),
+                success -> {
+                    return new ResponseEntity<>(
+                            EntityModel.of(new NoDataResponse())
+                                    .add(authLinkProvider.getSelfLink(httpRequest))
+                                    .add(authLinkProvider.getLoginLink()),
+                            HttpStatus.CREATED);
+                },
                 fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
                         HttpStatus.CONFLICT)
         );
@@ -46,13 +54,18 @@ public class AuthenticationController {
     @RequestMapping("login")
     @PostMapping
     public ResponseEntity loginUser(
-            @RequestBody LoginRequest request){
+            @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest){
 
-        OneOf2<LoginResponse, ValidationFailed> loginResult =
+        OneOf2<LoginResult, ValidationFailed> loginResult =
                 authenticationService.login(request.getEmail(), request.getPassword());
 
         return loginResult.match(
-                login -> new ResponseEntity<>(login, HttpStatus.OK),
+                login -> {
+                    return new ResponseEntity<>(
+                            EntityModel.of(login)
+                            .add(authLinkProvider.getSelfLink(httpRequest)), HttpStatus.OK);
+                },
                 fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
                         HttpStatus.CONFLICT)
         );
