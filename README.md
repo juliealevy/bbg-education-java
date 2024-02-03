@@ -29,6 +29,8 @@ Some sample code in Java/Spring Boot to show the following:
 ## Coming soon
 In progress, coming soon:
 - Logging
+- user context
+- idempotent posts - caching (in memory vs distr (redus?))
 - more error handling
   - better problem responses
   - authentication needs better error handling
