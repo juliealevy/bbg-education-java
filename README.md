@@ -24,7 +24,10 @@ Some sample code in Java/Spring Boot to show the following:
   -   added UserEntity - trying out Service pattern instead of Command to compare
   -   added jwt security config, auth filter, register/login apis, etc.
 - Added more entities and attached a schema diagram  
-- HAL/HATEOS responses (in progress)
+- HAL/HATEOS responses 
+  - trying out Spring Boot Hateos EntityModel and EntityCollection
+  - auth and program done
+  - trying to figure out the best way to build the discoverable links for an api call (with templated uris)
 
 ## Coming soon
 In progress, coming soon:
