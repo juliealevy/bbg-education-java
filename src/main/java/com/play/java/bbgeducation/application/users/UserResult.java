@@ -15,7 +15,6 @@ public class UserResult {
 
     private Long id;
     private String email;
-    //private String password; not returning this
     private String firstName;
     private String lastName;
 }

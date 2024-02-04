@@ -24,6 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserService userService;
+
     private JwtTokenUtil jwtUtil;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, UserService userService, JwtTokenUtil jwtUtil) {
@@ -42,7 +43,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 .roles(Roles.USER)
                 .build();
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword()));
+                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
+                        userDetails.getAuthorities()));
 
         Optional<UserEntity> user = userRepository.findByEmail(email);
         if (user.isEmpty()){

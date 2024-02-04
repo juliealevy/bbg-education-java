@@ -13,24 +13,22 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class JwtTokenUtil {
 
-    private String secret = "testing123notrealsecret";
+    @Value("${jwt.secret}")
+    private String secret;
 
-    private long tokenLifeTimeSeconds = 3600;
+    @Value("${jwt.access-token-lifetime-seconds}")
+    private long tokenLifeTimeSeconds;
 
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
     private final String ATTRIBUTE_EXPIRED = "expired";
     private final String ATTRIBUTE_INVALID = "invalid";
-    private JwtParser jwtParser;
-
-    public JwtTokenUtil() {
-        this.jwtParser = Jwts.parser().setSigningKey(secret);
-    }
 
     public String generateToken(UserEntity user){
         Claims claims = buildClaims(user);
         Date tokenExpiration = getTokenExpiration();
         return Jwts.builder()
+                .setSubject(user.getEmail())
                 .setClaims(claims)
                 .setExpiration(tokenExpiration)
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -74,7 +72,11 @@ public class JwtTokenUtil {
     }
 
     private Claims parseJwtClaims(String token){
-        return jwtParser.parseClaimsJws(token).getBody();
+
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
     private Claims buildClaims(UserEntity user){
         Claims claims = Jwts.claims().setSubject(user.getEmail());
@@ -88,6 +90,6 @@ public class JwtTokenUtil {
     private Date getTokenExpiration(){
         Date tokenCreateDateTime = new Date();
         return new Date(tokenCreateDateTime.getTime() +
-                TimeUnit.SECONDS.toMillis(tokenLifeTimeSeconds*1000));
+                TimeUnit.SECONDS.toMillis(tokenLifeTimeSeconds));
     }
 }

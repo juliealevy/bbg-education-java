@@ -116,15 +116,16 @@ public class ProgramController {
 
         List<ProgramResult> programs = pipeline.send(ProgramGetAllCommand.builder().build());
 
-        CollectionModel<ProgramResult> programRep = CollectionModel.of(programs)
+        List<EntityModel<ProgramResult>> items = programs.stream()
+                .map(p -> {
+                    return EntityModel.of(p)
+                            .add(linkProvider.getByIdLink(p.getId(),true))
+                            .add(linkProvider.getDeleteLink(p.getId()));
+                }).toList();
+
+        CollectionModel<EntityModel<ProgramResult>> programRep = CollectionModel.of(items)
                 .add(linkProvider.getSelfLink(httpRequest))
                 .add(linkProvider.getCreateLink());
-
-        programRep.getContent().forEach(p -> {
-            EntityModel.of(p)
-                    .add(linkProvider.getByIdLink(p.getId(),true))
-                    .add(linkProvider.getDeleteLink(p.getId()));
-        });
 
         return new ResponseEntity<>(programRep, HttpStatus.OK);
     }
