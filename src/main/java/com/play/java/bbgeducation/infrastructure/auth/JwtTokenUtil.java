@@ -13,11 +13,11 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class JwtTokenUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
+   // @Value("${jwt.secret}")  issue creating bean with these.. TODO:  figure out
+    private String secret = "testing123notrealsecret";
 
-    @Value("${jwt.access-token-lifetime-seconds}")
-    private long tokenLifeTimeSeconds;
+    //@Value("${jwt.access-token-lifetime-seconds}")
+    private long tokenLifeTimeSeconds = 36000;
 
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
