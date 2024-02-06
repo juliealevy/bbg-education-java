@@ -1,0 +1,84 @@
+Berskshire Botanical Gardens (BBG) Horticulture Certificate Program Tracking
+-------------------------------------------------------------------------------
+Requiremments:
+
+BBG Horticulature Certificate Program I and II are educational offerings at BBG that result in a certificate.
+
+Each Program has a list of courses that must be completed to receive the certificate.
+Participants must also complete 15 practicum hours (price included in the total cost)	
+	Practicums are chosen from a list of classes/opportunities at BBG.
+	Practicums are basically optional courses to pick from that must total up to 15 hours
+	Practicums have one day classes of differing hours.
+
+Courses are offered one at a time, in succession and are comprised of 12 hours of classtime.
+Courses are taught by different visiting instructors.   
+For some courses, there are multple instructors across the classes.
+
+Some courses meet weekly for 3 hours, 4 times
+Some courses meet weekly for 2 hours, 6 times
+Some courses meet over the weekend for 6 hours, 2 times.
+
+Course requirements:  courses are successfully completed if
+- the student attends 75% of the classes
+- the student completes the final project for the course (pass/fail)
+
+
+The BBG Education Coordinator tracks attendance and project completion on paper.
+Students are asked to track practicum hours themselves and fill out a form to be presented to the coordinator when the 15 hours are completed.
+(Students have to register via the BBG website to attend the practicums, so the coordinator can verify)
+
+
+This application should provide the following functionality:
+	- allow an admin user to define the program, its association session, courses, and the classes for each course.
+		- includes the instructors and the class times, etc.
+	- allow an admin user to enroll students participating in the program.
+	- allow an admin user to record class attendance for each student
+	- allow an admin user to record project completion for each student
+	- allow an admin user to record practicum hours for each student
+	- allow an admin user to see a list of all students and their progress 
+		- courses completed, practicum hours, certificate requirements met, etc.
+	- allow a student user to see a list of courses, classes, class schedule, practicum availabilities for the program they are enrolled in.
+	- allow a student to see their progress (and no other student's progress)
+	- allow a student to record their practicum hours??
+
+Admins will need to register as users with Admin roles.
+Admins will need to register student users 
+Admins and student users will need to log in to the application and only have access to the above defined features based on student vs admin role.
+
+Entities:
+---------------
+
+Program:   				high level Certificate Program I or II (or any other program to be tracked)
+Session:   				the start and end dates of a particular program offering.
+Course:	   				a course being offerred that can be included in a program/session as a required course
+Class:					the day and start/end times of each class in a course
+Instructor:				the person teaching the course (or potentially the class for a course)
+User:					an admin defining the program's makeup and requirements, can see all students
+						a student - can only see their progress.  Might be read only, might allow some self entry
+Practicum Course		available course to use as a practicum
+Practicum Class			the actual scheduled practicum
+Student Attendance		classes user attended
+Student project			projects student completed			
+			
+Workflows:
+Enter/Edit Programs
+Enter/Edit A Session for a Program
+Enter/Edit Courses
+Add courses to a session.
+Enter/Edit Classes for a session
+Enter/Edit Practicums
+Enter/Edit Practicums for a session.
+Enter/Edit Instructors
+
+Enroll/Unenroll Students
+Enter/Edit Student Attendance in classes
+Enter/Edit Student completion of course projects
+
+View list/calendar of scheduled classes for a program/session
+View list of enrolled students for a program/session with summary of progress
+View individul student with progress detail
+View individual student calendar of classes with indication of attendance 
+
+
+
+	
