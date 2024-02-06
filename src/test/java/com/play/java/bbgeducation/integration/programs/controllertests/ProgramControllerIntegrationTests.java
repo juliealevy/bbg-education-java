@@ -7,6 +7,7 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
+import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
-    public void ProgramCreate_Returns201_WhenSuccess() throws Exception {
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void ProgramCreate_Returns201_WhenAdminAndValid() throws Exception {
         ProgramRequest testRequest = buildRequestI();
         String programJson = objectMapper.writeValueAsString(testRequest);
 
@@ -56,7 +57,21 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test")
+    public void ProgramCreate_Returns403_WhenNotAdmin() throws Exception {
+        ProgramRequest testRequest = buildRequestI();
+        String programJson = objectMapper.writeValueAsString(testRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(PROGRAMS_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(programJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isForbidden()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
     public void ProgramCreate_ReturnsSavedProgram_WhenSuccess() throws Exception {
         ProgramRequest testRequest = buildRequestI();
         String programJson = objectMapper.writeValueAsString(testRequest);
@@ -74,7 +89,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
     public void ProgramCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         ProgramCreateCommand createCommand1 = buildCreateCommandI();
         OneOf2<ProgramResult, ValidationFailed> savedProgram1 = pipeline.send(createCommand1);

@@ -25,13 +25,15 @@ public class UserController {
 
     @PostMapping(path="")
     public ResponseEntity createUser(
-            @RequestBody UserRequest userRequest) {
+            @RequestBody CreateUserRequest userRequest) {
 
         OneOf2<UserResult, ValidationFailed> created = userService.createUser(
                 userRequest.getFirstName(),
                 userRequest.getLastName(),
                 userRequest.getEmail(),
-                userRequest.getPassword());
+                userRequest.getPassword(),
+                userRequest.getIsAdmin() == null ? false: userRequest.getIsAdmin()
+        );
 
         return created.match(
                 user -> new ResponseEntity<>(user, HttpStatus.CREATED),
@@ -44,7 +46,7 @@ public class UserController {
     @PutMapping(path="{id}")
     public ResponseEntity updateUser(
             @PathVariable("id") Long id,
-            @RequestBody UserRequest userRequest) {
+            @RequestBody UpdateUserRequest userRequest) {
 
         OneOf3<Success, NotFound, ValidationFailed> updated = userService.updateUser(
                 id,

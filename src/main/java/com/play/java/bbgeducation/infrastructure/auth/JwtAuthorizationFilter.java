@@ -64,7 +64,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
                 UserResult user = userEntity.asOption1();
                 Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(user, "", buildAuthorities());
+                        new UsernamePasswordAuthenticationToken(user, "", buildAuthorities(user.isAdmin()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }catch(Exception ex){
@@ -78,20 +78,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     }
 
-    private String[] getUserRoles(){
-        //TODO:  create a provider and fetch this info when more roles needed
-        //or add to user entity and fetch with that call
-        List<String> roles = new ArrayList<>();
-        //all users get this role if they authenticate
-        roles.add("USER");
-        return roles.toArray(new String[0]);
-    }
-    private Collection<GrantedAuthority> buildAuthorities(){
-        String[] roles = getUserRoles();
-        List<GrantedAuthority> authorities = new ArrayList<>(roles.length);
-        for(String role : roles){
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+    private Collection<GrantedAuthority> buildAuthorities(boolean userIsAdmin) {
+
+        int numOfRoles = userIsAdmin? 2: 1;
+        List<GrantedAuthority> authorities = new ArrayList<>(numOfRoles);
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + Roles.USER));
+        if (userIsAdmin) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + Roles.ADMIN));
         }
+
         return authorities;
     }
 }

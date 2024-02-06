@@ -13,6 +13,7 @@ public class UserResultMapper implements Mapper<UserEntity, UserResult> {
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .email(userEntity.getEmail())
+                .isAdmin(userEntity.getIsAdmin())
                 .build();
 
     }

@@ -35,7 +35,8 @@ public class AuthenticationController {
                 request.getEmail(),
                 request.getPassword(),
                 request.getFirstName(),
-                request.getLastName());
+                request.getLastName(),
+                request.getIsAdmin());
 
         return newUser.match(
                 success -> {

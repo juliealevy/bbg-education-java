@@ -25,6 +25,7 @@ public final class DataUtils {
                 .password("123456")
                 .firstName("Mary")
                 .lastName("Poppins")
+                .isAdmin(false)
                 .build();
     }
 

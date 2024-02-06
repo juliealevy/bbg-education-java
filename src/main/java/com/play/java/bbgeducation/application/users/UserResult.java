@@ -9,12 +9,18 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class UserResult {
+
+    public UserResult(){
+        isAdmin = false;
+    }
 
     private Long id;
     private String email;
     private String firstName;
     private String lastName;
+
+    @Builder.Default
+    private boolean isAdmin = false;
 }

@@ -36,14 +36,42 @@ public class UserServiceTests {
        when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
 
-        OneOf2<UserResult, ValidationFailed> result = underTest.createUser(userToCreate.getFirstName(), userToCreate.getLastName(),
-                userToCreate.getEmail(), userToCreate.getPassword());
+        OneOf2<UserResult, ValidationFailed> result = createUser(userToCreate);
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
         assertThat(result.asOption1().getEmail()).isEqualTo(userToCreate.getEmail());
         assertThat(result.asOption1().getFirstName()).isEqualTo(userToCreate.getFirstName());
         assertThat(result.asOption1().getLastName()).isEqualTo(userToCreate.getLastName());
+        assertThat(result.asOption1().isAdmin()).isEqualTo(userToCreate.getIsAdmin());
+    }
+
+    @Test
+    public void createUser_ShouldReturnAdminUser_WhenAdminTrue(){
+        RegisterRequest userToCreate = getAdminRequest();
+
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
+        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
+
+        OneOf2<UserResult, ValidationFailed> result = createUser(userToCreate);
+
+        assertThat(result).isNotNull();
+        assertThat(result.hasOption1()).isTrue();
+        assertThat(result.asOption1().isAdmin()).isTrue();
+    }
+
+    @Test
+    public void createUser_ShouldReturnNonAdminUser_WhenAdminNotProvided(){
+        RegisterRequest userToCreate = getUserRequest();
+
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
+        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
+
+        OneOf2<UserResult, ValidationFailed> result = createUser(userToCreate);
+
+        assertThat(result).isNotNull();
+        assertThat(result.hasOption1()).isTrue();
+        assertThat(result.asOption1().isAdmin()).isFalse();
     }
 
     @Test
@@ -52,8 +80,7 @@ public class UserServiceTests {
 
         when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
 
-        OneOf2<UserResult, ValidationFailed> result = underTest.createUser(userToCreate.getFirstName(), userToCreate.getLastName(),
-                userToCreate.getEmail(), userToCreate.getPassword());
+        OneOf2<UserResult, ValidationFailed> result = createUser(userToCreate);
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption2()).isTrue();
@@ -66,5 +93,21 @@ public class UserServiceTests {
                 .email("mary@fly.com")
                 .password("123456")
                 .build();
+    }
+
+    private static RegisterRequest getAdminRequest() {
+        return RegisterRequest.builder()
+                .firstName("Mary")
+                .lastName("Poppins")
+                .email("mary@fly.com")
+                .password("123456")
+                .isAdmin(true)
+                .build();
+    }
+
+    private OneOf2<UserResult, ValidationFailed> createUser(RegisterRequest userToCreate){
+        return underTest.createUser(userToCreate.getFirstName(), userToCreate.getLastName(),
+                userToCreate.getEmail(), userToCreate.getPassword(),userToCreate.getIsAdmin());
+
     }
 }

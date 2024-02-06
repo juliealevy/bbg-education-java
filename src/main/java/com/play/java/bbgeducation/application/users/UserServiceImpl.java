@@ -29,9 +29,10 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public OneOf2<UserResult, ValidationFailed> createUser(String firstName, String lastName, String email, String password) {
+    public OneOf2<UserResult, ValidationFailed> createUser(String firstName, String lastName,
+                                                           String email, String password, boolean isAdmin) {
 
-        if (userRepository.existsByEmail(email)){
+        if (userRepository.existsByEmail(email)) {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
         }
 
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService{
                 .lastName(lastName)
                 .email(email)
                 .password(password)
+                .isAdmin(isAdmin)
                 .build()
         );
         return OneOf2.fromOption1(userMapper.mapTo(saved));
@@ -63,6 +65,7 @@ public class UserServiceImpl implements UserService{
                 .lastName(lastName)
                 .email(email)
                 .password(password)
+                .isAdmin(found.get().getIsAdmin())   //no updating this via this call
                 .build());
 
         return OneOf3.fromOption1(new Success());

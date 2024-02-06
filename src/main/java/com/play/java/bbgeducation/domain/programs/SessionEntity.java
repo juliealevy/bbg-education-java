@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.domain.programs;
 
+import com.play.java.bbgeducation.domain.courses.CourseEntity;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +38,9 @@ public class SessionEntity {
     private Date startDate;
     private Date endDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    private int practicumHours;
+
+    @ManyToOne(cascade = ALL)
     @JoinColumn(name = "program_id", referencedColumnName = "id")
     private ProgramEntity program;
 

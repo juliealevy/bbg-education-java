@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.integration.users;
 
-import com.play.java.bbgeducation.api.users.UserRequest;
+import com.play.java.bbgeducation.api.users.CreateUserRequest;
+import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 
 public class DataUtils {
@@ -11,6 +12,7 @@ public class DataUtils {
                 .lastName("Levy")
                 .email("julie@testmail.com")
                 .password("123456")
+                .isAdmin(false)
                 .build();
     }
 
@@ -20,11 +22,12 @@ public class DataUtils {
                 .lastName("Poppins")
                 .email("mary@flymail.com")
                 .password("123456")
+                .isAdmin(false)
                 .build();
     }
 
-    public static UserRequest buildUserRequest1(){
-        return UserRequest.builder()
+    public static CreateUserRequest buildUserRequest1(){
+        return CreateUserRequest.builder()
                 .firstName("Julie")
                 .lastName("Levy")
                 .email("julie@testmail.com")
@@ -32,8 +35,27 @@ public class DataUtils {
                 .build();
     }
 
-    public static UserRequest buildUserRequest2(){
-        return UserRequest.builder()
+    public static UpdateUserRequest buildUpdateUserRequest(){
+        return UpdateUserRequest.builder()
+                .firstName("Julie")
+                .lastName("Levy")
+                .email("julie@testmail.com")
+                .password("123456")
+                .build();
+    }
+
+    public static CreateUserRequest buildAdminRequest(){
+        return CreateUserRequest.builder()
+                .firstName("Julie")
+                .lastName("Levy")
+                .email("julie@testmail.com")
+                .password("123456")
+                .isAdmin(true)
+                .build();
+    }
+
+    public static CreateUserRequest buildUserRequest2(){
+        return CreateUserRequest.builder()
                 .firstName("Mary")
                 .lastName("Poppins")
                 .email("mary@flymail.com")

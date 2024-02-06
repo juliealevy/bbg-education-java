@@ -1,7 +1,8 @@
 package com.play.java.bbgeducation.integration.users;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.play.java.bbgeducation.api.users.UserRequest;
+import com.play.java.bbgeducation.api.users.CreateUserRequest;
+import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.users.UserResult;
@@ -20,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest1;
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest2;
+import static com.play.java.bbgeducation.integration.users.DataUtils.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -44,7 +44,7 @@ public class UserControllerIntegrationTests {
     @Test
     @WithMockUser("test")
     public void UserCreate_Returns201_WhenSuccess() throws Exception {
-        UserRequest request = buildUserRequest1();
+        CreateUserRequest request = buildUserRequest1();
         String requestJson = objectMapper.writeValueAsString(request);
 
         underTest.perform(MockMvcRequestBuilders.post(USERS_PATH)
@@ -57,8 +57,8 @@ public class UserControllerIntegrationTests {
 
     @Test
     @WithMockUser("test")
-    public void UserCreate_ReturnsSavedProgram_WhenSuccess() throws Exception {
-        UserRequest request = buildUserRequest1();
+    public void UserCreate_ReturnsSavedUser_WhenSuccess() throws Exception {
+        CreateUserRequest request = buildUserRequest1();
         String requestJson = objectMapper.writeValueAsString(request);
 
         underTest.perform(MockMvcRequestBuilders.post(USERS_PATH)
@@ -77,9 +77,24 @@ public class UserControllerIntegrationTests {
 
     @Test
     @WithMockUser("test")
+    public void UserCreate_ReturnsAdminUser_WhenAdminTrue() throws Exception {
+        CreateUserRequest request = buildAdminRequest();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        underTest.perform(MockMvcRequestBuilders.post(USERS_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.admin").value(true)
+        );
+    }
+
+    @Test
+    @WithMockUser("test")
     public void UserCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
-        UserRequest request = buildUserRequest1();
-        userService.createUser(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword());
+        CreateUserRequest request = buildUserRequest1();
+        userService.createUser(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword(),
+                false);
 
         String requestJson = objectMapper.writeValueAsString(request);
 
@@ -99,7 +114,7 @@ public class UserControllerIntegrationTests {
         Pair<UserResult, String> created = createAndSaveUser1();
 
 
-        UserRequest updatedRequest = UserRequest.builder()
+        UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
                 .firstName(created.getFirst().getFirstName())
                 .lastName(created.getFirst().getLastName() + " updated")
                 .email(created.getFirst().getEmail())
@@ -228,16 +243,16 @@ public class UserControllerIntegrationTests {
     }
 
     private Pair<UserResult, String> createAndSaveUser1(){
-        UserRequest request = buildUserRequest1();
+        CreateUserRequest request = buildUserRequest1();
         OneOf2<UserResult, ValidationFailed> created = userService.createUser(request.getFirstName(),
-                request.getLastName(), request.getEmail(), request.getPassword());
+                request.getLastName(), request.getEmail(), request.getPassword(),request.getIsAdmin());
         return  Pair.of(created.asOption1(), request.getPassword());
     }
 
     private Pair<UserResult, String> createAndSaveUser2(){
-        UserRequest request = buildUserRequest2();
+        CreateUserRequest request = buildUserRequest2();
         OneOf2<UserResult, ValidationFailed> created = userService.createUser(request.getFirstName(),
-                request.getLastName(), request.getEmail(), request.getPassword());
+                request.getLastName(), request.getEmail(), request.getPassword(),request.getIsAdmin());
         return Pair.of(created.asOption1(), request.getPassword());
     }
 }

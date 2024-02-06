@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserService {
     //passing in params to avoid controller knowing about entities and service knowing about requests...for now
-    OneOf2<UserResult, ValidationFailed> createUser(String firstName, String lastName, String email, String password);
+    OneOf2<UserResult, ValidationFailed> createUser(String firstName, String lastName, String email, String password, boolean isAdmin);
     OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email, String password);
     OneOf2<Success, NotFound> deleteUser(Long id);
     List<UserResult> getAll();

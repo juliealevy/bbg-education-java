@@ -1,6 +1,5 @@
 package com.play.java.bbgeducation.integration.auth;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
@@ -70,8 +69,7 @@ public class AuthenticationControllerIntegrationTests {
     @Test
     public void Register_ShouldReturnFail_WhenEmailExists() throws Exception {
         RegisterRequest request = buildRegisterRequest1();
-        authenticationService.register(request.getEmail(), request.getPassword(), request.getFirstName(),
-                request.getLastName());
+        registerUser(request);
 
         RegisterRequest request2 = buildRegisterRequest1();
         String requestJson = objectMapper.writeValueAsString(request2);
@@ -90,8 +88,7 @@ public class AuthenticationControllerIntegrationTests {
     @Test
     public void Login_ShouldReturnToken_WhenCredsValid() throws Exception {
         RegisterRequest regRequest = buildRegisterRequest1();
-        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), regRequest.getFirstName(),
-                regRequest.getLastName());
+        registerUser(regRequest);
 
         LoginRequest request = LoginRequest.builder()
                 .email(regRequest.getEmail())
@@ -111,8 +108,7 @@ public class AuthenticationControllerIntegrationTests {
     @Test
     public void Login_ShouldReturn200_WhenCredsValid() throws Exception {
         RegisterRequest regRequest = buildRegisterRequest1();
-        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), regRequest.getFirstName(),
-                regRequest.getLastName());
+        registerUser(regRequest);
 
         LoginRequest request = LoginRequest.builder()
                 .email(regRequest.getEmail())
@@ -146,8 +142,7 @@ public class AuthenticationControllerIntegrationTests {
     @Test
     public void Login_ShouldFail_WhenPasswordInvalid() throws Exception {
         RegisterRequest regRequest = buildRegisterRequest1();
-        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), regRequest.getFirstName(),
-                regRequest.getLastName());
+        registerUser(regRequest);
 
         LoginRequest request = LoginRequest.builder()
                 .email(regRequest.getEmail())
@@ -164,4 +159,8 @@ public class AuthenticationControllerIntegrationTests {
         );
     }
 
+    private void registerUser(RegisterRequest regRequest){
+        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), regRequest.getFirstName(),
+                regRequest.getLastName(),regRequest.getIsAdmin());
+    }
 }

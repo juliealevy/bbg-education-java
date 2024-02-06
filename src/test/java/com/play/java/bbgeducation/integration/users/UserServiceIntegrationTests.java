@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.integration.users;
 
-import com.play.java.bbgeducation.api.users.UserRequest;
+import com.play.java.bbgeducation.api.users.CreateUserRequest;
+import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.application.common.exceptions.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
@@ -18,8 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest1;
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserRequest2;
+import static com.play.java.bbgeducation.integration.users.DataUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -35,10 +35,9 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void UserCreate_ShouldSucceedandFetch_WhenInputValid(){
-        UserRequest userRequest = buildUserRequest1();
+        CreateUserRequest userRequest = buildUserRequest1();
 
-        OneOf2<UserResult, ValidationFailed> created = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        OneOf2<UserResult, ValidationFailed> created = createUser(userRequest);
 
         assertThat(created).isNotNull();
         assertThat(created.hasOption1()).isTrue();
@@ -49,12 +48,10 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void CreateUser_ShouldFailValidation_WhenEmailExists(){
-        UserRequest userRequest = buildUserRequest1();
+        CreateUserRequest userRequest = buildUserRequest1();
 
-        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
-        OneOf2<UserResult, ValidationFailed> created2 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        OneOf2<UserResult, ValidationFailed> created1 = createUser(userRequest);
+        OneOf2<UserResult, ValidationFailed> created2 = createUser(userRequest);
 
         assertThat(created1).isNotNull();
         assertThat(created1.hasOption1()).isTrue();
@@ -65,11 +62,10 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void UpdateUser_ShouldSucceed_WhenInputValid(){
-        UserRequest userRequest = buildUserRequest1();
-        OneOf2<UserResult, ValidationFailed> created = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        CreateUserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created = createUser(userRequest);
 
-        UserRequest updatedRequest = UserRequest.builder()
+        UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName() + " updated")
                 .email(userRequest.getEmail())
@@ -90,7 +86,7 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void UpdateUser_ShouldReturnNotFound_WhenIdInvalid() {
-        UserRequest userRequest = buildUserRequest1();
+        UpdateUserRequest userRequest = buildUpdateUserRequest();
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(100L, userRequest.getFirstName(), userRequest.getLastName(),
                 userRequest.getEmail(), userRequest.getPassword());
@@ -101,12 +97,10 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void UpdateUser_ShouldFail_WhenEmailExists() {
-        UserRequest userRequest = buildUserRequest1();
-        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
-        UserRequest userRequest2 = buildUserRequest2();
-        OneOf2<UserResult, ValidationFailed> created2 = underTest.createUser(userRequest2.getFirstName(), userRequest2.getLastName(),
-                userRequest2.getEmail(), userRequest2.getPassword());
+        CreateUserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = createUser(userRequest);;
+        CreateUserRequest userRequest2 = buildUserRequest2();
+        OneOf2<UserResult, ValidationFailed> created2 = createUser(userRequest2);
 
         userRequest.setEmail(userRequest2.getEmail());
 
@@ -127,12 +121,10 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void GetAll_ReturnsList() {
-        UserRequest userRequest = buildUserRequest1();
-        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
-        UserRequest userRequest2 = buildUserRequest2();
-        OneOf2<UserResult, ValidationFailed> created2 = underTest.createUser(userRequest2.getFirstName(), userRequest2.getLastName(),
-                userRequest2.getEmail(), userRequest2.getPassword());
+        CreateUserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = createUser(userRequest);
+        CreateUserRequest userRequest2 = buildUserRequest2();
+        OneOf2<UserResult, ValidationFailed> created2 = createUser(userRequest2);
 
         List<UserResult> all = underTest.getAll();
         assertThat(all).hasSize(2);
@@ -140,9 +132,8 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void GetById_ReturnsUser_WhenIdExists(){
-        UserRequest userRequest = buildUserRequest1();
-        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        CreateUserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = createUser(userRequest);
 
         OneOf2<UserResult, NotFound> fetch = underTest.getById(created1.asOption1().getId());
 
@@ -161,9 +152,8 @@ public class UserServiceIntegrationTests {
 
     @Test
     public void Delete_ReturnsNoContent_WhenIdExists(){
-        UserRequest userRequest = buildUserRequest1();
-        OneOf2<UserResult, ValidationFailed> created1 = underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+        CreateUserRequest userRequest = buildUserRequest1();
+        OneOf2<UserResult, ValidationFailed> created1 = createUser(userRequest);
 
         OneOf2<Success, NotFound> deleted = underTest.deleteUser(created1.asOption1().getId());
 
@@ -180,5 +170,10 @@ public class UserServiceIntegrationTests {
         assertThat(deleted).isNotNull();
         assertThat(deleted.hasOption2()).isTrue();
 
+    }
+
+    private OneOf2<UserResult, ValidationFailed> createUser(CreateUserRequest userRequest) {
+        return underTest.createUser(userRequest.getFirstName(), userRequest.getLastName(),
+                userRequest.getEmail(), userRequest.getPassword(), userRequest.getIsAdmin());
     }
 }

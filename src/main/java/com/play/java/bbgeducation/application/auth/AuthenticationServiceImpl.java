@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,22 +38,28 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public OneOf2<LoginResult, ValidationFailed> login(String email, String password) {
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+        if (user.isEmpty()){
+            throw new RuntimeException("An unknown authentication error occurred");
+        }
+        List<String> roles = new ArrayList<>();
+        roles.add(Roles.USER);
+        if (user.get().getIsAdmin()){
+            roles.add(Roles.ADMIN);
+        }
 
         UserDetails userDetails = User.builder()
                 .username(email)
                 .password(password)
-                .roles(Roles.USER)
+                .roles(String.valueOf(roles))
                 .build();
+
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
                         userDetails.getAuthorities()));
 
-        Optional<UserEntity> user = userRepository.findByEmail(email);
-        if (user.isEmpty()){
-            //if this happens, something really screwed up with the authentication
-            //add some logging here when logging added
-            throw new RuntimeException("An unknown authentication error occurred");
-        }
+
         String token = jwtUtil.generateToken(user.get());
         return OneOf2.fromOption1(LoginResult.builder()
                 .accessToken(token)
@@ -59,9 +67,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public OneOf2<Success, ValidationFailed> register(String email, String password, String firstName, String lastName) {
+    public OneOf2<Success, ValidationFailed> register(String email, String password, String firstName, String lastName, boolean isAdmin) {
 
-        OneOf2<UserResult, ValidationFailed> user = userService.createUser(firstName, lastName, email, password);
+        OneOf2<UserResult, ValidationFailed> user = userService.createUser(firstName, lastName, email, password,isAdmin);
         return user.match(
                 success -> OneOf2.fromOption1(new Success()),
                 OneOf2::fromOption2
