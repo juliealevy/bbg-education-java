@@ -6,6 +6,8 @@ This is very much an in progress project - in current development.
 
 Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, lombok
 
+Documentation is in documents folder:  https://github.com/juliealevy/bbg-education-java/tree/main/src/main/documents
+
 ## What's in it
 Some sample code in Java/Spring Boot to show the following:
 - Vertical Slice ish
