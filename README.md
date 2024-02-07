@@ -4,7 +4,7 @@ This is a practice java app to track the course make-up and student progress in 
 
 This is very much an in progress project - in current development.
 
-Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, lombok
+Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, lombok, fluent-validator
 
 Documentation is in documents folder:  https://github.com/juliealevy/bbg-education-java/tree/main/src/main/documents
 
@@ -15,7 +15,7 @@ Some sample code in Java/Spring Boot to show the following:
   - api (rest api controllers)
   - application (business logic commands/services, etc)
   - domain (domain entities)
-  - infrastructure (DB repositories, etc)
+  - infrastructure (DB repositories, auth, etc)
 - First domain CRUD implementation:  BBGProgram with commands
 - Integration Testing of Repositories, Commands, Controllers
 - Unit Testing of commands and services
@@ -31,11 +31,18 @@ Some sample code in Java/Spring Boot to show the following:
 - HAL/HATEOS responses 
   - trying out Spring Boot Hateos EntityModel and EntityCollection
     - auth and program done
-    - trying to figure out the best way to build the discoverable links for an api call (with templated uris)- in progress
+- Added command-based validation in a pipeline middleware.
+  -   implemented for CreateProgram
+  -   implement for other Program commands (in progress)
+  -   figure something out for services based entities (User/Auth)
+    
 
 ## Coming soon
-- validation
 - Logging
+- make a decision about future workflow/entity implementation:  command vs service
+- trying to figure out the best way to build the discoverable links for an api call (with templated uris)
+- Add refresh token to auth, consider implementing revoke feature (with DB persistance of tokens)
+- Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
 - more error handling
   - better problem responses
