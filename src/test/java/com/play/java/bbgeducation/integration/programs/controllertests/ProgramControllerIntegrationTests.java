@@ -6,7 +6,7 @@ import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
+import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

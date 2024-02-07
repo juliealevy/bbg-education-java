@@ -1,10 +1,12 @@
 package com.play.java.bbgeducation.application.common.exceptions.validation;
 
+import br.com.fluentvalidator.context.Error;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,47 +16,42 @@ import java.util.List;
 @Builder
 public class ValidationFailed {
     private ValidationErrorType errorType;
-    private List<ValidationError> errors;
+    private List<Error> errors;
 
     public ValidationFailed(ValidationErrorType errorType, String propertyName, String errorMessage){
         this.errorType = errorType;
-        this.errors = Collections.singletonList(ValidationError.builder()
-                        .propertyName(propertyName)
-                        .errorMessage(errorMessage)
-                        .build());
+        this.errors = Collections.singletonList(buildError(propertyName, errorMessage));
     }
-    public static ValidationFailed BadRequest(String propertyName, String message){
-        ValidationError error = ValidationError.builder()
-                .propertyName(propertyName)
-                .errorMessage(message)
-                .build();
 
+   public static ValidationFailed BadRequest(String propertyName, String message){
         return ValidationFailed.builder()
                 .errorType(ValidationErrorType.BadRequest)
-                .errors(Collections.singletonList(error))
+                .errors(Collections.singletonList(buildError(propertyName, message)))
                 .build();
     }
 
     public static ValidationFailed Conflict(String propertyName, String message){
-        ValidationError error = ValidationError.builder()
-                .propertyName(propertyName)
-                .errorMessage(message)
-                .build();
-
         return ValidationFailed.builder()
                 .errorType(ValidationErrorType.Conflict)
-                .errors(Collections.singletonList(error))
+                .errors(Collections.singletonList(buildError(propertyName, message)))
                 .build();
     }
 
-    public static ValidationFailed BadRequest(List<ValidationError> errors){
+    public static ValidationFailed Conflict(Collection<Error> errors){
+        return ValidationFailed.builder()
+                .errorType(ValidationErrorType.Conflict)
+                .errors(errors.stream().toList())
+                .build();
+    }
+
+    public static ValidationFailed BadRequest(Collection<Error> errors){
         return ValidationFailed.builder()
                 .errorType(ValidationErrorType.BadRequest)
-                .errors(errors)
+                .errors(errors.stream().toList())
                 .build();
     }
 
-    public ValidationError getFirstError(){
+    public Error getFirstError(){
         if (this.errors == null || this.errors.isEmpty()){
             return null;
         }
@@ -67,9 +64,13 @@ public class ValidationFailed {
         }
         StringBuilder messages = new StringBuilder();
         this.errors.forEach(e -> {
-            messages.append(e.getErrorMessage()).append(System.lineSeparator());
+            messages.append(e.getMessage()).append(System.lineSeparator());
         });
         return messages.toString();
+    }
+
+    private static Error buildError(String propertyName, String message){
+        return Error.create(propertyName, message, "", null);
     }
 }
 

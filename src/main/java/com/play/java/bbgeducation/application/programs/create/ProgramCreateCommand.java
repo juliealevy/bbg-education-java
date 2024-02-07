@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.programs.commands;
+package com.play.java.bbgeducation.application.programs.create;
 
 import an.awesome.pipelinr.Command;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;

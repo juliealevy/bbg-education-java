@@ -6,7 +6,7 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.programs.commands.ProgramCreateCommand;
+import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommand;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.junit.jupiter.api.Test;

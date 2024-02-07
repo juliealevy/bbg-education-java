@@ -1,5 +1,6 @@
-package com.play.java.bbgeducation.application.common.exceptions;
+package com.play.java.bbgeducation.api.common;
 
+import com.play.java.bbgeducation.application.common.exceptions.NameExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
