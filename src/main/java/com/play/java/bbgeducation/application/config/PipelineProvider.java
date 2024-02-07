@@ -17,7 +17,7 @@ public class PipelineProvider {
             ObjectProvider<Command.Middleware> middlewares) {
         return new Pipelinr()
                 .with(commandHandlers::stream) // Registers Handlers
-                .with(notificationHandlers::stream) // Registers Notifications (not covered here)
-                .with(middlewares::orderedStream); // Registers Middlewares (not covered here)
+                //.with(notificationHandlers::stream) //
+                .with(middlewares::orderedStream);
     }
 }

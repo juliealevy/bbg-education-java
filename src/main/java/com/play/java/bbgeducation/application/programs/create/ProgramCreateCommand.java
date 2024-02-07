@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProgramCreateCommand implements Command<OneOf2<ProgramResult, ValidationFailed>> {
+public class ProgramCreateCommand implements Command<OneOf2<ProgramResult, ValidationFailed>>
+ {
     private String name;
     private String description;
 

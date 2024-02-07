@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.unit.programs.commands;
+package com.play.java.bbgeducation.unit.programs.commands.create;
 
 import br.com.fluentvalidator.Validator;
 import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
@@ -24,11 +24,10 @@ public class ProgramCreateCommandHandlerTests {
 
     private ProgramCreateCommandHandler underTest;
     private final ProgramRepository programRepository = Mockito.mock(ProgramRepository.class);
-    private final Validator<ProgramCreateCommand> validator = new ProgramCreateCommandValidator();
 
     @BeforeEach
     public void init(){
-        underTest = new ProgramCreateCommandHandler(programRepository, validator);
+        underTest = new ProgramCreateCommandHandler(programRepository);
     }
 
     @Test
@@ -59,36 +58,6 @@ public class ProgramCreateCommandHandlerTests {
         assertThat(result.hasOption2()).isTrue();
         assertThat(result.asOption2().getErrors()).hasSize(1);
         assertThat(result.asOption2() instanceof NameExistsValidationFailed).isTrue();
-    }
-
-    @Test
-    public void handle_ShouldReturnValidationFail_WhenNameIsEmpty(){
-        ProgramCreateCommand cmd = buildCommand();
-        cmd.setName("");
-
-        when(programRepository.existsByName(any(String.class))).thenReturn(false);
-        when(programRepository.save(any(ProgramEntity.class))).then(returnsFirstArg());
-
-        OneOf2<ProgramResult, ValidationFailed> result = underTest.handle(cmd);
-
-        assertThat(result).isNotNull();
-        assertThat(result.hasOption2()).isTrue();
-        assertThat(result.asOption2().getErrors()).hasSize(2);
-    }
-
-    @Test
-    public void handle_ShouldReturnValidationFail_WhenNameIsTooShort(){
-        ProgramCreateCommand cmd = buildCommand();
-        cmd.setName("ab");
-
-        when(programRepository.existsByName(any(String.class))).thenReturn(false);
-        when(programRepository.save(any(ProgramEntity.class))).then(returnsFirstArg());
-
-        OneOf2<ProgramResult, ValidationFailed> result = underTest.handle(cmd);
-
-        assertThat(result).isNotNull();
-        assertThat(result.hasOption2()).isTrue();
-        assertThat(result.asOption2().getErrors()).hasSize(1);
     }
 
     private static ProgramCreateCommand buildCommand() {
