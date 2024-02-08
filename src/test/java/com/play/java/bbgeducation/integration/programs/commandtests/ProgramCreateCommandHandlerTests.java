@@ -1,10 +1,10 @@
 package com.play.java.bbgeducation.integration.programs.commandtests;
 
 import an.awesome.pipelinr.Pipeline;
-import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.NameExistsValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.junit.jupiter.api.Test;

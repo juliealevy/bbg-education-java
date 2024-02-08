@@ -1,9 +1,9 @@
-package com.play.java.bbgeducation.application.programs.commands;
+package com.play.java.bbgeducation.application.programs.getById;
 
 import an.awesome.pipelinr.Command;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProgramDeleteByIdCommand implements Command<OneOf2<Success, NotFound>> {
+public class ProgramGetByIdCommand implements Command<OneOf2<ProgramResult, NotFound>> {
     private Long id;
-
 }

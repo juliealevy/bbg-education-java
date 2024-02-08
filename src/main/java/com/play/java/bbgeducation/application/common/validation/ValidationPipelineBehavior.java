@@ -1,28 +1,23 @@
-package com.play.java.bbgeducation.application.validation;
+package com.play.java.bbgeducation.application.common.validation;
 
 import an.awesome.pipelinr.Command;
-import br.com.fluentvalidator.Validator;
 import br.com.fluentvalidator.context.Error;
 import br.com.fluentvalidator.context.ValidationResult;
-import com.google.common.reflect.TypeToken;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
-public class ValidationPipelineMiddleware implements Command.Middleware {
+public class ValidationPipelineBehavior implements Command.Middleware {
 
     private final ObjectProvider<CommandValidator> validators;
 
-    public ValidationPipelineMiddleware(ObjectProvider<CommandValidator> validators) {
+    public ValidationPipelineBehavior(ObjectProvider<CommandValidator> validators) {
         this.validators = validators;
     }
 

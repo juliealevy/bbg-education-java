@@ -4,7 +4,7 @@ package com.play.java.bbgeducation.api.auth;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.auth.LoginResult;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import jakarta.servlet.http.HttpServletRequest;

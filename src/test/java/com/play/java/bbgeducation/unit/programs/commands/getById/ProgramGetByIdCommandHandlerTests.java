@@ -1,10 +1,10 @@
-package com.play.java.bbgeducation.unit.programs.commands;
+package com.play.java.bbgeducation.unit.programs.commands.getById;
 
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetByIdCommandHandler;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
+import com.play.java.bbgeducation.application.programs.getById.ProgramGetByIdCommand;
+import com.play.java.bbgeducation.application.programs.getById.ProgramGetByIdCommandHandler;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.apache.commons.lang3.tuple.Pair;

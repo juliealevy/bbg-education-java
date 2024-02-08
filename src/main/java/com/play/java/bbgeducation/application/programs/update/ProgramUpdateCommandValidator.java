@@ -1,13 +1,12 @@
 package com.play.java.bbgeducation.application.programs.update;
 
 import br.com.fluentvalidator.AbstractValidator;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
-import com.play.java.bbgeducation.application.validation.CommandValidator;
-import com.play.java.bbgeducation.application.validation.OneOfResultInfo;
+import com.play.java.bbgeducation.application.common.validation.CommandValidator;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;

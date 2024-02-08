@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.validation;
+package com.play.java.bbgeducation.application.common.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

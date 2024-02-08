@@ -1,19 +1,16 @@
 package com.play.java.bbgeducation.unit.programs.commands.create;
 
-import br.com.fluentvalidator.Validator;
-import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.NameExistsValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommandHandler;
-import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommandValidator;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;

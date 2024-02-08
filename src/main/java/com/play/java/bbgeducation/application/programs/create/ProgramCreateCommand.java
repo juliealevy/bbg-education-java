@@ -2,8 +2,8 @@ package com.play.java.bbgeducation.application.programs.create;
 
 import an.awesome.pipelinr.Command;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

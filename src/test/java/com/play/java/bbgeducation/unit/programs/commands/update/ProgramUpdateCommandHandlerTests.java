@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.unit.programs.commands.update;
 
-import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.NameExistsValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;

@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.common.exceptions.validation;
+package com.play.java.bbgeducation.application.common.validation;
 
 import br.com.fluentvalidator.context.Error;
 import lombok.AllArgsConstructor;

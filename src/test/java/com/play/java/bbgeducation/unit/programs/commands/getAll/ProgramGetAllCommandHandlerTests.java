@@ -1,9 +1,9 @@
-package com.play.java.bbgeducation.unit.programs.commands;
+package com.play.java.bbgeducation.unit.programs.commands.getAll;
 
 import an.awesome.pipelinr.repack.com.google.common.collect.Iterables;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramGetAllCommandHandler;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
+import com.play.java.bbgeducation.application.programs.getAll.ProgramGetAllCommand;
+import com.play.java.bbgeducation.application.programs.getAll.ProgramGetAllCommandHandler;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.programs;
+package com.play.java.bbgeducation.application.programs.result;
 
 
 import lombok.AllArgsConstructor;

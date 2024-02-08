@@ -1,10 +1,10 @@
-package com.play.java.bbgeducation.unit.programs.commands;
+package com.play.java.bbgeducation.unit.programs.commands.delete;
 
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramDeleteByIdCommandHandler;
+import com.play.java.bbgeducation.application.programs.delete.ProgramDeleteByIdCommand;
+import com.play.java.bbgeducation.application.programs.delete.ProgramDeleteByIdCommandHandler;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.junit.jupiter.api.BeforeEach;

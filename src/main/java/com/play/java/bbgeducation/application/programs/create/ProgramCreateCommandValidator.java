@@ -1,11 +1,11 @@
 package com.play.java.bbgeducation.application.programs.create;
 
 import br.com.fluentvalidator.AbstractValidator;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
-import com.play.java.bbgeducation.application.validation.CommandValidator;
-import com.play.java.bbgeducation.application.validation.OneOfResultInfo;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
+import com.play.java.bbgeducation.application.common.validation.CommandValidator;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
 import org.springframework.stereotype.Component;
 
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;

@@ -1,7 +1,7 @@
-package com.play.java.bbgeducation.application.programs.commands;
+package com.play.java.bbgeducation.application.programs.getAll;
 
 import an.awesome.pipelinr.Command;
-import com.play.java.bbgeducation.application.programs.ProgramResult;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.springframework.stereotype.Component;

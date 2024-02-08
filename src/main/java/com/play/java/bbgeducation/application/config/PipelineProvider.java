@@ -13,7 +13,7 @@ public class PipelineProvider {
     @Bean
     public Pipeline getPipeline(
             ObjectProvider<Command.Handler> commandHandlers,
-            ObjectProvider<Notification.Handler> notificationHandlers,
+           // ObjectProvider<Notification.Handler> notificationHandlers,
             ObjectProvider<Command.Middleware> middlewares) {
         return new Pipelinr()
                 .with(commandHandlers::stream) // Registers Handlers

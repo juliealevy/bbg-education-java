@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.unit.users;
 
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
-import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.users.UserResult;
