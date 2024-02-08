@@ -1,12 +1,12 @@
-package com.play.java.bbgeducation.unit.programs.commands;
+package com.play.java.bbgeducation.unit.programs.commands.update;
 
 import com.play.java.bbgeducation.application.common.exceptions.validation.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.exceptions.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommand;
-import com.play.java.bbgeducation.application.programs.commands.ProgramUpdateCommandHandler;
+import com.play.java.bbgeducation.application.programs.update.ProgramUpdateCommand;
+import com.play.java.bbgeducation.application.programs.update.ProgramUpdateCommandHandler;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import org.junit.jupiter.api.BeforeEach;

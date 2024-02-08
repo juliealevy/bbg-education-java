@@ -20,6 +20,7 @@ public class OneOf2<T1,T2> implements OneOf {
         }
     }
 
+
     public static<T1, T2> OneOf2<T1, T2> fromOption1 (final T1 option){
         return new OneOf2<>(option, null);
     }
@@ -28,6 +29,20 @@ public class OneOf2<T1,T2> implements OneOf {
         return new OneOf2<>(null,option);
     }
 
+    //this is for the validation pipeline middleware handling validation generically
+    public static<T1, T2> OneOf2<T1, T2> fromOptionNumber (int number, Object option){
+        if (number > 2 || number <= 0){
+            throw new IllegalArgumentException("OneOf only has options 1 and 2");
+        }
+        if (option == null){
+            throw new IllegalArgumentException("OneOf option cannot be null");
+        }
+        try {
+            return number == 1 ?  fromOption1((T1) option): fromOption2((T2) option);
+        }catch(ClassCastException ex){
+            throw new IllegalArgumentException("Unexpected option type: " + option.getClass().getSimpleName());
+        }
+    }
 
     public boolean hasOption1(){
         return _option1 != null;

@@ -5,6 +5,7 @@ import com.play.java.bbgeducation.application.common.exceptions.validation.Valid
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.programs.ProgramResult;
 import com.play.java.bbgeducation.application.validation.CommandValidator;
+import com.play.java.bbgeducation.application.validation.OneOfResultInfo;
 import org.springframework.stereotype.Component;
 
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
@@ -32,9 +33,20 @@ public class ProgramCreateCommandValidator
                 .must(not(stringEmptyOrNull()))
                     .withMessage("Program name cannot be empty")
                     .withFieldName("name")
+                .withAttempedValue(ProgramCreateCommand::getName)
                 .must(stringSizeBetween(3, 50))
                     .withMessage("Program name must be between 3 and 50 characters.")
                     .withFieldName("name")
-                .critical();
+                    .withAttempedValue(ProgramCreateCommand::getName);
+
+    }
+
+
+    @Override
+    public OneOfResultInfo getResultInfo() {
+        return OneOfResultInfo.builder()
+                .resultType(OneOf2.class)
+                .validationFailedOptionNumber(2)
+                .build();
     }
 }
