@@ -47,24 +47,28 @@ public class AuthenticationControllerIntegrationTests {
     public void init(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
     }
-    //for some reason this fails during verifiy, although fine when run just as a test. ???
-    //maybe an integration test for auth is a bad idea??  need to look further into testing auth
-//    @Test
-//    public void Register_ShouldReturn201_WhenInputValid() throws Exception {
-//        RegisterRequest request = buildRegisterRequest1();
-//        String requestJson = objectMapper.writeValueAsString(request);
-//
-//        try {
-//            mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/register")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(requestJson)
-//            ).andExpect(
-//                    MockMvcResultMatchers.status().isCreated()
-//            );
-//        }catch(Exception ex){
-//            throw new Exception ("register error happened with message: " + ex.getMessage());
-//        }
-//    }
+
+    @Test
+    public void Register_ShouldReturn201_WhenInputValid() throws Exception {
+        //not sure why i have to use different data for this test.  If i try and
+        //use the datautil method to build the request, i get an error:  email already exists...
+        //something must be off with the set up of these tests.   each one should start fresh
+        RegisterRequest request = RegisterRequest.builder()
+                .email("testcreate@test.com")
+                .firstName("test")
+                .lastName("test")
+                .password("123456")
+                .isAdmin(false)
+                .build();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+    }
 
     @Test
     public void Register_ShouldReturnFail_WhenEmailExists() throws Exception {
@@ -83,6 +87,25 @@ public class AuthenticationControllerIntegrationTests {
                 MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
         );
 
+    }
+    @Test
+    public void Login_ShouldReturn200_WhenCredsValid() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        LoginRequest request = LoginRequest.builder()
+                .email(regRequest.getEmail())
+                .password(regRequest.getPassword())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
     }
 
     @Test
@@ -105,25 +128,7 @@ public class AuthenticationControllerIntegrationTests {
 
     }
 
-    @Test
-    public void Login_ShouldReturn200_WhenCredsValid() throws Exception {
-        RegisterRequest regRequest = buildRegisterRequest1();
-        registerUser(regRequest);
 
-        LoginRequest request = LoginRequest.builder()
-                .email(regRequest.getEmail())
-                .password(regRequest.getPassword())
-                .build();
-
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isOk()
-        );
-    }
 
     @Test
     public void Login_ShouldFail_WhenEmailNotExists() throws Exception {
@@ -135,7 +140,7 @@ public class AuthenticationControllerIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
-                MockMvcResultMatchers.status().isInternalServerError()  //should catch this for a clearer error??
+                MockMvcResultMatchers.status().isUnauthorized()  //should catch this for a clearer error??
         );
     }
 
@@ -155,7 +160,7 @@ public class AuthenticationControllerIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
-                MockMvcResultMatchers.status().isInternalServerError()
+                MockMvcResultMatchers.status().isUnauthorized()
         );
     }
 

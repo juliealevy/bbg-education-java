@@ -9,20 +9,25 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.auth.JwtTokenUtil;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
+import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.CredentialNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService{
-
+    Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -36,11 +41,14 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         this.jwtUtil = jwtUtil;
     }
 
+    @SneakyThrows
     @Override
     public OneOf2<LoginResult, ValidationFailed> login(String email, String password) {
         Optional<UserEntity> user = userRepository.findByEmail(email);
         if (user.isEmpty()){
-            throw new RuntimeException("An unknown authentication error occurred");
+            //don't want to return info to the user whether email or password was the problem
+            return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Bad Credentials"));
+
         }
         List<String> roles = new ArrayList<>();
         roles.add(Roles.USER);

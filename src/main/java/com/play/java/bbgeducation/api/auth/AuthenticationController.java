@@ -67,8 +67,8 @@ public class AuthenticationController {
                             EntityModel.of(login)
                             .add(authLinkProvider.getSelfLink(httpRequest)), HttpStatus.OK);
                 },
-                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
+                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, fail.getErrorMessage()),
+                        HttpStatus.UNAUTHORIZED)
         );
     }
 }

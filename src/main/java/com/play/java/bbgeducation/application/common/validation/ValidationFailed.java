@@ -30,6 +30,13 @@ public class ValidationFailed {
                 .build();
     }
 
+    public static ValidationFailed Unauthorized(String propertyName, String message){
+        return ValidationFailed.builder()
+                .errorType(ValidationErrorType.Unauthorized)
+                .errors(Collections.singletonList(buildError(propertyName, message)))
+                .build();
+    }
+
     public static ValidationFailed Conflict(String propertyName, String message){
         return ValidationFailed.builder()
                 .errorType(ValidationErrorType.Conflict)

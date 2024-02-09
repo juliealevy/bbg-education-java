@@ -33,8 +33,9 @@ Some sample code in Java/Spring Boot to show the following:
     - auth and program done
 - Added command-based validation in a pipeline middleware.
   -   implemented for CreateProgram
-  -   implement for ProgramUpdate 
+  -   implemented for ProgramUpdate 
   -   figure something out for services based entities (User/Auth)
+- Initial logging config, a few examples.  (in progress) 
     
 
 ## Coming soon

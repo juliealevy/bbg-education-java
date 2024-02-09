@@ -21,7 +21,7 @@ public final class DataUtils {
 
     public static RegisterRequest buildRegisterRequest1(){
         return RegisterRequest.builder()
-                .email("mary@flymail.com")
+                .email("julie@flymail.com")
                 .password("123456")
                 .firstName("Mary")
                 .lastName("Poppins")
