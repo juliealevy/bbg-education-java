@@ -33,7 +33,7 @@ Some sample code in Java/Spring Boot to show the following:
     - auth and program done
 - Added command-based validation in a pipeline middleware.
   -   implemented for CreateProgram
-  -   implement for other Program commands (in progress)
+  -   implement for ProgramUpdate 
   -   figure something out for services based entities (User/Auth)
     
 
