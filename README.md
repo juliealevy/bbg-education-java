@@ -36,6 +36,7 @@ Some sample code in Java/Spring Boot to show the following:
   -   implemented for ProgramUpdate 
   -   figure something out for services based entities (User/Auth)
 - Initial logging config, a few examples.  (in progress) 
+  - Added request/response logging with sensitive data scrubbing 
     
 
 ## Coming soon
