@@ -33,14 +33,14 @@ Some sample code in Java/Spring Boot to show the following:
     - auth and program done
 - Added command-based validation in a pipeline middleware.
   -   implemented for CreateProgram
-  -   implemented for ProgramUpdate 
-  -   figure something out for services based entities (User/Auth)
-- Initial logging config, a few examples.  (in progress) 
+  -   implemented for ProgramUpdate  
+- Added logging
+  - Initial logging config, a few examples.  (in progress) 
   - Added request/response logging with sensitive data scrubbing 
     
 
 ## Coming soon
-- Logging
+- validation for services based entities (User/Auth)
 - make a decision about future workflow/entity implementation:  command vs service
 - trying to figure out the best way to build the discoverable links for an api call (with templated uris)
 - Add refresh token to auth, consider implementing revoke feature (with DB persistance of tokens)
