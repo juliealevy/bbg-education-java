@@ -27,26 +27,6 @@ public class UserServiceImpl implements UserService{
         this.userMapper = userMapper;
     }
 
-
-    @Override
-    public OneOf2<UserResult, ValidationFailed> createUser(String firstName, String lastName,
-                                                           String email, String password, boolean isAdmin) {
-
-        if (userRepository.existsByEmail(email)) {
-            return OneOf2.fromOption2(new EmailExistsValidationFailed());
-        }
-
-        UserEntity saved = userRepository.save(UserEntity.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .password(password)
-                .isAdmin(isAdmin)
-                .build()
-        );
-        return OneOf2.fromOption1(userMapper.mapTo(saved));
-    }
-
     @Override
     public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email, String password) {
 
@@ -97,20 +77,5 @@ public class UserServiceImpl implements UserService{
         return foundUser.<OneOf2<UserResult, NotFound>>map(
                 userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
                 .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
-    }
-
-    @Override
-    public OneOf2<UserResult, NotFound> getByEmail(String email) {
-
-        Optional<UserEntity> found = userRepository.findByEmail(email);
-
-        return found.<OneOf2<UserResult, NotFound>>map(
-                userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
-                .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
-    }
-
-    @Override
-    public boolean emailExists(String email) {
-        return userRepository.existsByEmail(email);
     }
 }

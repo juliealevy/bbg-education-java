@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.infrastructure.auth;
+package com.play.java.bbgeducation.infrastructure.auth.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -9,5 +9,5 @@ import org.springframework.security.config.annotation.method.configuration.Globa
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
-public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 }

@@ -8,6 +8,7 @@ import com.play.java.bbgeducation.application.common.validation.ValidationFailed
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static com.play.java.bbgeducation.integration.programs.DataUtils.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -29,6 +33,7 @@ import static com.play.java.bbgeducation.integration.programs.DataUtils.*;
 @AutoConfigureMockMvc
 public class ProgramControllerIntegrationTests {
     private MockMvc mockMvc;
+    private WebApplicationContext webApplicationContext;
     private ObjectMapper objectMapper;
     private final Pipeline pipeline;
 
@@ -36,10 +41,16 @@ public class ProgramControllerIntegrationTests {
     private static final String PROBLEM_JSON_TYPE = "application/problem+json";
 
     @Autowired
-    public ProgramControllerIntegrationTests(MockMvc mockMvc, Pipeline pipeline) {
+    public ProgramControllerIntegrationTests(WebApplicationContext webApplicationContext, MockMvc mockMvc, Pipeline pipeline) {
         this.mockMvc = mockMvc;
+        this.webApplicationContext = webApplicationContext;
         this.pipeline = pipeline;
         this.objectMapper = new ObjectMapper();
+    }
+
+    @BeforeEach
+    public void init(){
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
     }
 
     @Test
@@ -57,7 +68,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username="test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramCreate_Returns403_WhenNotAdmin() throws Exception {
         ProgramRequest testRequest = buildRequestI();
         String programJson = objectMapper.writeValueAsString(testRequest);
@@ -108,7 +119,7 @@ public class ProgramControllerIntegrationTests {
         );
     }
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
@@ -119,7 +130,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetAll_ReturnsList_WhenSuccess() throws Exception {
         ProgramResult saved1 = createAndSaveProgramI();
         ProgramResult saved2 = createAndSaveProgramII();
@@ -142,7 +153,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetById_Returns200_WhenIdExists() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -154,7 +165,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetById_ReturnsProgram_WhenIdExists() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -170,7 +181,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetById_Returns404_WhenIdNotExist() throws Exception {
         ProgramResult program = createAndSaveProgramI();
 
@@ -182,7 +193,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void ProgramUpdate_Returns200_WhenInputValid() throws Exception {
         ProgramResult savedProgram = createAndSaveProgramI();
 
@@ -201,7 +212,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void ProgramUpdate_ReturnsNotFound_WhenIdNotExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
@@ -221,7 +232,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void ProgramUpdate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
         ProgramResult savedProgram2 = createAndSaveProgramII();
@@ -244,7 +255,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void ProgramDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
@@ -256,7 +267,7 @@ public class ProgramControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void ProgramDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 

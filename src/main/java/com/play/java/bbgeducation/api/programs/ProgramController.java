@@ -13,7 +13,6 @@ import com.play.java.bbgeducation.application.programs.delete.ProgramDeleteByIdC
 import com.play.java.bbgeducation.application.programs.getAll.ProgramGetAllCommand;
 import com.play.java.bbgeducation.application.programs.getById.ProgramGetByIdCommand;
 import com.play.java.bbgeducation.application.programs.update.ProgramUpdateCommand;
-import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
@@ -25,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.play.java.bbgeducation.infrastructure.auth.Roles.ADMIN;
 
 @RestController
 @RequestMapping("api/programs")
@@ -39,7 +40,7 @@ public class ProgramController {
     }
 
     @PostMapping(path="")
-    @RolesAllowed(Roles.ADMIN)
+    @RolesAllowed(ADMIN)
     public ResponseEntity createProgram(
             @RequestBody ProgramRequest programRequest,
             HttpServletRequest httpRequest)  {
@@ -68,6 +69,7 @@ public class ProgramController {
 
     }
     @PutMapping(path="{id}")
+    @RolesAllowed(ADMIN)
     public ResponseEntity updateProgram(
             @PathVariable("id") Long id,
             @RequestBody ProgramRequest programRequest,
@@ -138,6 +140,7 @@ public class ProgramController {
     }
 
     @DeleteMapping(path="{id}")
+    @RolesAllowed(ADMIN)
     ResponseEntity deleteProgramById(
             @PathVariable("id") Long id,
             HttpServletRequest httpRequest) {

@@ -2,92 +2,87 @@ package com.play.java.bbgeducation.infrastructure.auth;
 
 import an.awesome.pipelinr.repack.com.google.common.base.Strings;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.users.UserResult;
-import com.play.java.bbgeducation.application.users.UserService;
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenUtil jwtUtil;
-    private final ObjectMapper mapper;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
 
-    private final UserService userService;
-
-    public JwtAuthorizationFilter(JwtTokenUtil jwtUtil, ObjectMapper mapper, UserService userService) {
-        this.jwtUtil = jwtUtil;
-        this.mapper = mapper;
-        this.userService = userService;
+    public JwtAuthorizationFilter(JwtService jwtService, UserDetailsService userDetailsService, ObjectMapper objectMapper) {
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        Map<String, Object> errorDetails = new HashMap<>();
         try{
-            String accessToken = jwtUtil.resolveToken(request);
+            final String authHeader = request.getHeader("Authorization");
+            final String token;
+            final String userEmail;
 
-            if (Strings.isNullOrEmpty(accessToken)){
-                filterChain.doFilter(request, response);
+            if (Strings.isNullOrEmpty(authHeader) || !(authHeader.startsWith("Bearer "))){
+                filterChain.doFilter(request,response);
                 return;
             }
 
-            Claims claims = jwtUtil.resolveClaims(request);
-            if (claims != null && jwtUtil.validateClaims(claims)) {
-                String email = jwtUtil.getEmail(claims);
-                //get user info without password
-                OneOf2<UserResult, NotFound> userEntity = userService.getByEmail(email);
-                if (userEntity.hasOption2()) {
-                    throw new BadCredentialsException("Invalid Credentials");
+            token = authHeader.substring(7);
+            userEmail = jwtService.extractUserName(token);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                if (!jwtService.isTokenExpired(token)){
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-                UserResult user = userEntity.asOption1();
-                Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(user, "", buildAuthorities(user.isAdmin()));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }catch(Exception ex){
-            errorDetails.put("message", "Authentication Error");
-            errorDetails.put("details",ex.getMessage());
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            mapper.writeValue(response.getWriter(), errorDetails);
+        }catch(ExpiredJwtException jex){
+            writeError(response,jex.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+        catch(Exception ex){
+            writeError(response, ex.getMessage(), HttpStatus.FORBIDDEN);
         }
         filterChain.doFilter(request,response);
 
     }
 
-
-    private Collection<GrantedAuthority> buildAuthorities(boolean userIsAdmin) {
-
-        int numOfRoles = userIsAdmin? 2: 1;
-        List<GrantedAuthority> authorities = new ArrayList<>(numOfRoles);
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + Roles.USER));
-        if (userIsAdmin) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + Roles.ADMIN));
-        }
-
-        return authorities;
+    private void writeError(HttpServletResponse response, String errorMessage, HttpStatus status) throws IOException {
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("message", "Authentication Error");
+        errorDetails.put("details",errorMessage);
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        objectMapper.writeValue(response.getWriter(), errorDetails);
     }
 }

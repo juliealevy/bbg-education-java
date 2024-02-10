@@ -23,26 +23,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(path="")
-    public ResponseEntity createUser(
-            @RequestBody CreateUserRequest userRequest) {
-
-        OneOf2<UserResult, ValidationFailed> created = userService.createUser(
-                userRequest.getFirstName(),
-                userRequest.getLastName(),
-                userRequest.getEmail(),
-                userRequest.getPassword(),
-                userRequest.getIsAdmin() == null ? false: userRequest.getIsAdmin()
-        );
-
-        return created.match(
-                user -> new ResponseEntity<>(user, HttpStatus.CREATED),
-                fail ->  new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
-        );
-
-    }
-
     @PutMapping(path="{id}")
     public ResponseEntity updateUser(
             @PathVariable("id") Long id,

@@ -1,24 +1,29 @@
 package com.play.java.bbgeducation.domain.users;
 
+import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name="user_details")
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     public UserEntity(){
         isAdmin = false;
@@ -50,4 +55,38 @@ public class UserEntity {
     @UpdateTimestamp
     private OffsetDateTime updatedDateTime;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> roles = new ArrayList<>();
+        roles.add(new SimpleGrantedAuthority("ROLE_"+ Roles.USER));
+        if (isAdmin){
+            roles.add(new SimpleGrantedAuthority("ROLE_"+ Roles.ADMIN));
+        }
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
