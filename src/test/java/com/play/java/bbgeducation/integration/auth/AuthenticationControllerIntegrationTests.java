@@ -3,13 +3,17 @@ package com.play.java.bbgeducation.integration.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
+import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -109,7 +113,7 @@ public class AuthenticationControllerIntegrationTests {
     }
 
     @Test
-    public void Login_ShouldReturnToken_WhenCredsValid() throws Exception {
+    public void Login_ShouldReturnTokens_WhenCredsValid() throws Exception {
         RegisterRequest regRequest = buildRegisterRequest1();
         registerUser(regRequest);
 
@@ -124,7 +128,10 @@ public class AuthenticationControllerIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.accessToken").isString());
+                MockMvcResultMatchers.jsonPath("$.access_token").isString()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.refresh_token").isString()
+        );
 
     }
 
@@ -162,6 +169,25 @@ public class AuthenticationControllerIntegrationTests {
         ).andExpect(
                 MockMvcResultMatchers.status().isUnauthorized()
         );
+    }
+
+    @Test
+    public void Refresh_ShouldReturnTokens() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated =
+                authenticationService.authenticate(regRequest.getEmail(), regRequest.getPassword());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.access_token").isString()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.refresh_token").isString()
+        );
+
     }
 
     private void registerUser(RegisterRequest regRequest){

@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.application.common.logging.scrubbers;
 
-import com.play.java.bbgeducation.application.auth.LoginResult;
+import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;
 
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Component;
 public class EntityModelResponseScrubber implements LoggingBodyScrubber<EntityModel>
 {
     public EntityModel scrub(EntityModel body){
-       if (body.getContent() instanceof LoginResult){
+       if (body.getContent() instanceof AuthenticationResult){
            return scrubLoginResultToken(body);
        }
        return body;
     }
 
-    private EntityModel<LoginResult> scrubLoginResultToken(EntityModel<LoginResult> body){
-        LoginResult clonedContent = LoginResult.builder()
+    private EntityModel<AuthenticationResult> scrubLoginResultToken(EntityModel<AuthenticationResult> body){
+        AuthenticationResult clonedContent = AuthenticationResult.builder()
                 .accessToken("")
                 .refreshToken("")
                 .build();
-        EntityModel<LoginResult> scrubbed = EntityModel.of(clonedContent);
+        EntityModel<AuthenticationResult> scrubbed = EntityModel.of(clonedContent);
         scrubbed.add(body.getLinks());
 
         return scrubbed;

@@ -23,7 +23,10 @@ public class JwtService {
     private String SECRET_KEY;
 
     @Value("${jwt.access-token-lifetime-seconds}")
-    private int EXPIRE_IN_SECONDS;
+    private int ACCESS_EXPIRE_IN_SECONDS;
+
+    @Value("${jwt.refresh-token-lifetime-seconds}")
+    private int REFRESH_EXPIRE_IN_SECONDS;
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -34,24 +37,36 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateAccessToken(UserDetails userDetails){
+        return generateAccessToken(new HashMap<>(), userDetails);
     }
 
-    public String generateToken(
+    public String generateAccessToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails) {
+
+        return buildToken(extraClaims, userDetails, getAccessTokenExpiration());
+    }
+
+    public String generateRefreshToken(
+            UserDetails userDetails) {
+
+        return buildToken(new HashMap<>(), userDetails, getRefreshTokenExpiration());
+    }
+
+    private String buildToken(Map<String, Object> extraClaims,
+                              UserDetails userDetails,
+                              Date expiration){
 
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .issuer("bbgeducation")
-                .expiration(getTokenExpiration())
+                .expiration(expiration)
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
-
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -72,9 +87,15 @@ public class JwtService {
         }
     }
 
-    private Date getTokenExpiration(){
+    private Date getAccessTokenExpiration(){
         Date tokenCreateDateTime = new Date();
         return new Date(tokenCreateDateTime.getTime() +
-                TimeUnit.SECONDS.toMillis(EXPIRE_IN_SECONDS));
+                TimeUnit.SECONDS.toMillis(ACCESS_EXPIRE_IN_SECONDS));
+    }
+
+    private Date getRefreshTokenExpiration(){
+        Date tokenCreateDateTime = new Date();
+        return new Date(tokenCreateDateTime.getTime() +
+                TimeUnit.SECONDS.toMillis(REFRESH_EXPIRE_IN_SECONDS));
     }
 }

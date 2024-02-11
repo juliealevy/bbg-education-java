@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Horticultural Certificate Program I\",\r\n    \"description\": \"this is the first program\"\r\n}",
+							"raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"this is the seven program\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Horticultural Certificate Program I\",\r\n    \"description\": \"this is the first program updated\"\r\n}",
+							"raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"this is the umpteenth program update\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -51,14 +51,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/programs/254",
+							"raw": "{{baseUrl}}/api/programs/268",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"programs",
-								"254"
+								"268"
 							]
 						}
 					},
@@ -88,14 +88,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/programs/52",
+							"raw": "{{baseUrl}}/api/programs/268",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"programs",
-								"52"
+								"268"
 							]
 						}
 					},
@@ -107,14 +107,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/programs/253",
+							"raw": "{{baseUrl}}/api/programs/267",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"programs",
-								"253"
+								"267"
 							]
 						}
 					},
@@ -159,7 +159,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"firstName\": \"Julie\",\r\n   \"lastName\": \"Levy\",\r\n   \"email\": \"julie2@testmail.com\",\r\n   \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n   \"firstName\": \"Julie\",\r\n   \"lastName\": \"Levy\",\r\n   \"email\": \"julie2@testmail.com\",\r\n   \"password\": \"1234567\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -167,14 +167,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users/1",
+							"raw": "{{baseUrl}}/api/users/5",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"users",
-								"1"
+								"5"
 							]
 						}
 					},
@@ -186,14 +186,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/3",
+							"raw": "{{baseUrl}}/api/users/5",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"users",
-								"3"
+								"5"
 							]
 						}
 					},
@@ -205,14 +205,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/52",
+							"raw": "{{baseUrl}}/api/users/25",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"users",
-								"52"
+								"25"
 							]
 						}
 					},
@@ -261,7 +261,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": " {\r\n        \"email\": \"mary@flymail.com\",\r\n        \"password\": \"123456\",\r\n        \"firstName\": \"Mary\",\r\n        \"lastName\": \"Poppins\"\r\n    }",
+							"raw": " {\r\n    \"email\": \"admin@flymail.com\",\r\n    \"password\": \"123456\",\r\n    \"firstName\": \"Mary\",\r\n    \"lastName\": \"Poppins\",\r\n    \"isAdmin\": true    \r\n\r\n }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -291,7 +291,8 @@
 								"exec": [
 									"pm.test(\"success\", () => {   \r",
 									"  const responseJson = pm.response.json();\r",
-									"  pm.collectionVariables.set('token', responseJson.accessToken); \r",
+									"  pm.collectionVariables.set('access_token', responseJson.access_token); \r",
+									"  pm.collectionVariables.set('refresh_token', responseJson.refresh_token); \r",
 									"  console.log(pm.response.json().token);\r",
 									"  console.log(pm.collectionVariables.get('token'));\r",
 									"});"
@@ -308,7 +309,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"burt@flymail.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n    \"email\": \"admin@flymail.com\",\r\n    \"password\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -328,6 +329,62 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{refresh_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "open-api",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api-docs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api-docs"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -337,7 +394,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "{{token}}",
+				"value": "{{access_token}}",
 				"type": "string"
 			}
 		]
@@ -369,7 +426,12 @@
 			"type": "string"
 		},
 		{
-			"key": "token",
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
 			"value": "",
 			"type": "string"
 		}
