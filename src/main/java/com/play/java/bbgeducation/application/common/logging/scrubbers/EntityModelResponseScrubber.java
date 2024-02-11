@@ -15,12 +15,12 @@ public class EntityModelResponseScrubber implements LoggingBodyScrubber<EntityMo
 {
     public EntityModel scrub(EntityModel body){
        if (body.getContent() instanceof AuthenticationResult){
-           return scrubLoginResultToken(body);
+           return scrubAuthResultToken(body);
        }
        return body;
     }
 
-    private EntityModel<AuthenticationResult> scrubLoginResultToken(EntityModel<AuthenticationResult> body){
+    private EntityModel<AuthenticationResult> scrubAuthResultToken(EntityModel<AuthenticationResult> body){
         AuthenticationResult clonedContent = AuthenticationResult.builder()
                 .accessToken("")
                 .refreshToken("")

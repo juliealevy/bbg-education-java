@@ -84,7 +84,8 @@ public class AuthenticationController {
 
         return authenticationService.refreshToken(httpRequest, httpResponse)
                 .match(
-                        result -> ResponseEntity.ok(result),
+                        result -> ResponseEntity.ok(EntityModel.of(result)
+                                .add(authLinkProvider.getSelfLink(httpRequest))),
                         fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, fail.getErrorMessage()),
                                 HttpStatus.UNAUTHORIZED)
                 );
