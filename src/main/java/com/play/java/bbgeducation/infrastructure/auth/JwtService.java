@@ -75,6 +75,6 @@ public class JwtService {
     private Date getTokenExpiration(){
         Date tokenCreateDateTime = new Date();
         return new Date(tokenCreateDateTime.getTime() +
-                TimeUnit.SECONDS.toMillis(60));
+                TimeUnit.SECONDS.toMillis(EXPIRE_IN_SECONDS));
     }
 }

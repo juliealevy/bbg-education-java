@@ -2,18 +2,17 @@ package com.play.java.bbgeducation.api.programs;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.programs.result.ProgramResult;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.delete.ProgramDeleteByIdCommand;
 import com.play.java.bbgeducation.application.programs.getAll.ProgramGetAllCommand;
 import com.play.java.bbgeducation.application.programs.getById.ProgramGetByIdCommand;
+import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.application.programs.update.ProgramUpdateCommand;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -24,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static com.play.java.bbgeducation.infrastructure.auth.Roles.ADMIN;
 
 @RestController
 @RequestMapping("api/programs")
@@ -40,7 +37,6 @@ public class ProgramController {
     }
 
     @PostMapping(path="")
-    @RolesAllowed(ADMIN)
     public ResponseEntity createProgram(
             @RequestBody ProgramRequest programRequest,
             HttpServletRequest httpRequest)  {
@@ -69,7 +65,6 @@ public class ProgramController {
 
     }
     @PutMapping(path="{id}")
-    @RolesAllowed(ADMIN)
     public ResponseEntity updateProgram(
             @PathVariable("id") Long id,
             @RequestBody ProgramRequest programRequest,
@@ -140,7 +135,6 @@ public class ProgramController {
     }
 
     @DeleteMapping(path="{id}")
-    @RolesAllowed(ADMIN)
     ResponseEntity deleteProgramById(
             @PathVariable("id") Long id,
             HttpServletRequest httpRequest) {

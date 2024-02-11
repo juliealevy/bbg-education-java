@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -76,7 +78,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Bad Credentials"));
         }
 
-        String token = jwtService.generateToken(user.get());
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("authorities", user.get().getAuthorities());
+        extraClaims.put("firstName", user.get().getFirstName());
+        extraClaims.put("lastName", user.get().getLastName());
+        String token = jwtService.generateToken(extraClaims, user.get());
 
         return OneOf2.fromOption1(LoginResult.builder()
                 .accessToken(token)
