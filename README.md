@@ -26,7 +26,8 @@ Some sample code in Java/Spring Boot to show the following:
 - Basic jwt bearer authentication 
   -   added UserEntity - trying out Service pattern instead of Command to compare
   -   added jwt security config, auth filter, register/login apis, etc.
-  -   added admin role
+  -   added admin role with method-level security
+  -   added refresh token
 - Added more entities and attached a schema diagram  
 - HAL/HATEOS responses 
   - trying out Spring Boot Hateos EntityModel and EntityCollection
@@ -43,13 +44,11 @@ Some sample code in Java/Spring Boot to show the following:
 - validation for services based entities (User/Auth)
 - make a decision about future workflow/entity implementation:  command vs service
 - trying to figure out the best way to build the discoverable links for an api call (with templated uris)
-- Add refresh token to auth, consider implementing revoke feature (with DB persistance of tokens)
+- Auth: consider implementing revoke feature (with DB persistance of tokens)
 - Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
 - more error handling
-  - better problem responses
-  - authentication needs better error handling ??
-- clean up user controller - remove unneccesary api calls handled by auth
+  - better problem response building/handling
 - Next domain object:  BBGSession (Many to One with BBGProgram)
 - Focus on more workflow oriented implementation for rest of entities/features/workflows  
   
