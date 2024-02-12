@@ -15,11 +15,12 @@ public class InterceptLog  implements HandlerInterceptor {
 
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
-        if(request.getMethod().equals(HttpMethod.GET.name())
-                || request.getMethod().equals(HttpMethod.DELETE.name()) ) {
-                //|| request.getMethod().equals(HttpMethod.PUT.name()))    {
-            loggingService.logRequest(request,null);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (request.getMethod().equals(HttpMethod.GET.name())
+                || request.getMethod().equals(HttpMethod.DELETE.name())
+                || (request.getContentLength() <= 0 && request.getMethod().equals(HttpMethod.POST.name()))
+        ) {
+            loggingService.logRequest(request, null);
         }
         return true;
     }

@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.integration.users;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +40,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void UserUpdate_ShouldReturn200_WhenInputValid() throws Exception {
         UserEntity created = createAndSaveUser1();
 
@@ -62,7 +63,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void UserGetById_Returns200_WhenIdExists() throws Exception {
         UserEntity created = createAndSaveUser1();
 
@@ -74,7 +75,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void UserGetById_ReturnsUser_WhenIdExists() throws Exception {
         UserEntity created = createAndSaveUser1();
 
@@ -92,7 +93,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void UserGetById_Returns404_WhenIdNotExists() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.get(getPath(100L))
@@ -103,7 +104,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
@@ -114,7 +115,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void GetAll_ReturnsList_WhenSuccess() throws Exception {
         UserEntity created = createAndSaveUser1();
         UserEntity created2 = createAndSaveUser2();
@@ -141,7 +142,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void UserDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
         UserEntity created = createAndSaveUser1();
 
@@ -153,7 +154,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("test")
+    @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void UserDelete_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.delete(getPath(100L))

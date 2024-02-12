@@ -1,19 +1,32 @@
 package com.play.java.bbgeducation.application.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.play.java.bbgeducation.application.common.CloneableData;
+import com.play.java.bbgeducation.application.common.logging.scrubbing.HasScrubOnLog;
+import com.play.java.bbgeducation.application.common.logging.scrubbing.ScrubOnLog;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthenticationResult {
+@HasScrubOnLog
+public class AuthenticationResult extends CloneableData {
+
     @JsonProperty("access_token")
+    @ScrubOnLog
     private String accessToken;
+
     @JsonProperty("refresh_token")
+    @ScrubOnLog
     private String refreshToken;
 
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return AuthenticationResult.builder()
+                .accessToken(this.accessToken)
+                .refreshToken(this.refreshToken)
+                .build();
+    }
 }

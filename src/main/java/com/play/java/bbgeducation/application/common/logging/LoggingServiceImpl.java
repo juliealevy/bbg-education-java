@@ -1,11 +1,10 @@
 package com.play.java.bbgeducation.application.common.logging;
 
-import com.play.java.bbgeducation.application.common.logging.scrubbers.LoggingBodyScrubber;
+import com.play.java.bbgeducation.application.common.logging.scrubbing.LoggingDataScrubberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,10 +13,10 @@ import java.util.*;
 public class LoggingServiceImpl implements LoggingService{
 
     Logger logger = LoggerFactory.getLogger(LoggingServiceImpl.class);
-    private final ObjectProvider<LoggingBodyScrubber> bodyScrubbers;
+    private final LoggingDataScrubberService loggingDataScrubberService;
 
-    public LoggingServiceImpl(ObjectProvider<LoggingBodyScrubber> bodyScrubbers) {
-        this.bodyScrubbers = bodyScrubbers;
+    public LoggingServiceImpl(LoggingDataScrubberService loggingDataScrubberService) {
+        this.loggingDataScrubberService = loggingDataScrubberService;
     }
 
     @Override
@@ -25,7 +24,7 @@ public class LoggingServiceImpl implements LoggingService{
         StringBuilder requestMessage = new StringBuilder();
 
         Map<String, String> params = getParameters(request);
-        Object scrubbedBody =  scrubBodyForLog(body);
+        Object scrubbedBody =  loggingDataScrubberService.scrubBody(body);
 
         requestMessage.append("REQUEST ");
         requestMessage.append("method [").append(request.getMethod()).append("]");
@@ -46,7 +45,7 @@ public class LoggingServiceImpl implements LoggingService{
     public void logResponse(HttpServletRequest request, HttpServletResponse response, Object body) {
         StringBuilder responseMessage = new StringBuilder();
         Map<String,String> headers = getHeaders(response);
-        Object scrubbedBody =  scrubBodyForLog(body);
+        Object scrubbedBody =  loggingDataScrubberService.scrubBody(body);
         responseMessage.append("RESPONSE ");
         responseMessage.append(" method = [").append(request.getMethod()).append("]");
         if(!headers.isEmpty()) {
@@ -74,21 +73,6 @@ public class LoggingServiceImpl implements LoggingService{
             parameters.put(paramName,paramValue);
         }
         return parameters;
-    }
-
-    private Object scrubBodyForLog(Object body) {
-        if (body == null || bodyScrubbers == null)
-            return body;
-
-        Optional<LoggingBodyScrubber> scrubberMatch = bodyScrubbers.stream()
-                .filter(bs -> bs.matches(body))
-                .findFirst();
-
-        if (scrubberMatch.isEmpty()){
-            return body;
-        }
-
-        return scrubberMatch.get().scrub(body);
     }
 
 
