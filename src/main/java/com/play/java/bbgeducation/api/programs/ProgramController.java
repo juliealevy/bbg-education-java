@@ -2,6 +2,8 @@ package com.play.java.bbgeducation.api.programs;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
+import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -26,12 +28,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/programs")
+@HasApiEndpoints
 public class ProgramController {
 
     private final Pipeline pipeline;
-    private final ProgramsLinkProvider linkProvider;
+    private final ProgramLinkProvider linkProvider;
 
-    public ProgramController(Pipeline pipeline, ProgramsLinkProvider linkProvider) {
+    public ProgramController(Pipeline pipeline, ProgramLinkProvider linkProvider) {
         this.pipeline = pipeline;
         this.linkProvider = linkProvider;
     }
@@ -94,7 +97,7 @@ public class ProgramController {
     }
 
     @GetMapping(path="{id}")
-    ResponseEntity getById (
+    public ResponseEntity getById (
             @PathVariable("id") Long id,
             HttpServletRequest request) {
 
@@ -115,7 +118,7 @@ public class ProgramController {
     }
 
     @GetMapping(path="")
-    ResponseEntity getAll(
+    public ResponseEntity getAll(
             HttpServletRequest httpRequest) {
 
         List<ProgramResult> programs = pipeline.send(ProgramGetAllCommand.builder().build());
@@ -135,7 +138,7 @@ public class ProgramController {
     }
 
     @DeleteMapping(path="{id}")
-    ResponseEntity deleteProgramById(
+    public ResponseEntity deleteProgramById(
             @PathVariable("id") Long id,
             HttpServletRequest httpRequest) {
 

@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.api.users;
 
+import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
+@HasApiEndpoints
 public class UserController {
     private final UserService userService;
 

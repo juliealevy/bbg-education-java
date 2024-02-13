@@ -1,7 +1,9 @@
 package com.play.java.bbgeducation.api.common;
 
+import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,6 +28,18 @@ public class ExceptionHandlerController {
     ProblemDetail BadCredentialsException(BadCredentialsException ex){
         logger.trace(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoSuchMethodException.class)
+    ProblemDetail handleNoSuchMethodException(NoSuchMethodException ex){
+        logger.error(ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidApiEndpointLinkException.class)
+    ProblemDetail handleInvalidApiEndpointLinkException(InvalidApiEndpointLinkException ex){
+        logger.error(ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)

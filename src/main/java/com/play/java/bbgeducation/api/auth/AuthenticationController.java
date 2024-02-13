@@ -1,7 +1,9 @@
 package com.play.java.bbgeducation.api.auth;
 
 
+import com.play.java.bbgeducation.api.auth.links.AuthenticationLinkProvider;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
@@ -19,6 +21,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("api/auth")
+@HasApiEndpoints
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -30,7 +33,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(path="/register")
-    public ResponseEntity registerUser(
+    public ResponseEntity<?> registerUser(
             @RequestBody RegisterRequest request,
             HttpServletRequest httpRequest){
 
@@ -42,20 +45,18 @@ public class AuthenticationController {
                 request.getIsAdmin());
 
         return newUser.match(
-                success -> {
-                    return new ResponseEntity<>(
-                            EntityModel.of(new NoDataResponse())
-                                    .add(authLinkProvider.getSelfLink(httpRequest))
-                                    .add(authLinkProvider.getLoginLink()),
-                            HttpStatus.CREATED);
-                },
-                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
+                success -> new ResponseEntity<>(
+                        EntityModel.of(new NoDataResponse())
+                                .add(authLinkProvider.getSelfLink(httpRequest))
+                                .add(authLinkProvider.getLoginLink()),
+                        HttpStatus.CREATED),
+                fail -> new ResponseEntity<>(
+                        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
                         HttpStatus.CONFLICT)
         );
     }
 
-    @RequestMapping("login")
-    @PostMapping
+    @PostMapping(path="login")
     public ResponseEntity authenticate(
             @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
@@ -76,8 +77,7 @@ public class AuthenticationController {
         );
     }
 
-    @RequestMapping("refresh")
-    @PostMapping
+    @PostMapping(path="refresh")
     public ResponseEntity refreshToken(
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) throws IOException {
