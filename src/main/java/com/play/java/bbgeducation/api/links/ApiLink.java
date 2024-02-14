@@ -14,6 +14,12 @@ public class ApiLink extends Link {
         this.httpMethod = httpMethod;
     }
 
+    public ApiLink(String linkRelation, String href, String httpMethod, Object requestBody){
+        super(href, LinkRelation.of(linkRelation));
+        this.httpMethod = httpMethod;
+        this.body = requestBody;
+    }
+
     public void AddBody(Object body){
         this.body = body;
     }

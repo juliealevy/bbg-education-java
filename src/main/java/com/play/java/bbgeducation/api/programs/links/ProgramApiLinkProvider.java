@@ -26,25 +26,25 @@ public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramCon
     @SneakyThrows
     public Link getCreateApiLink() {
         Optional<ApiLink> link = apiLinkService.get(ProgramLinkRelations.CREATE.value, getController(),
-                getController().getMethod("createProgram", ProgramRequest.class, HttpServletRequest.class));
+                getController().getMethod("createProgram", ProgramRequest.class, HttpServletRequest.class),
+                ApiProgramRequest.getApiBody());
+
         if (link.isEmpty()){
             throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
         }
-        link.get().AddBody(ApiProgramRequest.getApiBody());
         return link.get();
     }
 
     @SneakyThrows
     public Link getUpdateApiLink() {
-        Optional<ApiLink> link =  apiLinkService.get(ProgramLinkRelations.UPDATE.value, getController(),
-                        getController().getMethod("updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class));
+        Optional<ApiLink> link = apiLinkService.get(ProgramLinkRelations.UPDATE.value, getController(),
+                getController().getMethod("updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class),
+                ApiProgramRequest.getApiBody());
 
-        if (link.isEmpty()){
+        if (link.isEmpty()) {
             throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
         }
-        link.get().AddBody(ApiProgramRequest.getApiBody());
         return link.get();
-
     }
 
     @SneakyThrows

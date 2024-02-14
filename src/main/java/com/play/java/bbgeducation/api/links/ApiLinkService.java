@@ -17,13 +17,17 @@ public class ApiLinkService {
     }
 
     public Optional<ApiLink> get(String linkRelation, Class<?> controller, Method method){
-        return get(linkRelation, controller.getSimpleName(), method.getName());
+        return get(linkRelation, controller.getSimpleName(), method.getName(), null);
     }
 
-    private Optional<ApiLink> get(String linkRelation,String controllerName, String methodName){
+    public Optional<ApiLink> get(String linkRelation, Class<?> controller, Method method, Object requestBody){
+        return get(linkRelation, controller.getSimpleName(), method.getName(), requestBody);
+    }
+
+    private Optional<ApiLink> get(String linkRelation,String controllerName, String methodName, Object requestBody){
         Optional<EndPointData> endPointData = endPointService.get(controllerName, methodName);
         return endPointData
-                .map(linkData -> new ApiLink(linkRelation, linkData.getHref(), linkData.getHttpMethod()));
+                .map(linkData -> new ApiLink(linkRelation, linkData.getHref(), linkData.getHttpMethod(), requestBody));
 
     }
 

@@ -27,11 +27,12 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
     @SneakyThrows
     public Link getLoginApiLink() {
         Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.LOGIN.value, getController(),
-                getController().getMethod("authenticate", LoginRequest.class, HttpServletRequest.class));
+                getController().getMethod("authenticate", LoginRequest.class, HttpServletRequest.class),
+                ApiLoginRequest.getApiBody());
+
         if (link.isEmpty()){
             throw new InvalidApiEndpointLinkException(AuthLinkRelations.LOGIN.value);
         }
-        link.get().AddBody(ApiLoginRequest.getApiBody());
         return link.get();
     }
 
@@ -45,13 +46,12 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
     @SneakyThrows
     public Link getRegisterApiLink() {
         Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.REGISTER.value, getController(),
-                getController().getMethod("registerUser", RegisterRequest.class, HttpServletRequest.class));
+                getController().getMethod("registerUser", RegisterRequest.class, HttpServletRequest.class),
+                ApiRegisterRequest.getApiBody());
+
         if (link.isEmpty()){
             throw new InvalidApiEndpointLinkException(AuthLinkRelations.REGISTER.value);
         }
-
-        link.get().AddBody(ApiRegisterRequest.getApiBody());
-
         return link.get();
     }
 
