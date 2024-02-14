@@ -25,4 +25,5 @@ public class LoginRequest extends CloneableData {
                 .password(this.password)
                 .build();
     }
+
 }

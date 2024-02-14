@@ -4,6 +4,7 @@ import com.play.java.bbgeducation.api.auth.AuthenticationController;
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
 import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
+import com.play.java.bbgeducation.api.links.ApiLink;
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<AuthenticationController>> {
@@ -24,9 +26,13 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
 
     @SneakyThrows
     public Link getLoginApiLink() {
-        return apiLinkService.get(AuthLinkRelations.LOGIN.value, getController(),
-                        getController().getMethod("authenticate", LoginRequest.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(AuthLinkRelations.LOGIN.value));
+        Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.LOGIN.value, getController(),
+                getController().getMethod("authenticate", LoginRequest.class, HttpServletRequest.class));
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(AuthLinkRelations.LOGIN.value);
+        }
+        link.get().AddBody(ApiLoginRequest.getApiBody());
+        return link.get();
     }
 
     @SneakyThrows
@@ -38,9 +44,15 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
 
     @SneakyThrows
     public Link getRegisterApiLink() {
-        return apiLinkService.get(AuthLinkRelations.REGISTER.value, getController(),
-                        getController().getMethod("registerUser", RegisterRequest.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(AuthLinkRelations.REGISTER.value));
+        Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.REGISTER.value, getController(),
+                getController().getMethod("registerUser", RegisterRequest.class, HttpServletRequest.class));
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(AuthLinkRelations.REGISTER.value);
+        }
+
+        link.get().AddBody(ApiRegisterRequest.getApiBody());
+
+        return link.get();
     }
 
     public List<Link> getAllLinks(){

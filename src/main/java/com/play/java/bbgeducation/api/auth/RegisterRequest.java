@@ -35,4 +35,5 @@ public class RegisterRequest extends CloneableData {
                 .isAdmin(this.isAdmin)
                 .build();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.api.programs.links;
 
+import com.play.java.bbgeducation.api.links.ApiLink;
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
 import com.play.java.bbgeducation.api.programs.ProgramController;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramController>> {
@@ -23,17 +25,25 @@ public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramCon
 
     @SneakyThrows
     public Link getCreateApiLink() {
-        return apiLinkService.get(ProgramLinkRelations.CREATE.value, getController(),
-                        getController().getMethod("createProgram", ProgramRequest.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value));
-
+        Optional<ApiLink> link = apiLinkService.get(ProgramLinkRelations.CREATE.value, getController(),
+                getController().getMethod("createProgram", ProgramRequest.class, HttpServletRequest.class));
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
+        }
+        link.get().AddBody(ApiProgramRequest.getApiBody());
+        return link.get();
     }
 
     @SneakyThrows
     public Link getUpdateApiLink() {
-        return apiLinkService.get(ProgramLinkRelations.UPDATE.value, getController(),
-                        getController().getMethod("updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.UPDATE.value));
+        Optional<ApiLink> link =  apiLinkService.get(ProgramLinkRelations.UPDATE.value, getController(),
+                        getController().getMethod("updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class));
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
+        }
+        link.get().AddBody(ApiProgramRequest.getApiBody());
+        return link.get();
 
     }
 
