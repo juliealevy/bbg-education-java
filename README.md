@@ -32,6 +32,8 @@ Some sample code in Java/Spring Boot to show the following:
 - HAL/HATEOS responses 
   - trying out Spring Boot Hateos EntityModel and EntityCollection
     - auth and program done
+  - building discoverable links with templated hrefs using application context request method handlers
+    - auth and program done (response json below)
 - Added command-based validation in a pipeline middleware.
   -   implemented for CreateProgram
   -   implemented for ProgramUpdate  
@@ -41,15 +43,14 @@ Some sample code in Java/Spring Boot to show the following:
     
 
 ## Coming soon
+- Next domain object:  BBGSession (Many to One with BBGProgram)
 - validation for services based entities (User/Auth)
 - make a decision about future workflow/entity implementation:  command vs service
-- trying to figure out the best way to build the discoverable links for an api call (with templated uris)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
 - Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
 - more error handling
   - better problem response building/handling
-- Next domain object:  BBGSession (Many to One with BBGProgram)
 - Focus on more workflow oriented implementation for rest of entities/features/workflows  
   
 ## Discoverable API/REST calls
@@ -57,5 +58,47 @@ Some sample code in Java/Spring Boot to show the following:
 https://localhost:8080/api
 
 ```json
-  "status": "coming soon"
+  {
+    "version": "1.0.0",
+    "_links": {
+        "self": {
+            "href": "/api"
+        },
+        "auth:register": {
+            "href": "/api/auth/register",
+            "httpMethod": "POST"
+        },
+        "auth:login": {
+            "href": "/api/auth/login",
+            "httpMethod": "POST"
+        },
+        "auth:refresh": {
+            "href": "/api/auth/refresh",
+            "httpMethod": "POST"
+        },
+        "program:create": {
+            "href": "/api/programs",
+            "httpMethod": "POST"
+        },
+        "program:update": {
+            "href": "/api/programs/{id}",
+            "httpMethod": "PUT",
+            "templated": true
+        },
+        "program:delete": {
+            "href": "/api/programs/{id}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "program:get-by-id": {
+            "href": "/api/programs/{id}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "program:get-all": {
+            "href": "/api/programs",
+            "httpMethod": "GET"
+        }
+    }
+}
 ```
