@@ -58,7 +58,7 @@ Some sample code in Java/Spring Boot to show the following:
 https://localhost:8080/api
 
 ```json
-  {
+ {
     "version": "1.0.0",
     "_links": {
         "self": {
@@ -66,11 +66,22 @@ https://localhost:8080/api
         },
         "auth:register": {
             "href": "/api/auth/register",
-            "httpMethod": "POST"
+            "httpMethod": "POST",
+            "body": {
+                "email": "string",
+                "password": "string",
+                "firstName": "string",
+                "lastName": "string",
+                "isAdmin": "boolean"
+            }
         },
         "auth:login": {
             "href": "/api/auth/login",
-            "httpMethod": "POST"
+            "httpMethod": "POST",
+            "body": {
+                "email": "string",
+                "password": "string"
+            }
         },
         "auth:refresh": {
             "href": "/api/auth/refresh",
@@ -78,11 +89,19 @@ https://localhost:8080/api
         },
         "program:create": {
             "href": "/api/programs",
-            "httpMethod": "POST"
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string"
+            }
         },
         "program:update": {
             "href": "/api/programs/{id}",
             "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string"
+            },
             "templated": true
         },
         "program:delete": {
