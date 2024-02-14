@@ -10,6 +10,9 @@ import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramController>> {
 
@@ -58,5 +61,18 @@ public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramCon
                         getController().getMethod("getAll",HttpServletRequest.class))
                 .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.GET_ALL.value));
 
+    }
+
+
+    @Override
+    public List<Link> getAllLinks() {
+        List<Link> links = new ArrayList<>();
+        links.add(getCreateApiLink());
+        links.add(getUpdateApiLink());
+        links.add(getDeleteApiLink());
+        links.add(getByIdApiLink());
+        links.add(getAllApiLink());
+
+        return links;
     }
 }

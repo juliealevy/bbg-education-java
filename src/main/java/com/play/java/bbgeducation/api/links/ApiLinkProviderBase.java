@@ -1,5 +1,8 @@
 package com.play.java.bbgeducation.api.links;
 
+import org.springframework.hateoas.Link;
+import java.util.List;
+
 public abstract class ApiLinkProviderBase<T extends Class<?>> {
 
     private T controller;
@@ -13,6 +16,8 @@ public abstract class ApiLinkProviderBase<T extends Class<?>> {
     protected T getController(){
         return controller;
     }
+
+    public abstract List<Link> getAllLinks();
 
 
 }

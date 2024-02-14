@@ -33,19 +33,9 @@ public class ApiRootController {
 
         EntityModel<ApiDataResponse> response = EntityModel.of(
                         ApiDataResponse.builder().version("1.0.0").build())
-                .add(Link.of(httpRequest.getRequestURI()).withSelfRel());
-
-        response
-                .add(authApiLinkProvider.getRegisterApiLink())
-                .add(authApiLinkProvider.getLoginApiLink())
-                .add(authApiLinkProvider.getRefreshApiLink());
-
-        response
-                .add(programApiLinkProvider.getCreateApiLink())
-                .add(programApiLinkProvider.getUpdateApiLink())
-                .add(programApiLinkProvider.getDeleteApiLink())
-                .add(programApiLinkProvider.getByIdApiLink())
-                .add(programApiLinkProvider.getAllApiLink());
+                .add(Link.of(httpRequest.getRequestURI()).withSelfRel())
+                .add(authApiLinkProvider.getAllLinks())
+                .add(programApiLinkProvider.getAllLinks());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
