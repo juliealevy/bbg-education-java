@@ -142,7 +142,7 @@ public class ProgramSessionControllerIntegrationTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
-    public void ProgramSessionGetById_Returns200_WhenIdsExist() throws Exception {
+    public void GetById_Returns200_WhenIdsExist() throws Exception {
         ProgramResult savedProgram = createAndSaveProgram();
         SessionResult savedSession = createAndSaveSession(savedProgram.getId());
 
@@ -157,7 +157,7 @@ public class ProgramSessionControllerIntegrationTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
-    public void ProgramSessionGetById_ReturnsSession_WhenIdsExist() throws Exception {
+    public void GetById_ReturnsSession_WhenIdsExist() throws Exception {
         ProgramResult savedProgram = createAndSaveProgram();
         SessionResult savedSession = createAndSaveSession(savedProgram.getId());
 
@@ -186,6 +186,60 @@ public class ProgramSessionControllerIntegrationTests {
         ProgramResult savedProgram = createAndSaveProgram();
 
         String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), Instancio.create(Long.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void GetByProgram_Returns200_WhenProgramExists() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void GetByProgram_ReturnsSession_WhenProgramExists() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].id").value(savedSession.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].name").value(savedSession.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].description").value(savedSession.getDescription())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].startDate").value(savedSession.getStartDateStr())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].endDate").value(savedSession.getEndDateStr())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].practicumHours").value(savedSession.getPracticumHours())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.sessions.[0].program.id").value(savedSession.getProgram().getId())
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void GetByProgram_Returns404_WhenProgramNotExists() throws Exception {
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_PATH, 100L);
 
         mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
                 .contentType(MediaType.APPLICATION_JSON)

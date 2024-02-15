@@ -36,11 +36,21 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
     @SneakyThrows
     public Link getByIdApiLink() {
         Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.GET_BY_ID.value, getController(),
-                getController().getMethod("getById", Long.class, Long.class),
-                ApiSessionRequest.getApiBody());
+                getController().getMethod("getById", Long.class, Long.class,HttpServletRequest.class));
 
         if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.CREATE.value);
+            throw new InvalidApiEndpointLinkException(SessionLinkRelations.GET_BY_ID.value);
+        }
+        return link.get();
+    }
+
+    @SneakyThrows
+    public Link getByProgramApiLink() {
+        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.GET_BY_PROGRAM.value, getController(),
+                getController().getMethod("getByProgram",Long.class, HttpServletRequest.class));
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(SessionLinkRelations.GET_BY_PROGRAM.value);
         }
         return link.get();
     }
@@ -51,6 +61,7 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
         List<Link> links = new ArrayList<>();
         links.add(getCreateApiLink());
         links.add(getByIdApiLink());
+        links.add(getByProgramApiLink());
         return links;
     }
 }

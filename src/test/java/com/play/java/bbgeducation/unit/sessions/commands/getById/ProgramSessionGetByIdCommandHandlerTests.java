@@ -1,22 +1,13 @@
 package com.play.java.bbgeducation.unit.sessions.commands.getById;
 
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
-import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommandHandler;
-import com.play.java.bbgeducation.application.sessions.create.SessionResultMapper;
+import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommandHandler;
-import com.play.java.bbgeducation.application.sessions.getById.SessionGetByIdCommand;
-import com.play.java.bbgeducation.application.sessions.getById.SessionGetByIdCommandHandler;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
-import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
-import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import com.play.java.bbgeducation.infrastructure.repositories.SessionRepository;
-import io.jsonwebtoken.security.Jwks;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 

@@ -24,11 +24,12 @@ public class ProgramSessionLinkProvider extends LinkProviderBase<Class<ProgramSe
 
     public Link getByIdLink(Long programId, Long sessionId, boolean asSelf) {
         return linkTo(methodOn(getController())
-                .getById(programId, sessionId)).withRel(asSelf ? IanaLinkRelations.SELF_VALUE :
+                .getById(programId, sessionId, null)).withRel(asSelf ? IanaLinkRelations.SELF_VALUE :
                 SessionLinkRelations.GET_BY_ID.value);
     }
 
-    public Link getAllLink() {
-        throw new NotImplementedException();
+    public Link getByProgramLink(Long programId) {
+        return linkTo(methodOn(getController())
+                .getByProgram(programId,null)).withRel(SessionLinkRelations.GET_BY_PROGRAM.value);
     }
 }

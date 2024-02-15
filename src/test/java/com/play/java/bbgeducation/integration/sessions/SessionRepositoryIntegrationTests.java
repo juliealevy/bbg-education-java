@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -92,6 +93,98 @@ public class SessionRepositoryIntegrationTests {
                 .isInstanceOf(DataIntegrityViolationException.class);
 
     }
+
+    @Test
+    @Transactional
+    public void GetById_ShouldReturnResult_WhenProgramAndSessionExist() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        Optional<SessionEntity> result = underTest.getByProgramIdAndId(savedProgram.getId(), savedSession.getId());
+
+
+        assertThat(result).isNotNull();
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(savedSession);
+    }
+
+    @Test
+    @Transactional
+    public void GetById_ShouldFail_WhenProgramNotExist() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        Optional<SessionEntity> fetch = underTest.getByProgramIdAndId(savedProgram.getId() + 10L, savedSession.getId());
+
+        assertThat(fetch).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void GetById_ShouldFail_WhenSessionNotExist() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        Optional<SessionEntity> fetch = underTest.getByProgramIdAndId(savedProgram.getId(), savedSession.getId()+ 10L);
+
+        assertThat(fetch).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void GetById_ShouldFail_WhenNeitherExist() {
+
+        Optional<SessionEntity> fetch = underTest.getByProgramIdAndId(100L, 100L);
+
+        assertThat(fetch).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void GetByProgram_ShouldReturnResult_WhenProgramExists() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        List<SessionEntity> sessions = underTest.getByProgramId(savedProgram.getId());
+
+        assertThat(sessions).isNotNull();
+        assertThat(sessions).hasSize(1);
+    }
+
+    @Test
+    @Transactional
+    public void GetByProgram_CanReturnEmpty_WhenProgramExists() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        List<SessionEntity> sessions = underTest.getByProgramId(savedProgram.getId());
+
+        assertThat(sessions).isNotNull();
+        assertThat(sessions).hasSize(0);
+    }
+
+    @Test
+    @Transactional
+    public void GetByProgram_ShouldReturnEmpty_WhenProgramNotExists() {
+
+        List<SessionEntity> sessions = underTest.getByProgramId(100L);
+
+        assertThat(sessions).isNotNull();
+        assertThat(sessions).hasSize(0);
+    }
+
 
     private SessionEntity buildSessionEntity(ProgramEntity program){
         return SessionEntity.builder()

@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.sessions.create;
+package com.play.java.bbgeducation.application.sessions.result;
 
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;

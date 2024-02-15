@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.sessions;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
+import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
@@ -9,13 +10,17 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
+import com.play.java.bbgeducation.application.sessions.getByProgram.ProgramSessionGetByProgramCommand;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/programs/{pid}/sessions")
@@ -24,10 +29,12 @@ public class ProgramSessionController {
 
     private final Pipeline pipeline;
     private final ProgramSessionLinkProvider programSessionLinkProvider;
+    private final ProgramLinkProvider programLinkProvider;
 
-    public ProgramSessionController(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider) {
+    public ProgramSessionController(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider, ProgramLinkProvider programLinkProvider) {
         this.pipeline = pipeline;
         this.programSessionLinkProvider = programSessionLinkProvider;
+        this.programLinkProvider = programLinkProvider;
     }
 
     @PostMapping(path="")
@@ -51,9 +58,10 @@ public class ProgramSessionController {
         return result.match(
                 session -> new ResponseEntity<>(EntityModel.of(session)
                         .add(programSessionLinkProvider.getSelfLink(httpRequest))
-                        .add(programSessionLinkProvider.getByIdLink(programid, session.getId(), false)),
-                       // .add(programSessionLinkProvider.getAllLink()),
-
+                        .add(programSessionLinkProvider.getByIdLink(programid, session.getId(), false))
+                        .add(programSessionLinkProvider.getByProgramLink(programid))
+                        .add(programLinkProvider.getByIdLink(programid, false))
+                        .add(programLinkProvider.getAllLink()),
                         HttpStatus.CREATED),
                 notFound -> ResponseEntity.notFound().build(),
                 fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
@@ -64,7 +72,8 @@ public class ProgramSessionController {
     @GetMapping(path="{sid}")
     public ResponseEntity getById(
             @PathVariable("pid") Long programid,
-            @PathVariable("sid") Long sessionid
+            @PathVariable("sid") Long sessionid,
+            HttpServletRequest httpRequest
     ){
 
         ProgramSessionGetByIdCommand command = ProgramSessionGetByIdCommand.builder()
@@ -75,9 +84,44 @@ public class ProgramSessionController {
         OneOf2<SessionResult, NotFound> result = pipeline.send(command);
 
         return result.match(
-                session -> ResponseEntity.ok(session),
+                session -> ResponseEntity.ok(EntityModel.of(session)
+                        .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                ),
                 notfound -> ResponseEntity.notFound().build()
         );
     }
 
+    @GetMapping("")
+    public ResponseEntity getByProgram(
+            @PathVariable("pid") Long programid,
+            HttpServletRequest httpRequest
+    ){
+
+        ProgramSessionGetByProgramCommand command = ProgramSessionGetByProgramCommand.builder()
+                .programId(programid)
+                .build();
+
+        OneOf2<List<SessionResult>, NotFound> sessionsList = pipeline.send(command);
+
+        return sessionsList.match(
+                sessions -> ResponseEntity.ok(buildCollectionModel(sessions, httpRequest)),
+                notFound -> ResponseEntity.notFound().build()
+        );
+    }
+
+
+    CollectionModel<EntityModel<SessionResult>> buildCollectionModel(List<SessionResult> sessionList, HttpServletRequest httpRequest){
+        return CollectionModel.of(buildEntityModelResultList( sessionList))
+                .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                .add(programSessionLinkProvider.getCreateLink());
+
+
+    }
+    List<EntityModel<SessionResult>> buildEntityModelResultList(List<SessionResult> sessionList){
+        return sessionList.stream()
+                .map(s -> EntityModel.of(s)
+                        .add(programSessionLinkProvider.getByIdLink(s.getProgram().getId(), s.getId(), true))
+                        //getdeletelink
+                ).toList();
+    }
 }

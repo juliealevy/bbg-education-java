@@ -5,7 +5,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommandHandler;
-import com.play.java.bbgeducation.application.sessions.create.SessionResultMapper;
+import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;

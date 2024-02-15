@@ -5,7 +5,7 @@ public enum SessionLinkRelations {
     UPDATE ("session:update"),
     DELETE("session:delete"),
     GET_BY_ID("session:get-by-id"),
-    GET_ALL ("session:get-all");
+    GET_BY_PROGRAM ("session:get-by-program");
 
     public final String value;
     private SessionLinkRelations(String value){
