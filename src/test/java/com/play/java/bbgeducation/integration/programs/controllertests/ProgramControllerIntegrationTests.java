@@ -41,8 +41,7 @@ public class ProgramControllerIntegrationTests {
     private static final String PROBLEM_JSON_TYPE = "application/problem+json";
 
     @Autowired
-    public ProgramControllerIntegrationTests(WebApplicationContext webApplicationContext, MockMvc mockMvc, Pipeline pipeline) {
-        this.mockMvc = mockMvc;
+    public ProgramControllerIntegrationTests(WebApplicationContext webApplicationContext, Pipeline pipeline) {
         this.webApplicationContext = webApplicationContext;
         this.pipeline = pipeline;
         this.objectMapper = new ObjectMapper();

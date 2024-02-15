@@ -1,0 +1,149 @@
+Adding a Session
+---------------------
+As an admin, I would like to add a new session for a program, including the courses, class meeting datetimes and instructors.
+Sometimes I will want to build the session from scratch.
+Other times I will want to copy from a previous session of the same program.
+
+I will want to add existing courses and instructors already in the system.
+I will also want to add new courses and instructors as I define the session.
+
+I would like to view the entire session definition with all of the courses, instructors and class datetimes.
+I would like to view all of the class datetimes in a calendar.
+
+I would like to view a list of all of the sessions in the system, searchable by program, session name, dates.
+
+Steps:
+
+1.	Select a program
+2.  Enter a session name and start/end dates
+3.	Add a course
+	a.  Add a new course not in the system yet
+	b.  Pick a course from the system list
+	c.  Pick a course from a previous session
+	d.  Multiselect with ability to add or inherit class and instructor details
+4.	Define classes for each course:
+	a.  Total hours
+	b.  Total class number
+	c.  Instructor for class if different than the one defined at the course level.
+	
+	
+	
+API calls:
+1.	Get a list of programs
+	api/programs
+2.	Get a list of courses in the system
+	api/courses
+3.  Get a list of previous sessions for the program
+	api/programs/{pid}/sessions
+4.	Get a list of courses for a previous session for the program
+	api/programs/{pid}/sessions/{sid}/courses
+5.  Create a new course in the system
+	api/courses
+6.  Get a list of instructors in the system.
+	api/instructors
+7.  Get a list of instructors for a particular course from previous sessions
+	api/programs/{pid}/courses/{cid}/instructors
+8.  Create a new instructor
+	api/instructors
+9.  Create a new session
+	api/programs/{pid}/sessions
+10. Create classes for a course for the session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes
+11. Get classes for a course from a previous session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes
+12. Update a class for a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes/{clid}
+13. Update an instructor
+	api/instructors/{iid}
+14. Update/Change an instructor for a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+15. Update/Change an instructor for a course
+	api/courses/{cid}
+16. Update a course in the system.
+	api/courses/{cid}
+17. Update a session's details
+	api/programs/{pid}/sessions/{sid}
+18. Update a session's courses
+	api/programs/{pid}/sessions/{sid}
+19. Update a course's classes for a session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+20. Delete a future class for a course for a session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes/{clid}
+21. Delete a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+22. Delete a course in the system (de-activate if referenced in a session)
+	api/courses/{cid}
+23. Delete a session.
+	api/sessions/{sid}
+24. Delete a program (de-activate if referenced by a session)
+	api/programs/{pid}
+	
+Re-organized Api calls by path:
+-------------------------------------
+-------------------------------------
+
+Programs:
+1.	Get a list of programs
+	api/programs
+24. Delete a program (de-activate if referenced by a session)
+	api/programs/{pid}
+
+Program_Sessions:
+3.  Get a list of previous sessions for the program
+	api/programs/{pid}/sessions
+9.  Create a new session
+	api/programs/{pid}/sessions
+17. Update a session's details
+	api/programs/{pid}/sessions/{sid}
+18. Update a session's courses
+	api/programs/{pid}/sessions/{sid}
+23. Delete a session.
+	api/programs/{pid}/sessions/{sid}
+
+Courses:
+2.	Get a list of courses in the system
+	api/courses
+5.  Create a new course in the system
+	api/courses
+15. Update/Change an instructor for a course
+	api/courses/{cid}
+16. Update a course in the system.
+	api/courses/{cid}
+22. Delete a course in the system (de-activate if referenced in a session)
+	api/courses/{cid}
+
+Session_Courses
+4.	Get a list of courses for a previous session for the program
+	api/programs/{pid}/sessions/{sid}/courses
+14. Update/Change an instructor for a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+19. Update a course's classes for a session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+21. Delete a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}
+
+Classes:
+10. Create classes for a course for the session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes
+11. Get classes for a course from a previous session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes
+12. Update a class for a course for a session.
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes/{clid}
+20. Delete a future class for a course for a session
+	api/programs/{pid}/sessions/{sid}/courses/{cid}/classes/{clid}
+	
+Instructors:
+6.  Get a list of instructors in the system.
+	api/instructors
+8.  Create a new instructor
+	api/instructors
+13. Update an instructor
+	api/instructors/{iid}
+
+
+Session_Course_Instructors
+7.  Get a list of instructors for a particular course from previous sessions
+	api/programs/{pid}/courses/{cid}/instructors
+
+
+

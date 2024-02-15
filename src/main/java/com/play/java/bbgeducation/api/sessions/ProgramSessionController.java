@@ -1,0 +1,83 @@
+package com.play.java.bbgeducation.api.sessions;
+
+import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
+import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.OneOf3;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
+import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
+import com.play.java.bbgeducation.application.sessions.result.SessionResult;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("api/programs/{pid}/sessions")
+@HasApiEndpoints
+public class ProgramSessionController {
+
+    private final Pipeline pipeline;
+    private final ProgramSessionLinkProvider programSessionLinkProvider;
+
+    public ProgramSessionController(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider) {
+        this.pipeline = pipeline;
+        this.programSessionLinkProvider = programSessionLinkProvider;
+    }
+
+    @PostMapping(path="")
+    public ResponseEntity createSession(
+            @PathVariable("pid") Long programid,
+            @RequestBody SessionRequest sessionRequest,
+            HttpServletRequest httpRequest
+    ) {
+
+        SessionCreateCommand cmd = SessionCreateCommand.builder()
+                .programId(programid)
+                .name(sessionRequest.getName())
+                .description(sessionRequest.getDescription())
+                .startDate(sessionRequest.getStartDate())
+                .endDate(sessionRequest.getEndDate())
+                .practicumHours(sessionRequest.getPracticumHours())
+                .build();
+
+        OneOf3<SessionResult, NotFound, ValidationFailed> result = pipeline.send(cmd);
+
+        return result.match(
+                session -> new ResponseEntity<>(EntityModel.of(session)
+                        .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                        .add(programSessionLinkProvider.getByIdLink(programid, session.getId(), false)),
+                       // .add(programSessionLinkProvider.getAllLink()),
+
+                        HttpStatus.CREATED),
+                notFound -> ResponseEntity.notFound().build(),
+                fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
+                        .build()
+        );
+    }
+
+    @GetMapping(path="{sid}")
+    public ResponseEntity getById(
+            @PathVariable("pid") Long programid,
+            @PathVariable("sid") Long sessionid
+    ){
+
+        ProgramSessionGetByIdCommand command = ProgramSessionGetByIdCommand.builder()
+                .programId(programid)
+                .sessionId(sessionid)
+                .build();
+
+        OneOf2<SessionResult, NotFound> result = pipeline.send(command);
+
+        return result.match(
+                session -> ResponseEntity.ok(session),
+                notfound -> ResponseEntity.notFound().build()
+        );
+    }
+
+}

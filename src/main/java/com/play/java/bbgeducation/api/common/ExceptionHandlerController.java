@@ -33,7 +33,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(NoSuchMethodException.class)
     ProblemDetail handleNoSuchMethodException(NoSuchMethodException ex){
         logger.error(ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "No such method: " +  ex.getMessage());
     }
 
     @ExceptionHandler(InvalidApiEndpointLinkException.class)

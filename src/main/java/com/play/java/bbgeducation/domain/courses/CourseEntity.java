@@ -29,6 +29,7 @@ public class CourseEntity {
     private boolean isPublic;
     private boolean isOnline;
 
+
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @CreationTimestamp

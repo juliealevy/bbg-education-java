@@ -67,9 +67,9 @@ public class ProgramController {
 
 
     }
-    @PutMapping(path="{id}")
+    @PutMapping(path="{pid}")
     public ResponseEntity updateProgram(
-            @PathVariable("id") Long id,
+            @PathVariable("pid") Long id,
             @RequestBody ProgramRequest programRequest,
             HttpServletRequest httpRequest)  {
 
@@ -96,9 +96,9 @@ public class ProgramController {
 
     }
 
-    @GetMapping(path="{id}")
+    @GetMapping(path="{pid}")
     public ResponseEntity getById (
-            @PathVariable("id") Long id,
+            @PathVariable("pid") Long id,
             HttpServletRequest request) {
 
         OneOf2<ProgramResult, NotFound> result = pipeline.send(ProgramGetByIdCommand.builder()
@@ -137,9 +137,9 @@ public class ProgramController {
         return new ResponseEntity<>(programRep, HttpStatus.OK);
     }
 
-    @DeleteMapping(path="{id}")
+    @DeleteMapping(path="{pid}")
     public ResponseEntity deleteProgramById(
-            @PathVariable("id") Long id,
+            @PathVariable("pid") Long id,
             HttpServletRequest httpRequest) {
 
         OneOf2<Success, NotFound> deleted = pipeline.send(

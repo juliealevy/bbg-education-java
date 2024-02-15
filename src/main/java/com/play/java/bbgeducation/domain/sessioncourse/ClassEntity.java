@@ -26,7 +26,7 @@ public class ClassEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "session_course_id", referencedColumnName = "id")
-    private SessionCourseEntity session;
+    private SessionCourseEntity sessionCourse;
 
     @Column(name = "class_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime classDateTime;
