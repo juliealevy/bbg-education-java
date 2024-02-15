@@ -43,7 +43,7 @@ public class SessionEntity {
 
     private int practicumHours;
 
-    @ManyToOne(cascade = ALL)
+    @ManyToOne()
     @JoinColumn(name = "program_id", referencedColumnName = "id")
     private ProgramEntity program;
 

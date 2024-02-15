@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.integration.programs.respositorytests;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class ProgramRepositoryIntegrationTests {
     }
 
     @Test
+    @Transactional
     public void CreateProgram_ShouldSucceedAndFetch_WhenInputValid() {
         ProgramEntity program = DataUtils.buildProgramI();
         ProgramEntity saved = underTest.save(program);
@@ -38,6 +40,7 @@ public class ProgramRepositoryIntegrationTests {
     }
 
     @Test
+    @Transactional
     public void CreateProgramMany_ShouldSucceedAndFetch_WhenInputValid(){
         ProgramEntity program1 = DataUtils.buildProgramI();
         underTest.save(program1);
@@ -68,6 +71,7 @@ public class ProgramRepositoryIntegrationTests {
     }
 
     @Test
+    @Transactional
     public void DeleteProgram_ShouldSucceed_WhenIdExists(){
         ProgramEntity program = DataUtils.buildProgramI();
         underTest.save(program);
@@ -91,6 +95,7 @@ public class ProgramRepositoryIntegrationTests {
     }
 
     @Test
+    @Transactional
     public void FindProgramByName_ShouldSucceed_WhenNameFound(){
         ProgramEntity program1 = DataUtils.buildProgramI();
         underTest.save(program1);

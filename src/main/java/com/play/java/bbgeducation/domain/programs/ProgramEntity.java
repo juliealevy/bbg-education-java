@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -31,7 +32,7 @@ public class ProgramEntity {
     private String description;
 
     @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
-    private List<SessionEntity> sessions;
+    private List<SessionEntity> sessions = new ArrayList<>();
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")

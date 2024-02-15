@@ -1,23 +1,15 @@
 package com.play.java.bbgeducation.integration.sessions;
 
 import an.awesome.pipelinr.Pipeline;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.api.sessions.SessionRequest;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.oneof.OneOf3;
-import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
-import com.play.java.bbgeducation.application.sessions.getById.SessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
-import org.hibernate.query.sqm.DynamicInstantiationNature;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,24 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
-import static com.play.java.bbgeducation.integration.programs.DataUtils.buildCreateCommandI;
-import static com.play.java.bbgeducation.integration.programs.DataUtils.buildRequestI;
-import static org.instancio.Select.field;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
@@ -77,13 +62,12 @@ public class ProgramSessionControllerIntegrationTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
     public void SessionCreate_Returns201_WhenAdminAndValid() throws Exception {
-        ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);
-        OneOf2<ProgramResult, ValidationFailed> savedProgram = pipeline.send(programCreateCmd);
+        ProgramResult savedProgram = createAndSaveProgram();
 
-        SessionRequest request = Instancio.create(SessionRequest.class);
+        SessionRequest request = createSessionRequest();
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.asOption1().getId()))
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
@@ -94,13 +78,12 @@ public class ProgramSessionControllerIntegrationTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
     public void SessionCreate_Returns403_WhenNotAdmin() throws Exception {
-        ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);
-        OneOf2<ProgramResult, ValidationFailed> savedProgram = pipeline.send(programCreateCmd);
+        ProgramResult savedProgram = createAndSaveProgram();
 
-        SessionRequest request = Instancio.create(SessionRequest.class);
+        SessionRequest request = createSessionRequest();
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.asOption1().getId()))
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
@@ -111,13 +94,12 @@ public class ProgramSessionControllerIntegrationTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
     public void SessionCreate_ReturnsResult_WhenSuccess() throws Exception {
-        ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);
-        OneOf2<ProgramResult, ValidationFailed> savedProgram = pipeline.send(programCreateCmd);
+        ProgramResult savedProgram = createAndSaveProgram();
 
-        SessionRequest request = Instancio.create(SessionRequest.class);
+        SessionRequest request = createSessionRequest();
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.asOption1().getId()))
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
@@ -130,30 +112,23 @@ public class ProgramSessionControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.startDate").value(request.getStartDateStr())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.endDate").value(request.getEndDateStr())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.practicumHours").value(request.getPracticumHours())
         );
     }
 
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
     public void SessionCreate_ReturnsProblemJsonConflict_WhenNameExists() throws Exception {
-        ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);
-        OneOf2<ProgramResult, ValidationFailed> savedProgram = pipeline.send(programCreateCmd);
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
 
-        SessionRequest firstRequest = Instancio.create(SessionRequest.class);
-        String requestJson = objectMapper.writeValueAsString(firstRequest);
+        SessionRequest createRequest = createSessionRequest();
+        createRequest.setName(savedSession.getName());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.asOption1().getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isCreated()
-        );
+        String requestJson = objectMapper.writeValueAsString(createRequest);
 
-        SessionRequest secondRequest = Instancio.create(SessionRequest.class);
-        secondRequest.setName(firstRequest.getName());
-        requestJson = objectMapper.writeValueAsString(secondRequest);
-
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.asOption1().getId()))
+        mockMvc.perform(MockMvcRequestBuilders.post(String.format(PROGRAM_SESSIONS_PATH, savedProgram.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
@@ -165,5 +140,86 @@ public class ProgramSessionControllerIntegrationTests {
     }
 
 
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void ProgramSessionGetById_Returns200_WhenIdsExist() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
 
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void ProgramSessionGetById_ReturnsSession_WhenIdsExist() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(savedSession.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.description").value(savedSession.getDescription())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.startDate").value(savedSession.getStartDateStr())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.endDate").value(savedSession.getEndDateStr())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.practicumHours").value(savedSession.getPracticumHours())
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void ProgramSessionGetById_Returns404_WhenIdsNotExist() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), Instancio.create(Long.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    private SessionResult createAndSaveSession(Long programId){
+        SessionCreateCommand sessionCreateCmd = SessionCreateCommand.builder()
+                .programId(programId)
+                .name(Instancio.create(String.class))
+                .description(Instancio.create(String.class))
+                .startDate(LocalDate.now().plusMonths(1))
+                .endDate(LocalDate.now().plusMonths(7))
+                .practicumHours(Instancio.create(int.class))
+                .build();
+
+        return pipeline.send(sessionCreateCmd).asOption1();
+    }
+
+
+    private ProgramResult createAndSaveProgram(){
+        ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);
+        return pipeline.send(programCreateCmd).asOption1();
+    }
+
+    private SessionRequest createSessionRequest(){
+        return SessionRequest.builder()
+                .name(Instancio.of(String.class).stream().limit(50).toString())
+                .description(Instancio.of(String.class).stream().limit(255).toString())
+                .startDate(LocalDate.now().plusMonths(1))
+                .endDate(LocalDate.now().plusMonths(7))
+                .practicumHours(Instancio.create(int.class))
+                .build();
+    }
 }

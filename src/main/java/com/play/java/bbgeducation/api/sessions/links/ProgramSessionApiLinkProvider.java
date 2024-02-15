@@ -6,6 +6,7 @@ import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
 import com.play.java.bbgeducation.api.sessions.ProgramSessionController;
 import com.play.java.bbgeducation.api.sessions.SessionRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
     @SneakyThrows
     public Link getCreateApiLink() {
         Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.CREATE.value, getController(),
-                getController().getMethod("createSession", Long.class, SessionRequest.class),
+                getController().getMethod("createSession", Long.class, SessionRequest.class, HttpServletRequest.class),
                 ApiSessionRequest.getApiBody());
 
         if (link.isEmpty()){
