@@ -32,4 +32,9 @@ public class ProgramSessionLinkProvider extends LinkProviderBase<Class<ProgramSe
         return linkTo(methodOn(getController())
                 .getByProgram(programId,null)).withRel(SessionLinkRelations.GET_BY_PROGRAM.value);
     }
+
+    public Link getDeleteLink(Long programId, Long sessionId){
+        return linkTo(methodOn(getController())
+                .deleteSession(programId, sessionId, null)).withRel(SessionLinkRelations.DELETE.value);
+    }
 }

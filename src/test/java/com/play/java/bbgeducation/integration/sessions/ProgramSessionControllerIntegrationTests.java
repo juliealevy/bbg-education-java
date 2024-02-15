@@ -248,6 +248,49 @@ public class ProgramSessionControllerIntegrationTests {
         );
     }
 
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
+    public void Delete_ShouldReturnNoContent_WhenSessionExists() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void Delete_ShouldBeForbidden_WhenUserNotAdmin() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isForbidden()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
+    public void Delete_ShouldReturnNotFound_WhenSessionNotExist() throws Exception {
+
+        String urlTemplate = String.format(PROGRAM_SESSIONS_ID_PATH, 100L, 100L);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
     private SessionResult createAndSaveSession(Long programId){
         SessionCreateCommand sessionCreateCmd = SessionCreateCommand.builder()
                 .programId(programId)

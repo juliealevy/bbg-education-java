@@ -6,6 +6,7 @@ import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
 import com.play.java.bbgeducation.infrastructure.repositories.SessionRepository;
 import com.play.java.bbgeducation.integration.programs.DataUtils;
 import org.hibernate.TransientPropertyValueException;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,37 @@ public class SessionRepositoryIntegrationTests {
 
         assertThat(sessions).isNotNull();
         assertThat(sessions).hasSize(0);
+    }
+
+    @Test
+    @Transactional
+    public void Delete_ShouldSucceed_WhenSessionExists() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        Optional<SessionEntity> fetchedBefore = underTest.getByProgramIdAndId(savedSession.getProgram().getId(), savedSession.getId());
+        underTest.delete(fetchedBefore.get());
+        Optional<SessionEntity> fetchedAfter = underTest.getByProgramIdAndId(savedSession.getProgram().getId(), savedSession.getId());
+
+        assertThat(fetchedBefore).isPresent();
+        assertThat(fetchedAfter).isEmpty();
+
+    }
+
+    @Test
+    @Transactional
+    public void Delete_ShouldSucceed_WhenSessionNotExists() {
+        SessionEntity session = Instancio.create(SessionEntity.class);
+
+        Optional<SessionEntity> sessionToDelete = underTest.getByProgramIdAndId(session.getProgram().getId(), session.getId());
+
+        underTest.delete(session);
+
+        assertThat(sessionToDelete).isEmpty();
+
     }
 
 

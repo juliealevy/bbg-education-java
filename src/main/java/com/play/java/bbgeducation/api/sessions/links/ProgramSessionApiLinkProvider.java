@@ -55,6 +55,17 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
         return link.get();
     }
 
+    @SneakyThrows
+    public Link getDeleteApiLink() {
+        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.DELETE.value, getController(),
+                getController().getMethod("deleteSession",Long.class, Long.class, HttpServletRequest.class));
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(SessionLinkRelations.DELETE.value);
+        }
+        return link.get();
+    }
+
 
     @Override
     public List<Link> getAllLinks() {
@@ -62,6 +73,7 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
         links.add(getCreateApiLink());
         links.add(getByIdApiLink());
         links.add(getByProgramApiLink());
+        links.add(getDeleteApiLink());
         return links;
     }
 }

@@ -7,8 +7,10 @@ import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
+import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteCommand;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.getByProgram.ProgramSessionGetByProgramCommand;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
@@ -86,12 +88,13 @@ public class ProgramSessionController {
         return result.match(
                 session -> ResponseEntity.ok(EntityModel.of(session)
                         .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                        .add(programSessionLinkProvider.getDeleteLink(programid, sessionid))
                 ),
                 notfound -> ResponseEntity.notFound().build()
         );
     }
 
-    @GetMapping("")
+    @GetMapping(path="")
     public ResponseEntity getByProgram(
             @PathVariable("pid") Long programid,
             HttpServletRequest httpRequest
@@ -109,6 +112,24 @@ public class ProgramSessionController {
         );
     }
 
+    @DeleteMapping(path="{sid}")
+    public ResponseEntity deleteSession(
+            @PathVariable("pid") Long programid,
+            @PathVariable("sid") Long sessionid,
+            HttpServletRequest httpRequest
+    ){
+        SessionDeleteCommand command = SessionDeleteCommand.builder()
+                .programId(programid)
+                .sessionId(sessionid)
+                .build();
+        OneOf2<Success, NotFound> result = pipeline.send(command);
+
+        //Does this need any links returned (like getall)?  or keep at no content
+        return result.match(
+                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
+                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
+    }
 
     CollectionModel<EntityModel<SessionResult>> buildCollectionModel(List<SessionResult> sessionList, HttpServletRequest httpRequest){
         return CollectionModel.of(buildEntityModelResultList( sessionList))
@@ -121,7 +142,7 @@ public class ProgramSessionController {
         return sessionList.stream()
                 .map(s -> EntityModel.of(s)
                         .add(programSessionLinkProvider.getByIdLink(s.getProgram().getId(), s.getId(), true))
-                        //getdeletelink
+                        .add(programSessionLinkProvider.getDeleteLink(s.getProgram().getId(), s.getId()))
                 ).toList();
     }
 }
