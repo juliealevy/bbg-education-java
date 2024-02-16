@@ -42,11 +42,11 @@ Some sample code in Java/Spring Boot to show the following:
   - Added request/response logging with sensitive data scrubbing
 - Added basic CRUD for Session (child of Program)  
   -   decided to go with Command Pattern
-- Added actuator for health check, metrics, etc.  
+- Added actuator for health check, metrics, etc.
+- Started CRUD for Course
     
 
 ## Coming soon
-- next entity:  Courses
 - add some more workflow oriented calls for Session once Courses implemented
 - validation for services based entities (User/Auth)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
@@ -159,6 +159,16 @@ https://localhost:8080/api
                 "practicumHours": "Integer"
             },
             "templated": true
+        },
+        "course:create": {
+            "href": "/api/courses",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            }
         }
     }
 }
