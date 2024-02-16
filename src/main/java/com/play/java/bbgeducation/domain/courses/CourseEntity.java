@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.domain.courses;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,16 @@ import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Entity
 @Table(name="course")
 public class CourseEntity {
+
+    public CourseEntity(){
+        isPublic = true;
+        isOnline = false;
+    }
+
     @Id
     @SequenceGenerator(name = "course_id_seq", sequenceName = "COURSE_ID_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_id_seq")
@@ -26,8 +32,16 @@ public class CourseEntity {
     private String name;
 
     private String description;
-    private boolean isPublic;
-    private boolean isOnline;
+
+    @NotNull
+    @Column(columnDefinition ="BOOLEAN DEFAULT TRUE" )
+    @Builder.Default
+    private Boolean isPublic = true;
+
+    @NotNull
+    @Column(columnDefinition ="BOOLEAN DEFAULT FALSE")
+    @Builder.Default
+    private Boolean isOnline = false;
 
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
@@ -38,4 +52,8 @@ public class CourseEntity {
     @Column(name = "updated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @UpdateTimestamp
     private OffsetDateTime updatedDateTime;
+
+    @Column(name = "inactivated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @UpdateTimestamp
+    private OffsetDateTime inactivatedDateTime;
 }

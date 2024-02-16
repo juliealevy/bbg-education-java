@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.api.root;
 
 import com.play.java.bbgeducation.api.auth.links.AuthenticationApiLinkProvider;
+import com.play.java.bbgeducation.api.courses.links.CourseApiLinkProvider;
 import com.play.java.bbgeducation.api.programs.links.ProgramApiLinkProvider;
 import com.play.java.bbgeducation.api.sessions.ProgramSessionController;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionApiLinkProvider;
@@ -21,11 +22,13 @@ public class ApiRootController {
     private final ProgramApiLinkProvider programApiLinkProvider;
     private final AuthenticationApiLinkProvider authApiLinkProvider;
     private final ProgramSessionApiLinkProvider programSessionApiLinkProvider;
+    private final CourseApiLinkProvider courseApiLinkProvider;
 
-    public ApiRootController(ProgramApiLinkProvider programApiLinkProvider, AuthenticationApiLinkProvider authApiLinkProvider, ProgramSessionApiLinkProvider programSessionApiLinkProvider) {
+    public ApiRootController(ProgramApiLinkProvider programApiLinkProvider, AuthenticationApiLinkProvider authApiLinkProvider, ProgramSessionApiLinkProvider programSessionApiLinkProvider, CourseApiLinkProvider courseApiLinkProvider) {
         this.programApiLinkProvider = programApiLinkProvider;
         this.authApiLinkProvider = authApiLinkProvider;
         this.programSessionApiLinkProvider = programSessionApiLinkProvider;
+        this.courseApiLinkProvider = courseApiLinkProvider;
     }
 
 
@@ -40,7 +43,8 @@ public class ApiRootController {
                 .add(Link.of(httpRequest.getRequestURI()).withSelfRel())
                 .add(authApiLinkProvider.getAllLinks())
                 .add(programApiLinkProvider.getAllLinks())
-                .add(programSessionApiLinkProvider.getAllLinks());
+                .add(programSessionApiLinkProvider.getAllLinks())
+                .add(courseApiLinkProvider.getAllLinks());
 
 
         return new ResponseEntity<>(response, HttpStatus.OK);
