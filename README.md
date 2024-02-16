@@ -40,13 +40,14 @@ Some sample code in Java/Spring Boot to show the following:
 - Added logging
   - Initial logging config, a few examples.  (in progress) 
   - Added request/response logging with sensitive data scrubbing
-- Added basic CRUD for Session (child of Program)
-  -   need to add some more workflow oriented calls
+- Added basic CRUD for Session (child of Program)  
   -   decided to go with Command Pattern
+- Added actuator for health check, metrics, etc.  
     
 
 ## Coming soon
 - next entity:  Courses
+- add some more workflow oriented calls for Session once Courses implemented
 - validation for services based entities (User/Auth)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
 - Caching of some data (maybe use Redis in Docker)
