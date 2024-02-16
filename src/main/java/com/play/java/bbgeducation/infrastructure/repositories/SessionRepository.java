@@ -12,4 +12,5 @@ public interface  SessionRepository extends CrudRepository<SessionEntity, Long> 
     boolean existsByName(String name);
     Optional<SessionEntity> getByProgramIdAndId(Long programId, Long sessionId);
     List<SessionEntity> getByProgramId(Long programId);
+
 }

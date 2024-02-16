@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.api.sessions;
 
 import an.awesome.pipelinr.Pipeline;
+import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
@@ -14,6 +15,7 @@ import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteComma
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.getByProgram.ProgramSessionGetByProgramCommand;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
+import com.play.java.bbgeducation.application.sessions.update.SessionUpdateCommand;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -71,12 +73,43 @@ public class ProgramSessionController {
         );
     }
 
+    @PutMapping(path="{sid}")
+    public ResponseEntity updateSession(
+            @PathVariable("pid") Long programid,
+            @PathVariable("sid") Long sessionid,
+            @RequestBody SessionRequest sessionRequest,
+            HttpServletRequest httpRequest
+    ) {
+        SessionUpdateCommand command = SessionUpdateCommand.builder()
+                .programId(programid)
+                .id(sessionid)
+                .name(sessionRequest.getName())
+                .description(sessionRequest.getDescription())
+                .startDate(sessionRequest.getStartDate())
+                .endDate(sessionRequest.getEndDate())
+                .practicumHours(sessionRequest.getPracticumHours())
+                .build();
+
+        OneOf3<Success, NotFound, ValidationFailed> result = pipeline.send(command);
+
+        return result.match(
+                success -> ResponseEntity.ok(new NoDataResponse()
+                        .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                        .add(programSessionLinkProvider.getByIdLink(programid, sessionid,false))
+                        .add(programSessionLinkProvider.getByProgramLink(programid))
+                        ),
+                notFound -> ResponseEntity.notFound().build(),
+                fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
+                        .build()
+        );
+    }
+
     @GetMapping(path="{sid}")
     public ResponseEntity getById(
             @PathVariable("pid") Long programid,
             @PathVariable("sid") Long sessionid,
             HttpServletRequest httpRequest
-    ){
+    ) {
 
         ProgramSessionGetByIdCommand command = ProgramSessionGetByIdCommand.builder()
                 .programId(programid)
@@ -88,6 +121,7 @@ public class ProgramSessionController {
         return result.match(
                 session -> ResponseEntity.ok(EntityModel.of(session)
                         .add(programSessionLinkProvider.getSelfLink(httpRequest))
+                        .add(programSessionLinkProvider.getUpdateLink(programid, sessionid))
                         .add(programSessionLinkProvider.getDeleteLink(programid, sessionid))
                 ),
                 notfound -> ResponseEntity.notFound().build()

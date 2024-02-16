@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.integration.sessions;
 
 import an.awesome.pipelinr.Pipeline;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
@@ -37,8 +40,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @AutoConfigureMockMvc
 public class ProgramSessionControllerIntegrationTests {
     private MockMvc mockMvc;
-    private WebApplicationContext webApplicationContext;
-    private ObjectMapper objectMapper;
+    private final WebApplicationContext webApplicationContext;
+    private final ObjectMapper objectMapper;
     private final Pipeline pipeline;
 
     private static final String PROGRAM_SESSIONS_PATH = "/api/programs/%s/sessions";
@@ -139,6 +142,100 @@ public class ProgramSessionControllerIntegrationTests {
 
     }
 
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
+    public void SessionUpdate_Returns200_WhenInputValid() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+        SessionRequest updateSessionRequest = SessionRequest.builder()
+                .name(savedSession.getName() + " updated")
+                .description(savedSession.getDescription() + " updated")
+                .startDate(savedSession.getStartDate())
+                .endDate(savedSession.getEndDate())
+                .practicumHours(10)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateSessionRequest);
+        mockMvc.perform(MockMvcRequestBuilders.put(String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void SessionUpdate_Forbidden_WhenNotAdmin() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+        SessionRequest updateSessionRequest = SessionRequest.builder()
+                .name(savedSession.getName() + " updated")
+                .description(savedSession.getDescription() + " updated")
+                .startDate(savedSession.getStartDate())
+                .endDate(savedSession.getEndDate())
+                .practicumHours(10)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateSessionRequest);
+        mockMvc.perform(MockMvcRequestBuilders.put(String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isForbidden()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
+    @Transactional
+    public void SessionUpdate_Returns404_WhenNotExist() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession = createAndSaveSession(savedProgram.getId());
+        SessionRequest updateSessionRequest = SessionRequest.builder()
+                .name(savedSession.getName() + " updated")
+                .description(savedSession.getDescription() + " updated")
+                .startDate(savedSession.getStartDate())
+                .endDate(savedSession.getEndDate())
+                .practicumHours(10)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateSessionRequest);
+        mockMvc.perform(MockMvcRequestBuilders.put(String.format(PROGRAM_SESSIONS_ID_PATH, 100L, savedSession.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
+    public void SessionUpdate_ReturnsError_WhenChangedNameExists() throws Exception {
+        ProgramResult savedProgram = createAndSaveProgram();
+        SessionResult savedSession1 = createAndSaveSession(savedProgram.getId());
+        SessionResult savedSession2 = createAndSaveSession(savedProgram.getId());
+
+        //updating session2 with name of session1
+        SessionRequest session2UpdateRequest = SessionRequest.builder()
+                .name(savedSession1.getName())
+                .description(savedSession2.getDescription())
+                .practicumHours(savedSession2.getPracticumHours())
+                .startDate(savedSession2.getStartDate())
+                .endDate(savedSession2.getEndDate())
+                .build();
+
+
+        String requestJson = objectMapper.writeValueAsString(session2UpdateRequest);
+        mockMvc.perform(MockMvcRequestBuilders.put(String.format(PROGRAM_SESSIONS_ID_PATH, savedProgram.getId(), savedSession2.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isConflict()
+        ).andExpect(
+                MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
+        );
+    }
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
@@ -303,7 +400,6 @@ public class ProgramSessionControllerIntegrationTests {
 
         return pipeline.send(sessionCreateCmd).asOption1();
     }
-
 
     private ProgramResult createAndSaveProgram(){
         ProgramCreateCommand programCreateCmd = Instancio.create(ProgramCreateCommand.class);

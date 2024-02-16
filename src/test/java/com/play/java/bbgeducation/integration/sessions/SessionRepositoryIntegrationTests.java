@@ -53,6 +53,24 @@ public class SessionRepositoryIntegrationTests {
     }
 
     @Test
+    @Transactional
+    public void UpdateSession_ShouldSucceedAndFetch_WhenInputValid() {
+        ProgramEntity program = DataUtils.buildProgramI();
+        ProgramEntity savedProgram = programRepository.save(program);
+
+        SessionEntity create = buildSessionEntity(savedProgram);
+        SessionEntity savedSession = underTest.save(create);
+
+        create.setName(create.getName() + " updated");
+        SessionEntity updatedSession = underTest.save(create);
+
+        Optional<SessionEntity> fetched = underTest.getByProgramIdAndId(savedProgram.getId(), updatedSession.getId());
+
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get()).isEqualTo(updatedSession);
+    }
+
+    @Test
     public void CreateSessionMany_ShouldSucceedAndFetch_WhenInputValid() {
         ProgramEntity program = DataUtils.buildProgramI();
         ProgramEntity savedProgram = programRepository.save(program);

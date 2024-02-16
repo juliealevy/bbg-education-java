@@ -2,23 +2,30 @@ package com.play.java.bbgeducation.api.sessions.links;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.play.java.bbgeducation.api.sessions.SessionRequest;
-import lombok.Getter;
-
 
 public class ApiSessionRequest extends SessionRequest {
     private static final String stringType = String.class.getSimpleName().toLowerCase();
     private static final String datePattern = "MM-dd-yyyy";
 
     @JsonProperty("startDate")
-    @Getter
-    private String startDateStr = datePattern;
+    private String startDateString = datePattern;
     @JsonProperty("endDate")
-    @Getter
-    private String endDateStr = datePattern;
-
+    private String endDateString = datePattern;
     @JsonProperty("practicumHours")
-    @Getter
-    private String practicumHoursStr = Integer.class.getSimpleName();
+    public String practicumHoursStr = Integer.class.getSimpleName();
+
+
+    public String getStartDateString(){
+        return startDateString;
+    }
+
+    public String getEndDateString(){
+        return endDateString;
+    }
+
+    public String getPracticumHoursStr(){
+        return practicumHoursStr;
+    }
 
     public static SessionRequest getApiBody(){
         ApiSessionRequest request = new ApiSessionRequest();
@@ -29,5 +36,6 @@ public class ApiSessionRequest extends SessionRequest {
        request.setPracticumHours(null);
        return request;
     }
+
 
 }

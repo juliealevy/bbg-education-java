@@ -4,6 +4,8 @@ import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
+import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
+import com.play.java.bbgeducation.api.sessions.links.SessionLinkRelations;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -33,10 +35,12 @@ public class ProgramController {
 
     private final Pipeline pipeline;
     private final ProgramLinkProvider linkProvider;
+    private final ProgramSessionLinkProvider sessionLinkProvider;
 
-    public ProgramController(Pipeline pipeline, ProgramLinkProvider linkProvider) {
+    public ProgramController(Pipeline pipeline, ProgramLinkProvider linkProvider, ProgramSessionLinkProvider sessionLinkProvider) {
         this.pipeline = pipeline;
         this.linkProvider = linkProvider;
+        this.sessionLinkProvider = sessionLinkProvider;
     }
 
     @PostMapping(path="")
@@ -110,7 +114,8 @@ public class ProgramController {
                     return new ResponseEntity<>(EntityModel.of(program)
                             .add(Link.of(request.getRequestURI()).withSelfRel())
                             .add(linkProvider.getUpdateLink(id))
-                            .add(linkProvider.getDeleteLink(id)),
+                            .add(linkProvider.getDeleteLink(id))
+                            .add(sessionLinkProvider.getByProgramLink(id)),
                             HttpStatus.OK);
                 },
                 notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)

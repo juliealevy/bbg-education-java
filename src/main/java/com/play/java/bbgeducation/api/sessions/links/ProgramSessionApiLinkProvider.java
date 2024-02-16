@@ -66,6 +66,17 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
         return link.get();
     }
 
+    @SneakyThrows
+    public Link getUpdateApiLink() {
+        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.UPDATE.value, getController(),
+                getController().getMethod("updateSession", Long.class, Long.class, SessionRequest.class, HttpServletRequest.class),
+                ApiSessionRequest.getApiBody());
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(SessionLinkRelations.UPDATE.value);
+        }
+        return link.get();
+    }
 
     @Override
     public List<Link> getAllLinks() {
@@ -74,6 +85,7 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
         links.add(getByIdApiLink());
         links.add(getByProgramApiLink());
         links.add(getDeleteApiLink());
+        links.add(getUpdateApiLink());
         return links;
     }
 }

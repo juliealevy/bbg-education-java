@@ -24,7 +24,4 @@ public class ApiRegisterRequest  extends RegisterRequest {
         return isAdminString;
     }
 
-    public void setIsAdminString(String isAdminString) {
-        this.isAdminString = isAdminString;
-    }
 }
