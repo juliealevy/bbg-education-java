@@ -39,13 +39,15 @@ Some sample code in Java/Spring Boot to show the following:
   -   implemented for ProgramUpdate  
 - Added logging
   - Initial logging config, a few examples.  (in progress) 
-  - Added request/response logging with sensitive data scrubbing 
+  - Added request/response logging with sensitive data scrubbing
+- Added basic CRUD for Session (child of Program)
+  -   need to add some more workflow oriented calls
+  -   decided to go with Command Pattern
     
 
 ## Coming soon
-- Next domain object:  BBGSession (Many to One with BBGProgram)
+- next entity:  Courses
 - validation for services based entities (User/Auth)
-- make a decision about future workflow/entity implementation:  command vs service
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
 - Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
@@ -58,7 +60,7 @@ Some sample code in Java/Spring Boot to show the following:
 https://localhost:8080/api
 
 ```json
- {
+{
     "version": "1.0.0",
     "_links": {
         "self": {
@@ -96,7 +98,7 @@ https://localhost:8080/api
             }
         },
         "program:update": {
-            "href": "/api/programs/{id}",
+            "href": "/api/programs/{pid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -105,18 +107,57 @@ https://localhost:8080/api
             "templated": true
         },
         "program:delete": {
-            "href": "/api/programs/{id}",
+            "href": "/api/programs/{pid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "program:get-by-id": {
-            "href": "/api/programs/{id}",
+            "href": "/api/programs/{pid}",
             "httpMethod": "GET",
             "templated": true
         },
         "program:get-all": {
             "href": "/api/programs",
             "httpMethod": "GET"
+        },
+        "session:create": {
+            "href": "/api/programs/{pid}/sessions",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "startDate": "MM-dd-yyyy",
+                "endDate": "MM-dd-yyyy",
+                "practicumHours": "Integer"
+            },
+            "templated": true
+        },
+        "session:get-by-id": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "session:get-by-program": {
+            "href": "/api/programs/{pid}/sessions",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "session:delete": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "session:update": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "startDate": "MM-dd-yyyy",
+                "endDate": "MM-dd-yyyy",
+                "practicumHours": "Integer"
+            },
+            "templated": true
         }
     }
 }
