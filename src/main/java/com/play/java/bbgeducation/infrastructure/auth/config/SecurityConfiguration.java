@@ -25,7 +25,8 @@ public class SecurityConfiguration {
     private static final String[] WHITE_LIST_URL = {
             "/api",
             "/api-docs",
-            "/api/auth/**"
+            "/api/auth/**",
+            "monitor/**"
     };
 
     public SecurityConfiguration(AuthenticationProvider authenticationProvider, JwtAuthorizationFilter jwtAuthorizationFilter) {
