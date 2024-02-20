@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.courses.links;
 
 import com.play.java.bbgeducation.api.courses.CourseController;
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 
@@ -18,6 +19,13 @@ public class CourseLinkProvider extends LinkProviderBase<Class<CourseController>
     public Link getCreateLink(){
         return linkTo(methodOn(getController())
                 .createCourse(null,null)).withRel(CourseLinkRelations.CREATE.value);
+
+    }
+
+    public Link getByIdLink(Long id, boolean asSelf) {
+        return linkTo(methodOn(getController())
+                .getById(id, null))
+                .withRel(asSelf ? IanaLinkRelations.SELF_VALUE : CourseLinkRelations.GET_BY_ID.value);
 
     }
 }

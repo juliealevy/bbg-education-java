@@ -22,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -121,10 +122,60 @@ public class CourseControllerTests {
         );
 
     }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void getById_ShouldReturn200_WhenIdExists() throws Exception {
+        CourseResult first = createAndSaveCourse();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(String.format(COURSES_ID_PATH, first.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void getById_ShouldReturnCourse_WhenIdExists() throws Exception {
+        CourseResult first = createAndSaveCourse();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(String.format(COURSES_ID_PATH, first.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(first.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(first.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.description").value(first.getDescription())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.isPublic").value(first.getIsPublic())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.isOnline").value(first.getIsOnline())
+        );
+
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void getById_ShouldReturnNotFound_WhenIdNotExists() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get(String.format(COURSES_ID_PATH, 100L))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+
+    }
+
     private CourseRequest buildCourseRequest() {
         return CourseRequest.builder()
-                .name(Instancio.of(String.class).stream().limit(50).toString())
-                .description(Instancio.of(String.class).stream().limit(255).toString())
+                .name(Instancio.create(String.class))
+                .description(Instancio.create(String.class))
                 .isOnline(true)
                 .isPublic(false)
                 .build();
@@ -132,8 +183,8 @@ public class CourseControllerTests {
 
     private CourseResult createAndSaveCourse(){
         CourseCreateCommand command = CourseCreateCommand.builder()
-                .name(Instancio.of(String.class).stream().limit(50).toString())
-                .description(Instancio.of(String.class).stream().limit(255).toString())
+                .name(Instancio.create(String.class))
+                .description(Instancio.create(String.class))
                 .isOnline(true)
                 .isPublic(false)
                 .build();

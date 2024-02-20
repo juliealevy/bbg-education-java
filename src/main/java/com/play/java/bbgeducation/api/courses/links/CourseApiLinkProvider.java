@@ -32,13 +32,24 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
         }
         return link.get();
     }
+
+    @SneakyThrows
+    public Link getByIdApiLink() {
+        Optional<ApiLink> link = apiLinkService.get(CourseLinkRelations.GET_BY_ID.value, getController(),
+                getController().getMethod("getById", Long.class, HttpServletRequest.class));
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(CourseLinkRelations.GET_BY_ID.value);
+        }
+        return link.get();
+    }
     @Override
     public List<Link> getAllLinks() {
         List<Link> links = new ArrayList<>();
         links.add(getCreateApiLink());
 //        links.add(getUpdateApiLink());
 //        links.add(getDeleteApiLink());
-//        links.add(getByIdApiLink());
+        links.add(getByIdApiLink());
 //        links.add(getAllApiLink());
 
         return links;
