@@ -170,6 +170,16 @@ https://localhost:8080/api
                 "isPublic": "boolean",
                 "isOnline": "boolean"
             }
+        },
+        "course:delete": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "course:get-by-id": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "GET",
+            "templated": true
         }
     }
 }
