@@ -1,13 +1,11 @@
 package com.play.java.bbgeducation.application.sessions.create;
 
 import br.com.fluentvalidator.AbstractValidator;
-import br.com.fluentvalidator.predicate.DatePredicate;
 import br.com.fluentvalidator.predicate.StringPredicate;
+import com.play.java.bbgeducation.application.common.commands.CommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
-import com.play.java.bbgeducation.application.common.validation.CommandValidator;
-import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.*;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import org.springframework.stereotype.Component;
 
@@ -22,36 +20,37 @@ public class SessionCreateCommandValidator extends AbstractValidator<SessionCrea
     implements CommandValidator<SessionCreateCommand, OneOf3<SessionResult, NotFound, ValidationFailed>>
 {
 
+    private final String entityName = "session";
 
     @Override
     public void rules() {
 
-        setPropertyOnContext("session");
+        setPropertyOnContext(entityName);
 
         ruleFor(SessionCreateCommand::getName)
                 .must(not(stringEmptyOrNull()))
-                .withMessage("Session name cannot be empty")
+                .withMessage(ValidationMessages.EmptyName(entityName))
                 .withFieldName("name")
                 .withAttempedValue(SessionCreateCommand::getName)
-                .must(stringSizeBetween(3, 50))
-                .withMessage("Session name must be between 3 and 50 characters.")
+                .must(stringSizeBetween(ValidationLengths.NameMin(), ValidationLengths.NameMax()))
+                .withMessage(ValidationMessages.NameLength(entityName))
                 .withFieldName("name")
                 .withAttempedValue(SessionCreateCommand::getName);
 
         ruleFor(SessionCreateCommand::getDescription)
-                .must(StringPredicate.stringSizeLessThan(256))
-                .withMessage("Session description must be less than 256 characters.")
+                .must(StringPredicate.stringSizeLessThan(ValidationLengths.DescriptionMax()))
+                .withMessage(ValidationMessages.DescriptionLength(entityName))
                 .withFieldName("description")
                 .withAttempedValue(SessionCreateCommand::getDescription);
 
         ruleFor(SessionCreateCommand::getEndDate)
                 .must(this::checkEndDateConstraint)
-                .withMessage("Session end date must be after the start date.")
+                .withMessage(ValidationMessages.EndAfterStartDate(entityName))
                 .withFieldName("end date");
     }
 
     private boolean checkEndDateConstraint(final LocalDate endDate) {
-        return endDate.isAfter(getPropertyOnContext("session", SessionCreateCommand.class).getStartDate());
+        return endDate.isAfter(getPropertyOnContext(entityName, SessionCreateCommand.class).getStartDate());
     }
 
     @Override

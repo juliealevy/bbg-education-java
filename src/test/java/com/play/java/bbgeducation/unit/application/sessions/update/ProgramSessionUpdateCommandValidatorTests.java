@@ -26,43 +26,6 @@ public class ProgramSessionUpdateCommandValidatorTests {
     }
 
     @Test
-    public void validate_ShouldReturnError_ProgramMissing(){
-        SessionUpdateCommand command = buildUpdateCommand();
-        command.setProgramId(null);
-        ValidationResult result = underTest.validate(command);
-
-        assertThat(result).isNotNull();
-        assertFalse(result.isValid());
-        assertThat(result.getErrors()).isNotNull();
-        assertThat(result.getErrors().size()).isEqualTo(1);
-    }
-
-    @Test
-    public void validate_ShouldReturnError_SessionIdMissing(){
-        SessionUpdateCommand command = buildUpdateCommand();
-        command.setId(null);
-        ValidationResult result = underTest.validate(command);
-
-        assertThat(result).isNotNull();
-        assertFalse(result.isValid());
-        assertThat(result.getErrors()).isNotNull();
-        assertThat(result.getErrors().size()).isEqualTo(1);
-    }
-
-    @Test
-    public void validate_ShouldReturn2Errors_BothIdsMissing(){
-        SessionUpdateCommand command = buildUpdateCommand();
-        command.setId(null);
-        command.setProgramId(null);
-        ValidationResult result = underTest.validate(command);
-
-        assertThat(result).isNotNull();
-        assertFalse(result.isValid());
-        assertThat(result.getErrors()).isNotNull();
-        assertThat(result.getErrors().size()).isEqualTo(2);
-    }
-
-    @Test
     public void validate_ShouldReturn2Errors_WhenNameEmpty(){
         testNameDescriptionErrors(0, null, 2);
     }

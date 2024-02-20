@@ -3,11 +3,9 @@ package com.play.java.bbgeducation.application.courses.create;
 
 import br.com.fluentvalidator.AbstractValidator;
 import br.com.fluentvalidator.predicate.StringPredicate;
+import com.play.java.bbgeducation.application.common.commands.CommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.validation.CommandValidator;
-import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.common.validation.ValidationMessages;
+import com.play.java.bbgeducation.application.common.validation.*;
 import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import org.springframework.stereotype.Component;
 
@@ -19,22 +17,22 @@ import static java.util.function.Predicate.not;
 public class CourseCreateCommandValidator extends AbstractValidator<CourseCreateCommand>
     implements CommandValidator<CourseCreateCommand, OneOf2<CourseResult, ValidationFailed>>
 {
-    private final String ENTITY_NAME = "Course";
+    private final String entityName = "course";
     @Override
     public void rules() {
         ruleFor(CourseCreateCommand::getName)
                 .must(not(stringEmptyOrNull()))
-                .withMessage(ValidationMessages.EmptyName(ENTITY_NAME))
+                .withMessage(ValidationMessages.EmptyName(entityName))
                 .withFieldName("name")
                 .withAttempedValue(CourseCreateCommand::getName)
-                .must(stringSizeBetween(3, 50))
-                .withMessage(ValidationMessages.NameLength(ENTITY_NAME, 3, 50))
+                .must(stringSizeBetween(ValidationLengths.NameMin(), ValidationLengths.NameMax()))
+                .withMessage(ValidationMessages.NameLength(entityName))
                 .withFieldName("name")
                 .withAttempedValue(CourseCreateCommand::getName);
 
         ruleFor(CourseCreateCommand::getDescription)
-                .must(StringPredicate.stringSizeLessThan(256))
-                .withMessage(ValidationMessages.DescriptionLength(ENTITY_NAME, 256))
+                .must(StringPredicate.stringSizeLessThan(ValidationLengths.DescriptionMax()))
+                .withMessage(ValidationMessages.DescriptionLength(entityName))
                 .withFieldName("description")
                 .withAttempedValue(CourseCreateCommand::getDescription);
 

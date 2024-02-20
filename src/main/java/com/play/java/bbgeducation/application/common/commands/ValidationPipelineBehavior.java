@@ -1,10 +1,13 @@
-package com.play.java.bbgeducation.application.common.validation;
+package com.play.java.bbgeducation.application.common.commands;
 
 import an.awesome.pipelinr.Command;
 import br.com.fluentvalidator.context.Error;
 import br.com.fluentvalidator.context.ValidationResult;
+import com.play.java.bbgeducation.application.common.commands.CommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 

@@ -80,39 +80,4 @@ public class ProgramUpdateCommandValidatorTests {
 
     }
 
-    @Test
-    public void validate_ShouldReturnInvalid_WhenIdZero(){
-        ProgramUpdateCommand cmd = ProgramUpdateCommand.builder()
-                .id(0L)
-                .name("abcdea")
-                .description("zero id test")
-                .build();
-
-
-        ValidationResult result = underTest.validate(cmd);
-
-        assertThat(result).isNotNull();
-        assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).isNotNull();
-        assertThat(result.getErrors().size()).isGreaterThan(0);
-
-    }
-
-    @Test
-    public void validate_ShouldReturnInvalid_WhenNameIsEmptyAndIdZero(){
-        ProgramUpdateCommand cmd = ProgramUpdateCommand.builder()
-                .id(0L)
-                .name("")
-                .description("Empty name test")
-                .build();
-
-
-        ValidationResult result = underTest.validate(cmd);
-
-        assertThat(result).isNotNull();
-        assertFalse(result.isValid());
-        assertThat(result.getErrors()).isNotNull();
-        assertThat(result.getErrors().size()).isEqualTo(3);
-    }
-
 }

@@ -1,9 +1,10 @@
-package com.play.java.bbgeducation.application.common.validation;
+package com.play.java.bbgeducation.application.common.commands;
 
 import an.awesome.pipelinr.Command;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.google.common.reflect.TypeToken;
 import com.play.java.bbgeducation.application.common.oneof.OneOf;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
 
 public interface CommandValidator<C extends Command<R>, R  extends OneOf>  {
 

@@ -2,16 +2,14 @@ package com.play.java.bbgeducation.application.sessions.update;
 
 import br.com.fluentvalidator.AbstractValidator;
 import br.com.fluentvalidator.predicate.StringPredicate;
+import com.play.java.bbgeducation.application.common.commands.CommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.common.validation.CommandValidator;
-import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.common.validation.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringSizeBetween;
@@ -21,41 +19,35 @@ import static java.util.function.Predicate.not;
 public class SessionUpdateCommandValidator extends AbstractValidator<SessionUpdateCommand>
     implements CommandValidator<SessionUpdateCommand, OneOf3<Success, NotFound, ValidationFailed>> {
 
+    private final String entityName = "session";
     @Override
     public void rules() {
         setPropertyOnContext("session");
 
-        ruleFor(SessionUpdateCommand::getProgramId)
-                .must(Objects::nonNull)
-                .withMessage("Program Id must be provided.");
-        ruleFor(SessionUpdateCommand::getId)
-                .must(Objects::nonNull)
-                .withMessage("Session Id must be provided.");
-
         ruleFor(SessionUpdateCommand::getName)
                 .must(not(stringEmptyOrNull()))
-                .withMessage("Session name cannot be empty")
+                .withMessage(ValidationMessages.EmptyName(entityName))
                 .withFieldName("name")
                 .withAttempedValue(SessionUpdateCommand::getName)
-                .must(stringSizeBetween(3, 50))
-                .withMessage("Session name must be between 3 and 50 characters.")
+                .must(stringSizeBetween(ValidationLengths.NameMin(), ValidationLengths.NameMax()))
+                .withMessage(ValidationMessages.NameLength(entityName))
                 .withFieldName("name")
                 .withAttempedValue(SessionUpdateCommand::getName);
 
         ruleFor(SessionUpdateCommand::getDescription)
-                .must(StringPredicate.stringSizeLessThan(256))
-                .withMessage("Session description must be less than 256 characters.")
+                .must(StringPredicate.stringSizeLessThan(ValidationLengths.DescriptionMax()))
+                .withMessage(ValidationMessages.DescriptionLength(entityName))
                 .withFieldName("description")
                 .withAttempedValue(SessionUpdateCommand::getDescription);
 
         ruleFor(SessionUpdateCommand::getEndDate)
                 .must(this::checkEndDateConstraint)
-                .withMessage("Session end date must be after the start date.")
+                .withMessage(ValidationMessages.EndAfterStartDate(entityName))
                 .withFieldName("end date");
     }
 
     private boolean checkEndDateConstraint(final LocalDate endDate) {
-        return endDate.isAfter(getPropertyOnContext("session", SessionUpdateCommand.class).getStartDate());
+        return endDate.isAfter(getPropertyOnContext(entityName, SessionUpdateCommand.class).getStartDate());
     }
     @Override
     public OneOfResultInfo getResultInfo() {
