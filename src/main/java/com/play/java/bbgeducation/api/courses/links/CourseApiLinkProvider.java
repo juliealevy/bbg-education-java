@@ -43,12 +43,23 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
         }
         return link.get();
     }
+
+    @SneakyThrows
+    public Link getDeleteApiLink(){
+        Optional<ApiLink> link = apiLinkService.get(CourseLinkRelations.DELETE.value, getController(),
+                getController().getMethod("deleteCourse", Long.class, HttpServletRequest.class));
+
+        if (link.isEmpty()){
+            throw new InvalidApiEndpointLinkException(CourseLinkRelations.DELETE.value);
+        }
+        return link.get();
+    }
     @Override
     public List<Link> getAllLinks() {
         List<Link> links = new ArrayList<>();
         links.add(getCreateApiLink());
 //        links.add(getUpdateApiLink());
-//        links.add(getDeleteApiLink());
+        links.add(getDeleteApiLink());
         links.add(getByIdApiLink());
 //        links.add(getAllApiLink());
 

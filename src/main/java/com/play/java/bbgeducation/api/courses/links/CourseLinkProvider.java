@@ -28,4 +28,11 @@ public class CourseLinkProvider extends LinkProviderBase<Class<CourseController>
                 .withRel(asSelf ? IanaLinkRelations.SELF_VALUE : CourseLinkRelations.GET_BY_ID.value);
 
     }
+
+    public Link getDeleteLink(Long id) {
+        return linkTo(methodOn(getController())
+                .deleteCourse(id, null))
+                .withRel(CourseLinkRelations.DELETE.value);
+
+    }
 }

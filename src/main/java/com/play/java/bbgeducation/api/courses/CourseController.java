@@ -5,8 +5,10 @@ import com.play.java.bbgeducation.api.courses.links.CourseLinkProvider;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.courses.create.CourseCreateCommand;
+import com.play.java.bbgeducation.application.courses.delete.CourseDeleteCommand;
 import com.play.java.bbgeducation.application.courses.getById.CourseGetByIdCommand;
 import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,9 +56,9 @@ public class CourseController {
 
     }
 
-    @GetMapping(path="{id}")
+    @GetMapping(path="{cid}")
     public ResponseEntity getById(
-            @PathVariable("id") Long id,
+            @PathVariable("cid") Long id,
             HttpServletRequest request
     ) {
         CourseGetByIdCommand command = new CourseGetByIdCommand(id);
@@ -64,8 +66,23 @@ public class CourseController {
 
         return result.match(
                 course -> ResponseEntity.ok(EntityModel.of(course)
-                        .add(courseLinkProvider.getSelfLink(request))),
+                        .add(courseLinkProvider.getSelfLink(request))
+                        .add(courseLinkProvider.getDeleteLink(id))),
                 notfound -> ResponseEntity.notFound().build()
+        );
+    }
+
+    @DeleteMapping(path="{cid}")
+    public ResponseEntity deleteCourse(
+            @PathVariable("cid") Long id,
+            HttpServletRequest request
+    ){
+        CourseDeleteCommand command = new CourseDeleteCommand(id);
+        OneOf2<Success, NotFound> result = pipeline.send(command);
+
+        return result.match(
+          success -> ResponseEntity.noContent().build(),
+          notFound -> ResponseEntity.notFound().build()
         );
     }
 }

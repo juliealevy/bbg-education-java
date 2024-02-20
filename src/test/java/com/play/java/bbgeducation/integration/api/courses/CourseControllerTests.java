@@ -172,6 +172,33 @@ public class CourseControllerTests {
 
     }
 
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void deleteCourse_ShouldReturn201_WhenIdExists() throws Exception {
+        CourseResult first = createAndSaveCourse();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(String.format(COURSES_ID_PATH, first.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
+    public void deleteCourse_ShouldReturn404_WhenIdNotExists() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(String.format(COURSES_ID_PATH, 100L))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+
+    }
+
     private CourseRequest buildCourseRequest() {
         return CourseRequest.builder()
                 .name(Instancio.create(String.class))
