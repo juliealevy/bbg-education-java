@@ -1,6 +1,4 @@
-package com.play.java.bbgeducation.application.common.validation;
-
-import com.google.common.base.CaseFormat;
+package com.play.java.bbgeducation.application.common.commands;
 
 public final class ValidationMessages {
 

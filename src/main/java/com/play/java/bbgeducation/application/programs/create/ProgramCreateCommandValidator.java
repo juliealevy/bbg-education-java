@@ -1,14 +1,12 @@
 package com.play.java.bbgeducation.application.programs.create;
 
-import com.play.java.bbgeducation.application.common.commands.EntityCommandValidator;
 import com.play.java.bbgeducation.application.common.commands.CommandValidator;
-import com.play.java.bbgeducation.application.common.validation.*;
+import com.play.java.bbgeducation.application.common.commands.EntityCommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import org.springframework.stereotype.Component;
-
-import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
-import static br.com.fluentvalidator.predicate.StringPredicate.stringSizeBetween;
 
 //using two different libraries - one for validation and one for pipeline middleware which
 //assumes you are not using another library for validation.

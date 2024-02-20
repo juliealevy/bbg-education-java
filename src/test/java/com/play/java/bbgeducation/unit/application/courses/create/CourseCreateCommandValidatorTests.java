@@ -48,8 +48,8 @@ public class CourseCreateCommandValidatorTests {
         int descSize = descriptionLength == null? 100: descriptionLength;
 
         return Instancio.of(CourseCreateCommand.class)
-                .generate(field("name"), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
-                .generate(field("description"), gen -> gen.string().minLength(descSize).maxLength(descSize))
+                .generate(field(CourseCreateCommand::getName), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
+                .generate(field(CourseCreateCommand::getDescription), gen -> gen.string().minLength(descSize).maxLength(descSize))
                 .create();
     }
 

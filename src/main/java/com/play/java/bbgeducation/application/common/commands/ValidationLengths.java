@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.application.common.validation;
+package com.play.java.bbgeducation.application.common.commands;
 
 public final class ValidationLengths {
 

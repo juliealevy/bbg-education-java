@@ -2,8 +2,6 @@ package com.play.java.bbgeducation.application.common.commands;
 
 import br.com.fluentvalidator.AbstractValidator;
 import br.com.fluentvalidator.predicate.StringPredicate;
-import com.play.java.bbgeducation.application.common.validation.ValidationLengths;
-import com.play.java.bbgeducation.application.common.validation.ValidationMessages;
 
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringSizeBetween;

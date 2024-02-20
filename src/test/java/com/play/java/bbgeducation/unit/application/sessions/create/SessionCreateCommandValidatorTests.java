@@ -4,6 +4,7 @@ import br.com.fluentvalidator.Validator;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommandValidator;
+import org.hibernate.Session;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
@@ -108,8 +109,8 @@ public class SessionCreateCommandValidatorTests {
         int descSize = descriptionLength == null? 100: descriptionLength;
 
         SessionCreateCommand cmd = Instancio.of(SessionCreateCommand.class)
-                .generate(field("name"), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
-                .generate(field("description"), gen -> gen.string().minLength(descSize).maxLength(descSize))
+                .generate(field(SessionCreateCommand::getName), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
+                .generate(field(SessionCreateCommand::getDescription), gen -> gen.string().minLength(descSize).maxLength(descSize))
                 .create();
 
         cmd.setStartDate(LocalDate.now().plusMonths(1));

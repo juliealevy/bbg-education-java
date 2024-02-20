@@ -1,16 +1,13 @@
 package com.play.java.bbgeducation.application.programs.update;
 
-import com.play.java.bbgeducation.application.common.commands.EntityCommandValidator;
 import com.play.java.bbgeducation.application.common.commands.CommandValidator;
-import com.play.java.bbgeducation.application.common.validation.*;
+import com.play.java.bbgeducation.application.common.commands.EntityCommandValidator;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.application.common.validation.OneOfResultInfo;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import org.springframework.stereotype.Component;
-
-import static br.com.fluentvalidator.predicate.ComparablePredicate.greaterThan;
-import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
-import static br.com.fluentvalidator.predicate.StringPredicate.stringSizeBetween;
 
 @Component
 public class ProgramUpdateCommandValidator extends EntityCommandValidator<ProgramUpdateCommand>

@@ -85,8 +85,8 @@ public class ProgramSessionUpdateCommandValidatorTests {
         int descSize = descriptionLength == null? 100: descriptionLength;
 
         SessionUpdateCommand cmd = Instancio.of(SessionUpdateCommand.class)
-                .generate(field("name"), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
-                .generate(field("description"), gen -> gen.string().minLength(descSize).maxLength(descSize))
+                .generate(field(SessionUpdateCommand::getName), gen -> gen.string().minLength(nameSize).maxLength(nameSize))
+                .generate(field(SessionUpdateCommand::getDescription), gen -> gen.string().minLength(descSize).maxLength(descSize))
                 .create();
 
         cmd.setStartDate(LocalDate.now().plusMonths(1));
