@@ -27,7 +27,7 @@ public class AuthenticationLinkProvider extends LinkProviderBase<Class<Authentic
     @SneakyThrows
     public Link getRefreshLink()  {
         return linkTo(methodOn(getController())
-                .refreshToken(null, null)).withRel(AuthLinkRelations.REFRESH.value);
+                .refreshToken(null)).withRel(AuthLinkRelations.REFRESH.value);
     }
 
 

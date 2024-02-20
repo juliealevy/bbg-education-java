@@ -27,11 +27,13 @@ import java.util.Map;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final AuthHeaderParser authHeaderParser;
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
 
-    public JwtAuthorizationFilter(JwtService jwtService, UserDetailsService userDetailsService, ObjectMapper objectMapper) {
+    public JwtAuthorizationFilter(JwtService jwtService, AuthHeaderParser authHeaderParser, UserDetailsService userDetailsService, ObjectMapper objectMapper) {
         this.jwtService = jwtService;
+        this.authHeaderParser = authHeaderParser;
         this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
     }
@@ -43,16 +45,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         try{
-            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            final String token;
+            final String token = authHeaderParser.getAuthToken(request);
             final String userEmail;
 
-            if (Strings.isNullOrEmpty(authHeader) || !(authHeader.startsWith("Bearer "))){
+            if (Strings.isNullOrEmpty(token)){
                 filterChain.doFilter(request,response);
                 return;
             }
 
-            token = authHeader.substring(7);
             userEmail = jwtService.extractUserName(token);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

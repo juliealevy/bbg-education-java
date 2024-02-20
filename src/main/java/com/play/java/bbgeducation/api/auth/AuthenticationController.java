@@ -79,10 +79,10 @@ public class AuthenticationController {
 
     @PostMapping(path="refresh")
     public ResponseEntity refreshToken(
-            HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse) throws IOException {
+            HttpServletRequest httpRequest
+            ) throws IOException {
 
-        return authenticationService.refreshToken(httpRequest, httpResponse)
+        return authenticationService.refreshToken(httpRequest)
                 .match(
                         result -> ResponseEntity.ok(EntityModel.of(result)
                                 .add(authLinkProvider.getSelfLink(httpRequest))),

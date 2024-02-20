@@ -7,6 +7,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,13 +34,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private AuthHeaderParser authHeaderParser;
     private JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthenticationServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public AuthenticationServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, AuthHeaderParser authHeaderParser, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.authHeaderParser = authHeaderParser;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -100,18 +103,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
+    public OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest request) {
         final String userEmail;
-
-        if (Strings.isNullOrEmpty(authHeader) || !(authHeader.startsWith("Bearer "))) {
+        final String refreshToken = authHeaderParser.getAuthToken(request);
+        if (Strings.isNullOrEmpty(refreshToken)) {
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Invalid or no authorization provided"));
         }
 
-        refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUserName(refreshToken);
-        if (userEmail == null) {
+        if (Strings.isNullOrEmpty(userEmail)) {
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Invalid authorization provided"));
         }
         UserEntity userDetails = this.userRepository.findByEmail(userEmail)

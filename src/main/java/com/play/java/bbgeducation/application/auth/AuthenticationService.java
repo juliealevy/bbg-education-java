@@ -13,5 +13,5 @@ public interface AuthenticationService {
     OneOf2<AuthenticationResult, ValidationFailed> authenticate(String email, String password);
     OneOf2<Success, ValidationFailed> register(String email, String password, String firstName, String lastName, boolean isAdmin);
 
-    OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException;
+    OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest httpRequest) throws IOException;
 }

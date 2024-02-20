@@ -39,7 +39,7 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
     @SneakyThrows
     public Link getRefreshApiLink() {
         return apiLinkService.get(AuthLinkRelations.REFRESH.value, getController(),
-                        getController().getMethod("refreshToken", HttpServletRequest.class, HttpServletResponse.class))
+                        getController().getMethod("refreshToken", HttpServletRequest.class))
                 .orElseThrow(() -> new InvalidApiEndpointLinkException(AuthLinkRelations.REFRESH.value));
     }
 
