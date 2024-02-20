@@ -11,10 +11,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserEntity1;
-import static com.play.java.bbgeducation.integration.users.DataUtils.buildUserEntity2;
+import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity1;
+import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity2;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
