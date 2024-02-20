@@ -17,12 +17,13 @@ Some sample code in Java/Spring Boot to show the following:
   - domain (domain entities)
   - infrastructure (DB repositories, auth, etc)
 - First domain CRUD implementation:  BBGProgram with commands
-- Integration Testing of Repositories, Commands, Controllers
-- Unit Testing of commands and services
+- Integration Testing of controllers and command pipelines
+- Unit Testing of commands, services, repositories
 - Commands/Handlers
 - Repository Pattern
 - Start of error handling
   - added oneOf union classes for returns to replace throwing exceptions or returning nulls
+  - catch-all global handler for thrown exceptions: ExceptionHandlerController (@RestControllerAdvice)
 - Basic jwt bearer authentication 
   -   added UserEntity - trying out Service pattern instead of Command to compare
   -   added jwt security config, auth filter, register/login apis, etc.
@@ -43,7 +44,7 @@ Some sample code in Java/Spring Boot to show the following:
 - Added basic CRUD for Session (child of Program)  
   -   decided to go with Command Pattern
 - Added actuator for health check, metrics, etc.
-- Started CRUD for Course
+- Started CRUD for Course - in progress
     
 
 ## Coming soon
