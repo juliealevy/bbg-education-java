@@ -40,9 +40,10 @@ public class CourseGetAllCommandHandlerTests {
     public void handle_ShouldReturnList_WhenDataExists() {
         CourseEntity course1 = Instancio.create(CourseEntity.class);
         CourseEntity course2 = Instancio.create(CourseEntity.class);
+
         CourseGetAllCommand command = CourseGetAllCommand.builder().build();;
 
-        when(courseRepository.findAll()).thenReturn(List.of(course1, course2));
+        when(courseRepository.getAllActiveCourses()).thenReturn(List.of(course1, course2));
 
         List<CourseResult> results = underTest.handle(command);
 
