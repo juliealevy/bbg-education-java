@@ -180,6 +180,10 @@ https://localhost:8080/api
             "href": "/api/courses/{cid}",
             "httpMethod": "GET",
             "templated": true
+        },
+        "course:get-all": {
+            "href": "/api/courses",
+            "httpMethod": "GET"
         }
     }
 }
