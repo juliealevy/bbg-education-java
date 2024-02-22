@@ -1,0 +1,125 @@
+{
+    "version": "1.0.0",
+    "_links": {
+        "self": {
+            "href": "/api"
+        },
+        "auth:register": {
+            "href": "/api/auth/register",
+            "httpMethod": "POST",
+            "body": {
+                "email": "string",
+                "password": "string",
+                "firstName": "string",
+                "lastName": "string",
+                "isAdmin": "boolean"
+            }
+        },
+        "auth:login": {
+            "href": "/api/auth/login",
+            "httpMethod": "POST",
+            "body": {
+                "email": "string",
+                "password": "string"
+            }
+        },
+        "auth:refresh": {
+            "href": "/api/auth/refresh",
+            "httpMethod": "POST"
+        },
+        "program:create": {
+            "href": "/api/programs",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string"
+            }
+        },
+        "program:update": {
+            "href": "/api/programs/{pid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string"
+            },
+            "templated": true
+        },
+        "program:delete": {
+            "href": "/api/programs/{pid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "program:get-by-id": {
+            "href": "/api/programs/{pid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "program:get-all": {
+            "href": "/api/programs",
+            "httpMethod": "GET"
+        },
+        "session:create": {
+            "href": "/api/programs/{pid}/sessions",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "startDate": "MM-dd-yyyy",
+                "endDate": "MM-dd-yyyy",
+                "practicumHours": "Integer"
+            },
+            "templated": true
+        },
+        "session:get-by-id": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "session:get-by-program": {
+            "href": "/api/programs/{pid}/sessions",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "session:delete": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "session:update": {
+            "href": "/api/programs/{pid}/sessions/{sid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "startDate": "MM-dd-yyyy",
+                "endDate": "MM-dd-yyyy",
+                "practicumHours": "Integer"
+            },
+            "templated": true
+        },
+        "course:create": {
+            "href": "/api/courses",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            }
+        },
+        "course:delete": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "course:get-by-id": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "course:get-all": {
+            "href": "/api/courses",
+            "httpMethod": "GET"
+        }
+    }
+}
