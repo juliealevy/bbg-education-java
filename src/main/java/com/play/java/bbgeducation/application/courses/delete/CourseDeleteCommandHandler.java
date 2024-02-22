@@ -26,8 +26,8 @@ public class CourseDeleteCommandHandler implements Command.Handler<CourseDeleteC
             return OneOf2.fromOption2(new NotFound());
         }
 
-        //TODO:  if courses referenced by any sessions, then de-activate instead of delete
-        //create a stored proc to mark a course as inactive?
+        //TODO:  if courses referenced by any sessions, then inactivate instead of delete
+        //courseRepository.inactivateCourse(command.getCourseId());
 
         courseRepository.deleteById(command.getCourseId());
         return OneOf2.fromOption1(new Success());

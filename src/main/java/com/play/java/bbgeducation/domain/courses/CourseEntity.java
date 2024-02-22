@@ -54,6 +54,5 @@ public class CourseEntity {
     private OffsetDateTime updatedDateTime;
 
     @Column(name = "inactivated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @UpdateTimestamp
     private OffsetDateTime inactivatedDateTime;
 }

@@ -24,7 +24,7 @@ public class CourseGetAllCommandHandler implements Command.Handler<CourseGetAllC
 
     @Override
     public List<CourseResult> handle(CourseGetAllCommand command) {
-        return StreamSupport.stream(courseRepository.findAll().spliterator(), false)
+        return courseRepository.getAllActiveCourses().stream()
                 .map(mapper::mapTo)
                 .toList();
 
