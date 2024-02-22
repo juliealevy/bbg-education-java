@@ -26,7 +26,7 @@ public class SecurityConfiguration {
             "/api",
             "/api-docs",
             "/api/auth/**",
-            "monitor/**"
+            "/monitor/**"
     };
 
     public SecurityConfiguration(AuthenticationProvider authenticationProvider, JwtAuthorizationFilter jwtAuthorizationFilter) {

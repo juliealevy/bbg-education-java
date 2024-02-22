@@ -34,6 +34,9 @@
 				{
 					"name": "root",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -247,14 +250,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/programs/270",
+							"raw": "{{baseUrl}}/api/programs/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"programs",
-								"270"
+								"1"
 							]
 						}
 					},
@@ -344,7 +347,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/programs/270/sessions",
+							"raw": "http://localhost:8080/api/programs/1/sessions",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -353,7 +356,7 @@
 							"path": [
 								"api",
 								"programs",
-								"270",
+								"1",
 								"sessions"
 							]
 						}
@@ -539,17 +542,20 @@
 				{
 					"name": "health-check",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/actuator/health",
+							"raw": "http://localhost:8080/monitor/health",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"actuator",
+								"monitor",
 								"health"
 							]
 						}
@@ -559,17 +565,20 @@
 				{
 					"name": "links",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/actuator",
+							"raw": "http://localhost:8080/monitor",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"actuator"
+								"monitor"
 							]
 						}
 					},
@@ -578,10 +587,13 @@
 				{
 					"name": "metrics",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/monitor/metrics/",
+							"raw": "http://localhost:8080/monitor/metrics",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -589,8 +601,7 @@
 							"port": "8080",
 							"path": [
 								"monitor",
-								"metrics",
-								""
+								"metrics"
 							]
 						}
 					},
@@ -599,6 +610,9 @@
 				{
 					"name": "logfile",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -611,6 +625,102 @@
 							"path": [
 								"monitor",
 								"logfile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "course",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"s\",\r\n    \"description\": \"Test Description\",\r\n    \"isPublic\": true,\r\n    \"isOnline\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/courses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getbyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/courses/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"courses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-course",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/courses/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"courses",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/courses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"courses"
 							]
 						}
 					},
