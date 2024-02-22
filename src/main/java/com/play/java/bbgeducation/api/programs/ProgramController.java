@@ -5,7 +5,6 @@ import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
-import com.play.java.bbgeducation.api.sessions.links.SessionLinkRelations;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;

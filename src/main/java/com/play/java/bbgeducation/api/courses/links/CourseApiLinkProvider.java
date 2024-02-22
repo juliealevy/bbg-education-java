@@ -2,18 +2,14 @@ package com.play.java.bbgeducation.api.courses.links;
 
 import com.play.java.bbgeducation.api.courses.CourseController;
 import com.play.java.bbgeducation.api.courses.CourseRequest;
-import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
-import com.play.java.bbgeducation.api.links.ApiLink;
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseController>> {
@@ -21,39 +17,27 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
         super(apiLinkService, CourseController.class);
     }
 
-    @SneakyThrows
     public Link getCreateApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(CourseLinkRelations.CREATE.value, getController(),
-                getController().getMethod("createCourse", CourseRequest.class, HttpServletRequest.class),
-                ApiCourseRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(CourseLinkRelations.CREATE.value);
-        }
-        return link.get();
+        return getApiLink(CourseLinkRelations.CREATE.value, ApiCourseRequest.getApiBody(),
+                "createCourse", CourseRequest.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getByIdApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(CourseLinkRelations.GET_BY_ID.value, getController(),
-                getController().getMethod("getById", Long.class, HttpServletRequest.class));
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(CourseLinkRelations.GET_BY_ID.value);
-        }
-        return link.get();
+        return getApiLink(CourseLinkRelations.GET_BY_ID.value,
+                "getById", Long.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
+    public Link getAllApiLink() {
+        return getApiLink(CourseLinkRelations.GET_ALL.value,
+                "getAll", HttpServletRequest.class);
+    }
+
     public Link getDeleteApiLink(){
-        Optional<ApiLink> link = apiLinkService.get(CourseLinkRelations.DELETE.value, getController(),
-                getController().getMethod("deleteCourse", Long.class, HttpServletRequest.class));
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(CourseLinkRelations.DELETE.value);
-        }
-        return link.get();
+        return getApiLink(CourseLinkRelations.DELETE.value,
+                "deleteCourse",  Long.class, HttpServletRequest.class);
     }
+
+
     @Override
     public List<Link> getAllLinks() {
         List<Link> links = new ArrayList<>();
@@ -61,8 +45,9 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
 //        links.add(getUpdateApiLink());
         links.add(getDeleteApiLink());
         links.add(getByIdApiLink());
-//        links.add(getAllApiLink());
+        links.add(getAllApiLink());
 
         return links;
     }
+
 }

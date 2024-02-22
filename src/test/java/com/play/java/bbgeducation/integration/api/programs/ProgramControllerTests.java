@@ -20,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -61,6 +62,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.post(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(programJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isCreated()
         );
@@ -75,6 +77,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.post(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(programJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isForbidden()
         );
@@ -89,6 +92,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.post(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(programJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").isNumber()
         ).andExpect(
@@ -111,6 +115,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.post(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isConflict()
         ).andExpect(
@@ -123,6 +128,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -136,6 +142,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.get(PROGRAMS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.programs.[0].id").value(saved1.getId())
         ).andExpect(
@@ -158,6 +165,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -170,6 +178,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").value(program.getId())
         ).andExpect(
@@ -186,6 +195,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.get(getProgramsPath(program.getId() + 100L))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         );
@@ -205,6 +215,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.put(getProgramsPath(savedProgram.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -225,6 +236,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.put(getProgramsPath(savedProgram1.getId() + 100L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         );
@@ -246,6 +258,7 @@ public class ProgramControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.put(getProgramsPath(savedProgram1.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isConflict()
         ).andExpect(
@@ -260,6 +273,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.delete(getProgramsPath(savedProgram1.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isNoContent()
         );
@@ -272,6 +286,7 @@ public class ProgramControllerTests {
 
         mockMvc.perform(MockMvcRequestBuilders.delete(getProgramsPath(savedProgram1.getId() + 100L))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         );

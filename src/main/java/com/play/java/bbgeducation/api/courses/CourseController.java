@@ -10,13 +10,17 @@ import com.play.java.bbgeducation.application.common.validation.ValidationFailed
 import com.play.java.bbgeducation.application.courses.create.CourseCreateCommand;
 import com.play.java.bbgeducation.application.courses.delete.CourseDeleteCommand;
 import com.play.java.bbgeducation.application.courses.getById.CourseGetByIdCommand;
+import com.play.java.bbgeducation.application.courses.getall.CourseGetAllCommand;
 import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/courses")
@@ -48,7 +52,8 @@ public class CourseController {
         return result.match(
                 course -> new ResponseEntity(EntityModel.of(course)
                         .add(courseLinkProvider.getSelfLink(httpRequest))
-                        .add(courseLinkProvider.getByIdLink(course.getId(), false)),
+                        .add(courseLinkProvider.getByIdLink(course.getId(), false))
+                        .add(courseLinkProvider.getAllLink()),
                         HttpStatus.CREATED),
                 fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
                         .build()
@@ -65,11 +70,18 @@ public class CourseController {
         OneOf2<CourseResult, NotFound> result = pipeline.send(command);
 
         return result.match(
-                course -> ResponseEntity.ok(EntityModel.of(course)
-                        .add(courseLinkProvider.getSelfLink(request))
-                        .add(courseLinkProvider.getDeleteLink(id))),
+                course -> ResponseEntity.ok(buildEntityModelCourseItem(course)),
                 notfound -> ResponseEntity.notFound().build()
         );
+    }
+
+    @GetMapping(path="")
+    public ResponseEntity getAll(
+            HttpServletRequest httpRequest
+    ){
+        CourseGetAllCommand command = CourseGetAllCommand.builder().build();
+        List<CourseResult> results = pipeline.send(command);
+        return ResponseEntity.ok(buildCollectionModel(results, httpRequest));
     }
 
     @DeleteMapping(path="{cid}")
@@ -84,5 +96,23 @@ public class CourseController {
           success -> ResponseEntity.noContent().build(),
           notFound -> ResponseEntity.notFound().build()
         );
+    }
+
+    CollectionModel<EntityModel<CourseResult>> buildCollectionModel(List<CourseResult> courseList, HttpServletRequest httpRequest){
+        return CollectionModel.of(buildEntityModelResultList( courseList))
+                .add(courseLinkProvider.getSelfLink(httpRequest))
+                .add(courseLinkProvider.getCreateLink());
+    }
+
+    List<EntityModel<CourseResult>> buildEntityModelResultList(List<CourseResult> courseList){
+        return courseList.stream()
+                .map(this::buildEntityModelCourseItem)
+                .toList();
+    }
+
+    EntityModel<CourseResult> buildEntityModelCourseItem(CourseResult result){
+        return  EntityModel.of(result)
+                .add(courseLinkProvider.getByIdLink(result.getId(), true))
+                .add(courseLinkProvider.getDeleteLink(result.getId()));
     }
 }

@@ -29,6 +29,13 @@ public class CourseLinkProvider extends LinkProviderBase<Class<CourseController>
 
     }
 
+    public Link getAllLink() {
+        return linkTo(methodOn(getController())
+                .getAll(null))
+                .withRel(CourseLinkRelations.GET_ALL.value);
+
+    }
+
     public Link getDeleteLink(Long id) {
         return linkTo(methodOn(getController())
                 .deleteCourse(id, null))
