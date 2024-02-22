@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -78,6 +80,12 @@ public class ValidationFailed {
 
     private static Error buildError(String propertyName, String message){
         return Error.create(propertyName, message, "", null);
+    }
+
+    public ProblemDetail toProblemDetail(String title){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, this.getErrorMessage());
+        problemDetail.setTitle(title);
+        return problemDetail;
     }
 }
 

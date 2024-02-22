@@ -175,6 +175,21 @@ public class CourseControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
+    public void Update_ReturnsForbidden_WhenNotAdmin() throws Exception {
+        CourseRequest request = buildCourseRequest();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(String.format(COURSES_ID_PATH, 100L))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isForbidden()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
     public void getById_ShouldReturn200_WhenIdExists() throws Exception {
         CourseResult first = createAndSaveCourse(44);
 
@@ -226,14 +241,16 @@ public class CourseControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN, Roles.USER})
-    public void deleteCourse_ShouldReturn201_WhenIdExists() throws Exception {
+    public void deleteCourse_ShouldReturn200WithLinks_WhenIdExists() throws Exception {
         CourseResult first = createAndSaveCourse(66);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(String.format(COURSES_ID_PATH, first.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
-                MockMvcResultMatchers.status().isNoContent()
+                MockMvcResultMatchers.jsonPath("$._links").exists()
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
         );
 
     }

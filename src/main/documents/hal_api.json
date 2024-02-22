@@ -107,6 +107,17 @@
                 "isOnline": "boolean"
             }
         },
+        "course:update": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            },
+            "templated": true
+        },
         "course:delete": {
             "href": "/api/courses/{cid}",
             "httpMethod": "DELETE",

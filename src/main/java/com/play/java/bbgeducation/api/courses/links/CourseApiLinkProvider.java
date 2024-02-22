@@ -22,6 +22,11 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
                 "createCourse", CourseRequest.class, HttpServletRequest.class);
     }
 
+    public Link getUpdateApiLink(){
+        return getApiLink(CourseLinkRelations.UPDATE.value, ApiCourseRequest.getApiBody(),
+                "updateCourse", Long.class, CourseRequest.class, HttpServletRequest.class);
+    }
+
     public Link getByIdApiLink() {
         return getApiLink(CourseLinkRelations.GET_BY_ID.value,
                 "getById", Long.class, HttpServletRequest.class);
@@ -40,14 +45,14 @@ public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseContr
 
     @Override
     public List<Link> getAllLinks() {
-        List<Link> links = new ArrayList<>();
-        links.add(getCreateApiLink());
-//        links.add(getUpdateApiLink());
-        links.add(getDeleteApiLink());
-        links.add(getByIdApiLink());
-        links.add(getAllApiLink());
+        return List.of(
+                getCreateApiLink(),
+                getUpdateApiLink(),
+                getDeleteApiLink(),
+                getByIdApiLink(),
+                getAllApiLink()
+        );
 
-        return links;
     }
 
 }

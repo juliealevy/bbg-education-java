@@ -22,6 +22,11 @@ public class CourseLinkProvider extends LinkProviderBase<Class<CourseController>
 
     }
 
+    public Link getUpdateLink(Long id){
+        return linkTo(methodOn(getController())
+                .updateCourse(id, null, null)).withRel(CourseLinkRelations.UPDATE.value);
+    }
+
     public Link getByIdLink(Long id, boolean asSelf) {
         return linkTo(methodOn(getController())
                 .getById(id, null))
