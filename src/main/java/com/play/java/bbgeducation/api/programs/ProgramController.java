@@ -64,8 +64,8 @@ public class ProgramController {
 
                     return new ResponseEntity<>(representation, HttpStatus.CREATED);
                 },
-                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error creating program"))
+                        .build()
         );
 
 
@@ -74,7 +74,7 @@ public class ProgramController {
     public ResponseEntity updateProgram(
             @PathVariable("pid") Long id,
             @RequestBody ProgramRequest programRequest,
-            HttpServletRequest httpRequest)  {
+            HttpServletRequest httpRequest) {
 
         ProgramUpdateCommand command = ProgramUpdateCommand.builder()
                 .id(id)
@@ -85,16 +85,15 @@ public class ProgramController {
         OneOf3<Success, NotFound, ValidationFailed> updated = pipeline.send(command);
 
         return updated.match(
-                success -> {
-                    return new ResponseEntity<>(new NoDataResponse()
-                            .add(linkProvider.getSelfLink(httpRequest))
-                            .add(linkProvider.getByIdLink(id,false))
-                            .add(linkProvider.getAllLink()),
-                            HttpStatus.OK);
-                },
-                notfound -> new ResponseEntity<>(HttpStatus.NOT_FOUND),
-                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
+                success -> ResponseEntity.ok(new NoDataResponse()
+                        .add(linkProvider.getSelfLink(httpRequest))
+                        .add(linkProvider.getByIdLink(id, false))
+                        .add(linkProvider.getAllLink())
+                ),
+                notfound -> ResponseEntity.notFound().build(),
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error updating program"))
+                        .build()
+
         );
 
     }
@@ -109,15 +108,12 @@ public class ProgramController {
                 .build());
 
         return result.match(
-                program -> {
-                    return new ResponseEntity<>(EntityModel.of(program)
-                            .add(Link.of(request.getRequestURI()).withSelfRel())
-                            .add(linkProvider.getUpdateLink(id))
-                            .add(linkProvider.getDeleteLink(id))
-                            .add(sessionLinkProvider.getByProgramLink(id)),
-                            HttpStatus.OK);
-                },
-                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                program -> ResponseEntity.ok(EntityModel.of(program)
+                        .add(linkProvider.getSelfLink(request))
+                        .add(linkProvider.getUpdateLink(id))
+                        .add(linkProvider.getDeleteLink(id))
+                        .add(sessionLinkProvider.getByProgramLink(id))),
+                notFound -> ResponseEntity.notFound().build()
         );
     }
 
@@ -138,7 +134,7 @@ public class ProgramController {
                 .add(linkProvider.getSelfLink(httpRequest))
                 .add(linkProvider.getCreateLink());
 
-        return new ResponseEntity<>(programRep, HttpStatus.OK);
+        return ResponseEntity.ok(programRep);
     }
 
     @DeleteMapping(path="{pid}")
@@ -148,17 +144,15 @@ public class ProgramController {
 
         OneOf2<Success, NotFound> deleted = pipeline.send(
                 ProgramDeleteByIdCommand.builder()
-                .id(id)
-                .build());
+                        .id(id)
+                        .build());
 
-        //Does this need any links returned (like getall)?  or keep at no content
         return deleted.match(
-                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
-                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())
+                        .add(linkProvider.getAllLink())),
+                notFound -> ResponseEntity.notFound().build()
         );
 
     }
-
-
 
 }

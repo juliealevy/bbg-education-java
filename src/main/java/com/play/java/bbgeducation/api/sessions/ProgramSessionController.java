@@ -68,7 +68,7 @@ public class ProgramSessionController {
                         .add(programLinkProvider.getAllLink()),
                         HttpStatus.CREATED),
                 notFound -> ResponseEntity.notFound().build(),
-                fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error creating session"))
                         .build()
         );
     }
@@ -99,7 +99,7 @@ public class ProgramSessionController {
                         .add(programSessionLinkProvider.getByProgramLink(programid))
                         ),
                 notFound -> ResponseEntity.notFound().build(),
-                fail -> ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()))
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error updating session"))
                         .build()
         );
     }
@@ -151,17 +151,19 @@ public class ProgramSessionController {
             @PathVariable("pid") Long programid,
             @PathVariable("sid") Long sessionid,
             HttpServletRequest httpRequest
-    ){
+    ) {
         SessionDeleteCommand command = SessionDeleteCommand.builder()
                 .programId(programid)
                 .sessionId(sessionid)
                 .build();
         OneOf2<Success, NotFound> result = pipeline.send(command);
 
-        //Does this need any links returned (like getall)?  or keep at no content
         return result.match(
-                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
-                notFound -> new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())
+                        .add(programSessionLinkProvider.getByProgramLink(programid))
+                        .add(programLinkProvider.getByIdLink(programid, false))
+                ),
+                notFound -> ResponseEntity.notFound().build()
         );
     }
 

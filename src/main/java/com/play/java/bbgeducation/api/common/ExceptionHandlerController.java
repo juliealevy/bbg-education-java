@@ -21,31 +21,41 @@ public class ExceptionHandlerController {
     @ExceptionHandler(AccessDeniedException.class)
     ProblemDetail handleAccessDeniedException(AccessDeniedException ex){
         logger.trace("Access Denied: " +  ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problemDetail.setTitle("Access Denied");
+        return problemDetail;
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     ProblemDetail BadCredentialsException(BadCredentialsException ex){
         logger.trace(ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        ProblemDetail problemDetail =  ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problemDetail.setTitle("Bad Credentials");
+        return problemDetail;
     }
 
     @ExceptionHandler(NoSuchMethodException.class)
     ProblemDetail handleNoSuchMethodException(NoSuchMethodException ex){
         logger.error(ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "No such method: " +  ex.getMessage());
+        ProblemDetail problemDetail =  ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "No such method: " +  ex.getMessage());
+        problemDetail.setTitle("Internal Error");
+        return problemDetail;
     }
 
     @ExceptionHandler(InvalidApiEndpointLinkException.class)
     ProblemDetail handleInvalidApiEndpointLinkException(InvalidApiEndpointLinkException ex){
         logger.error(ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setTitle("Internal Error");
+        return problemDetail;
     }
 
     @ExceptionHandler(RuntimeException.class)
     ProblemDetail handleRuntimeException(RuntimeException ex){
         logger.error("Internal Service Error: " +  ex.getMessage(), ex);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        ProblemDetail problemDetail =  ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setTitle("Internal Error");
+        return problemDetail;
     }
 
 }

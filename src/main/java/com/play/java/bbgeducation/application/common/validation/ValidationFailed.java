@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.application.common.validation;
 
+import an.awesome.pipelinr.repack.com.google.common.base.Strings;
 import br.com.fluentvalidator.context.Error;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -83,9 +84,13 @@ public class ValidationFailed {
     }
 
     public ProblemDetail toProblemDetail(String title){
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, this.getErrorMessage());
-        problemDetail.setTitle(title);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(this.getErrorType().value, this.getErrorMessage());
+        if (!Strings.isNullOrEmpty(title)) {
+            problemDetail.setTitle(title);
+        }
         return problemDetail;
     }
+
+
 }
 

@@ -46,7 +46,6 @@ public class ApiRootController {
                 .add(programSessionApiLinkProvider.getAllLinks())
                 .add(courseApiLinkProvider.getAllLinks());
 
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }

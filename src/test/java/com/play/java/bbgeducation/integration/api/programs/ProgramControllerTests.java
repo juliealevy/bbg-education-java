@@ -268,14 +268,14 @@ public class ProgramControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN})
-    public void ProgramDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
+    public void ProgramDelete_ShouldReturnOK_WhenIdExists() throws Exception {
         ProgramResult savedProgram1 = createAndSaveProgramI();
 
         mockMvc.perform(MockMvcRequestBuilders.delete(getProgramsPath(savedProgram1.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
-                MockMvcResultMatchers.status().isNoContent()
+                MockMvcResultMatchers.status().isOk()
         );
     }
 

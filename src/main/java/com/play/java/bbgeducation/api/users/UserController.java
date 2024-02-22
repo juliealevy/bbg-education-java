@@ -38,10 +38,10 @@ public class UserController {
                 userRequest.getPassword());
 
         return updated.match(
-                success -> new ResponseEntity<>(HttpStatus.OK),
-                notfound -> new ResponseEntity<>(HttpStatus.NOT_FOUND),
-                fail ->  new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
+                success -> ResponseEntity.ok().build(),
+                notfound -> ResponseEntity.notFound().build(),
+                fail ->  ResponseEntity.of(fail.toProblemDetail("Error updating user"))
+                        .build()
         );
     }
 
@@ -56,9 +56,10 @@ public class UserController {
     ) {
         OneOf2<UserResult, NotFound> result = userService.getById(id);
 
+        //TODO:  need links
         return result.match(
-                user -> new ResponseEntity<>(user, HttpStatus.OK),
-                notfound ->  new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                user -> ResponseEntity.ok(user),
+                notfound ->  ResponseEntity.notFound().build()
         );
 
     }
@@ -69,9 +70,10 @@ public class UserController {
     ) {
         OneOf2<Success, NotFound> result = userService.deleteUser(id);
 
+        //TODO:  need links
         return result.match(
-                success -> new ResponseEntity<>(HttpStatus.NO_CONTENT),
-                notfound ->  new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                success -> ResponseEntity.noContent().build(),
+                notfound ->  ResponseEntity.notFound().build()
         );
 
     }

@@ -345,7 +345,7 @@ public class ProgramSessionControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER, Roles.ADMIN})
-    public void Delete_ShouldReturnNoContent_WhenSessionExists() throws Exception {
+    public void Delete_ShouldReturnOk_WhenSessionExists() throws Exception {
         ProgramResult savedProgram = createAndSaveProgram();
         SessionResult savedSession = createAndSaveSession(savedProgram.getId());
 
@@ -354,7 +354,7 @@ public class ProgramSessionControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.delete(urlTemplate)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.status().isNoContent()
+                MockMvcResultMatchers.status().isOk()
         );
     }
 

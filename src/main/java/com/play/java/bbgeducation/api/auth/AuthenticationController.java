@@ -50,9 +50,8 @@ public class AuthenticationController {
                                 .add(authLinkProvider.getSelfLink(httpRequest))
                                 .add(authLinkProvider.getLoginLink()),
                         HttpStatus.CREATED),
-                fail -> new ResponseEntity<>(
-                        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, fail.getErrorMessage()),
-                        HttpStatus.CONFLICT)
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error registering user"))
+                        .build()
         );
     }
 
@@ -65,15 +64,12 @@ public class AuthenticationController {
                 authenticationService.authenticate(request.getEmail(), request.getPassword());
 
         return loginResult.match(
-                login -> {
-                    return new ResponseEntity<>(
-                            EntityModel.of(login)
-                                    .add(authLinkProvider.getSelfLink(httpRequest))
-                                    .add(authLinkProvider.getRefreshLink())
-                            , HttpStatus.OK);
-                },
-                fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, fail.getErrorMessage()),
-                        HttpStatus.UNAUTHORIZED)
+                login -> ResponseEntity.ok(EntityModel.of(login)
+                                .add(authLinkProvider.getSelfLink(httpRequest))
+                                .add(authLinkProvider.getRefreshLink())
+                ),
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error authenticating"))
+                        .build()
         );
     }
 
@@ -86,8 +82,8 @@ public class AuthenticationController {
                 .match(
                         result -> ResponseEntity.ok(EntityModel.of(result)
                                 .add(authLinkProvider.getSelfLink(httpRequest))),
-                        fail -> new ResponseEntity<>(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, fail.getErrorMessage()),
-                                HttpStatus.UNAUTHORIZED)
+                        fail -> ResponseEntity.of(fail.toProblemDetail("Error refreshing token"))
+                                .build()
                 );
 
     }
