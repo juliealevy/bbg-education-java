@@ -44,7 +44,7 @@ Some sample code in Java/Spring Boot to show the following:
 - Added basic CRUD for Session (child of Program)  
   -   decided to go with Command Pattern
 - Added actuator for health check, metrics, etc.
-- Started CRUD for Course - in progress
+- implemented CRUD for Course using commands
     
 
 ## Coming soon
@@ -170,6 +170,17 @@ https://localhost:8080/api
                 "isPublic": "boolean",
                 "isOnline": "boolean"
             }
+        },
+        "course:update": {
+            "href": "/api/courses/{cid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            },
+            "templated": true
         },
         "course:delete": {
             "href": "/api/courses/{cid}",
