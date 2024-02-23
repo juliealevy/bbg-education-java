@@ -31,13 +31,11 @@ Some sample code in Java/Spring Boot to show the following:
   -   added refresh token
 - Added more entities and attached a schema diagram  
 - HAL/HATEOS responses 
-  - trying out Spring Boot Hateos EntityModel and EntityCollection
-    - auth and program done
+  - trying out Spring Boot Hateos EntityModel and EntityCollection    
   - building discoverable links with templated hrefs using application context request method handlers
-    - auth and program done (response json below)
+  - see api json below    
 - Added command-based validation in a pipeline middleware.
-  -   implemented for CreateProgram
-  -   implemented for ProgramUpdate  
+  -   implemented for create and update command handlers
 - Added logging
   - Initial logging config, a few examples.  (in progress) 
   - Added request/response logging with sensitive data scrubbing
@@ -53,8 +51,6 @@ Some sample code in Java/Spring Boot to show the following:
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
 - Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
-- more error handling
-  - better problem response building/handling
 - Focus on more workflow oriented implementation for rest of entities/features/workflows  
   
 ## Discoverable API/REST calls
@@ -195,6 +191,30 @@ https://localhost:8080/api
         "course:get-all": {
             "href": "/api/courses",
             "httpMethod": "GET"
+        },
+        "user:update": {
+            "href": "/api/users/{id}",
+            "httpMethod": "PUT",
+            "body": {
+                "firstName": "string",
+                "lastName": "string",
+                "email": "string"
+            },
+            "templated": true
+        },
+        "user:get-all": {
+            "href": "/api/users",
+            "httpMethod": "GET"
+        },
+        "user:get-by-id": {
+            "href": "/api/users/{id}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "user:delete": {
+            "href": "/api/users/{id}",
+            "httpMethod": "DELETE",
+            "templated": true
         }
     }
 }
