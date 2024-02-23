@@ -131,6 +131,30 @@
         "course:get-all": {
             "href": "/api/courses",
             "httpMethod": "GET"
+        },
+        "user:update": {
+            "href": "/api/users/{id}",
+            "httpMethod": "PUT",
+            "body": {
+                "firstName": "string",
+                "lastName": "string",
+                "email": "string"
+            },
+            "templated": true
+        },
+        "user:get-all": {
+            "href": "/api/users",
+            "httpMethod": "GET"
+        },
+        "user:get-by-id": {
+            "href": "/api/users/{id}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "user:delete": {
+            "href": "/api/users/{id}",
+            "httpMethod": "DELETE",
+            "templated": true
         }
     }
 }
