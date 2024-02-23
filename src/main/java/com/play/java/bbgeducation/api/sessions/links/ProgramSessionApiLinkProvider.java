@@ -23,59 +23,29 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
 
     @SneakyThrows
     public Link getCreateApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.CREATE.value, getController(),
-                getController().getMethod("createSession", Long.class, SessionRequest.class, HttpServletRequest.class),
-                ApiSessionRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.CREATE.value);
-        }
-        return link.get();
+        return getApiLink(SessionLinkRelations.CREATE.value, ApiSessionRequest.getApiBody(),
+                "createSession", Long.class, SessionRequest.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getByIdApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.GET_BY_ID.value, getController(),
-                getController().getMethod("getById", Long.class, Long.class,HttpServletRequest.class));
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.GET_BY_ID.value);
-        }
-        return link.get();
+        return getApiLink(SessionLinkRelations.GET_BY_ID.value, "getById", Long.class, Long.class,HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getByProgramApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.GET_BY_PROGRAM.value, getController(),
-                getController().getMethod("getByProgram",Long.class, HttpServletRequest.class));
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.GET_BY_PROGRAM.value);
-        }
-        return link.get();
+        return getApiLink(SessionLinkRelations.GET_BY_PROGRAM.value, "getByProgram",Long.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getDeleteApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.DELETE.value, getController(),
-                getController().getMethod("deleteSession",Long.class, Long.class, HttpServletRequest.class));
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.DELETE.value);
-        }
-        return link.get();
+        return getApiLink(SessionLinkRelations.DELETE.value, "deleteSession",Long.class, Long.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getUpdateApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(SessionLinkRelations.UPDATE.value, getController(),
-                getController().getMethod("updateSession", Long.class, Long.class, SessionRequest.class, HttpServletRequest.class),
-                ApiSessionRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(SessionLinkRelations.UPDATE.value);
-        }
-        return link.get();
+        return getApiLink(SessionLinkRelations.UPDATE.value, ApiSessionRequest.getApiBody(),
+                "updateSession", Long.class, Long.class, SessionRequest.class, HttpServletRequest.class);
     }
 
     @Override

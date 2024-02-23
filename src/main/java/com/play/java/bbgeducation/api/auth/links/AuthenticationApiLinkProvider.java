@@ -26,33 +26,19 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
 
     @SneakyThrows
     public Link getLoginApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.LOGIN.value, getController(),
-                getController().getMethod("authenticate", LoginRequest.class, HttpServletRequest.class),
-                ApiLoginRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(AuthLinkRelations.LOGIN.value);
-        }
-        return link.get();
+        return getApiLink(AuthLinkRelations.LOGIN.value,ApiLoginRequest.getApiBody(),
+                "authenticate", LoginRequest.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getRefreshApiLink() {
-        return apiLinkService.get(AuthLinkRelations.REFRESH.value, getController(),
-                        getController().getMethod("refreshToken", HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(AuthLinkRelations.REFRESH.value));
+        return getApiLink(AuthLinkRelations.REFRESH.value,"refreshToken", HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getRegisterApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(AuthLinkRelations.REGISTER.value, getController(),
-                getController().getMethod("registerUser", RegisterRequest.class, HttpServletRequest.class),
-                ApiRegisterRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(AuthLinkRelations.REGISTER.value);
-        }
-        return link.get();
+        return getApiLink(AuthLinkRelations.REGISTER.value, ApiRegisterRequest.getApiBody(),
+                "registerUser", RegisterRequest.class, HttpServletRequest.class);
     }
 
     public List<Link> getAllLinks(){

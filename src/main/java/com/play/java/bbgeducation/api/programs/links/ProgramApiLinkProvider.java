@@ -25,52 +25,31 @@ public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramCon
 
     @SneakyThrows
     public Link getCreateApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(ProgramLinkRelations.CREATE.value, getController(),
-                getController().getMethod("createProgram", ProgramRequest.class, HttpServletRequest.class),
-                ApiProgramRequest.getApiBody());
-
-        if (link.isEmpty()){
-            throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
-        }
-        return link.get();
+        return getApiLink(ProgramLinkRelations.CREATE.value, ApiProgramRequest.getApiBody(),
+                "createProgram", ProgramRequest.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getUpdateApiLink() {
-        Optional<ApiLink> link = apiLinkService.get(ProgramLinkRelations.UPDATE.value, getController(),
-                getController().getMethod("updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class),
-                ApiProgramRequest.getApiBody());
-
-        if (link.isEmpty()) {
-            throw new InvalidApiEndpointLinkException(ProgramLinkRelations.CREATE.value);
-        }
-        return link.get();
+        return getApiLink(ProgramLinkRelations.UPDATE.value, ApiProgramRequest.getApiBody(),
+                "updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class);
     }
 
     @SneakyThrows
     public Link getDeleteApiLink() {
-        return apiLinkService.get(ProgramLinkRelations.DELETE.value, getController(),
-                        getController().getMethod("deleteProgramById", Long.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.DELETE.value));
-
+        return getApiLink(ProgramLinkRelations.DELETE.value, "deleteProgramById", Long.class, HttpServletRequest.class);
     }
 
 
     @SneakyThrows
     public Link getByIdApiLink() {
-        return apiLinkService.get(ProgramLinkRelations.GET_BY_ID.value, getController(),
-                        getController().getMethod("getById", Long.class, HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.GET_BY_ID.value));
-
+        return getApiLink(ProgramLinkRelations.GET_BY_ID.value, "getById", Long.class, HttpServletRequest.class);
     }
 
 
     @SneakyThrows
     public Link getAllApiLink() {
-        return apiLinkService.get(ProgramLinkRelations.GET_ALL.value, getController(),
-                        getController().getMethod("getAll",HttpServletRequest.class))
-                .orElseThrow(() -> new InvalidApiEndpointLinkException(ProgramLinkRelations.GET_ALL.value));
-
+        return getApiLink(ProgramLinkRelations.GET_ALL.value, "getAll",HttpServletRequest.class);
     }
 
 
