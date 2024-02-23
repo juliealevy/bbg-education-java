@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.application.auth;
 import an.awesome.pipelinr.repack.com.google.common.base.Strings;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
+import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
@@ -13,6 +14,7 @@ import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,7 +65,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .isAdmin(isAdmin)
                 .build();
 
-        UserEntity saved = userRepository.save(userEntity);
+        try {
+            UserEntity saved = userRepository.save(userEntity);
+        }catch(TransactionSystemException cvex){
+            logger.error("Error updating user", cvex);
+            Throwable mostSpecificCause = cvex.getMostSpecificCause();
+            return OneOf2.fromOption2(ValidationFailed.Conflict("", mostSpecificCause.getMessage()));
+        }
 
         //for now, not returning any tokens.  forcing the login call
         return OneOf2.fromOption1(new Success());

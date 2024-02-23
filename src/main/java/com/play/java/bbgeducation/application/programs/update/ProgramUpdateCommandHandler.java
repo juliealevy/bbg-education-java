@@ -22,7 +22,7 @@ public class ProgramUpdateCommandHandler implements Command.Handler<ProgramUpdat
         this.programRepository = programRepository;
     }
 
-    @SneakyThrows
+
     @Override
     public OneOf3<Success, NotFound, ValidationFailed> handle(ProgramUpdateCommand command) {
 

@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity1;
@@ -48,7 +49,6 @@ public class UserControllerTests {
                 .firstName(created.getFirstName())
                 .lastName(created.getLastName() + " updated")
                 .email(created.getEmail())
-                .password(created.getPassword())
                 .build();
 
 
@@ -81,6 +81,7 @@ public class UserControllerTests {
 
         underTest.perform(MockMvcRequestBuilders.get(getPath(created.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").value(created.getId())
         ).andExpect(
@@ -122,34 +123,37 @@ public class UserControllerTests {
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].id").value(created.getId())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].id").value(created.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].firstName").value(created.getFirstName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].firstName").value(created.getFirstName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].lastName").value(created.getLastName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(created.getLastName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].email").value(created.getEmail())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(created.getEmail())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].id").value(created2.getId())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].id").value(created2.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].firstName").value(created2.getFirstName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].firstName").value(created2.getFirstName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].lastName").value(created2.getLastName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].lastName").value(created2.getLastName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].email").value(created2.getEmail())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].email").value(created2.getEmail())
         );
     }
 
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN})
-    public void UserDelete_ShouldReturnNoContent_WhenIdExists() throws Exception {
+    public void UserDelete_ShouldReturnOkWithLinks_WhenIdExists() throws Exception {
         UserEntity created = createAndSaveUser1();
 
         underTest.perform(MockMvcRequestBuilders.delete(getPath(created.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.status().isNoContent()
+                MockMvcResultMatchers.status().isOk()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$._links").exists()
         );
     }
 

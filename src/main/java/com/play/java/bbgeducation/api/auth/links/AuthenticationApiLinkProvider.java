@@ -24,18 +24,15 @@ public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<Aut
         super(apiLinkService, AuthenticationController.class);
     }
 
-    @SneakyThrows
     public Link getLoginApiLink() {
         return getApiLink(AuthLinkRelations.LOGIN.value,ApiLoginRequest.getApiBody(),
                 "authenticate", LoginRequest.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getRefreshApiLink() {
         return getApiLink(AuthLinkRelations.REFRESH.value,"refreshToken", HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getRegisterApiLink() {
         return getApiLink(AuthLinkRelations.REGISTER.value, ApiRegisterRequest.getApiBody(),
                 "registerUser", RegisterRequest.class, HttpServletRequest.class);

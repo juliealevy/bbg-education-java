@@ -9,7 +9,11 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +26,15 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final Mapper<UserEntity, UserResult> userMapper;
 
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     public UserServiceImpl(UserRepository userRepository, Mapper<UserEntity, UserResult> userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
     @Override
-    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email, String password) {
+    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email) {
 
         Optional<UserEntity> found = userRepository.findById(id);
         if (found.isEmpty()) {
@@ -39,15 +45,19 @@ public class UserServiceImpl implements UserService{
             return OneOf3.fromOption3(new EmailExistsValidationFailed());
         }
 
-        userRepository.save(UserEntity.builder()
-                .id(id)
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .password(password)
-                .isAdmin(found.get().getIsAdmin())   //no updating this via this call
-                .build());
-
+        try {
+            userRepository.save(UserEntity.builder()
+                    .id(id)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .isAdmin(found.get().getIsAdmin())   //no updating this via this call
+                    .build());
+        }catch(TransactionSystemException cvex){
+            logger.error("Error updating user", cvex);
+            Throwable mostSpecificCause = cvex.getMostSpecificCause();
+            return OneOf3.fromOption3(ValidationFailed.Conflict("", mostSpecificCause.getMessage()));
+        }
         return OneOf3.fromOption1(new Success());
     }
 

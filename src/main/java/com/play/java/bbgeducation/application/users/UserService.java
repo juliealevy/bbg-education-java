@@ -9,7 +9,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import java.util.List;
 
 public interface UserService {
-    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email, String password);
+    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email);
 
     OneOf2<Success, NotFound> deleteUser(Long id);
 

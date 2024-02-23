@@ -51,7 +51,7 @@ public class UserServiceTests {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail(), userEntity.getPassword());
+                userEntity.getEmail());
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
@@ -66,7 +66,7 @@ public class UserServiceTests {
         when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail() + "updated", userEntity.getPassword());
+                userEntity.getEmail() + "updated");
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
@@ -78,7 +78,7 @@ public class UserServiceTests {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(100L, userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail(), userRequest.getPassword());
+                userRequest.getEmail());
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption2()).isTrue();
@@ -93,7 +93,7 @@ public class UserServiceTests {
         when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail() + "updated", userEntity.getPassword());
+                userEntity.getEmail() + "updated");
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption3()).isTrue();

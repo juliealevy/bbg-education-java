@@ -7,7 +7,7 @@ import org.springframework.hateoas.Link;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class ApiLinkProviderBase<T extends Class<?>> {
+public abstract class ApiLinkProviderBase<T extends Class<?>> implements ApiLinkProvider {
 
     private T controller;
     protected final ApiLinkService apiLinkService;

@@ -30,7 +30,6 @@ public class DataUtils {
                 .firstName("Julie")
                 .lastName("Levy")
                 .email("julie@testmail.com")
-                .password("123456")
                 .build();
     }
 

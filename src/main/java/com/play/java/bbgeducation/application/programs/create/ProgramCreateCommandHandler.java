@@ -20,7 +20,6 @@ public class ProgramCreateCommandHandler
         this.programRepository = programRepository;
     }
 
-    @SneakyThrows
     @Override
     public OneOf2<ProgramResult, ValidationFailed> handle(ProgramCreateCommand createProgramCommand) {
 

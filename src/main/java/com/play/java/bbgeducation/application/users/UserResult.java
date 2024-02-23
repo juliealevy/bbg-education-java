@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.server.core.Relation;
 
 @Data
 @AllArgsConstructor
 @Builder
+@Relation(collectionRelation="users")
 public class UserResult {
 
     public UserResult(){

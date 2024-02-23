@@ -1,15 +1,11 @@
 package com.play.java.bbgeducation.api.root;
 
-import com.play.java.bbgeducation.api.auth.links.AuthenticationApiLinkProvider;
-import com.play.java.bbgeducation.api.courses.links.CourseApiLinkProvider;
-import com.play.java.bbgeducation.api.programs.links.ProgramApiLinkProvider;
-import com.play.java.bbgeducation.api.sessions.ProgramSessionController;
-import com.play.java.bbgeducation.api.sessions.links.ProgramSessionApiLinkProvider;
+import com.play.java.bbgeducation.api.links.ApiLinkProvider;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,20 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api")
 public class ApiRootController {
 
-    private final ProgramApiLinkProvider programApiLinkProvider;
-    private final AuthenticationApiLinkProvider authApiLinkProvider;
-    private final ProgramSessionApiLinkProvider programSessionApiLinkProvider;
-    private final CourseApiLinkProvider courseApiLinkProvider;
+    @Resource
+    private ApiLinkProvider programApiLinkProvider;
+    @Resource
+    private ApiLinkProvider authenticationApiLinkProvider;
+    @Resource
+    private ApiLinkProvider programSessionApiLinkProvider;
+    @Resource
+    private ApiLinkProvider courseApiLinkProvider;
+    @Resource
+    private ApiLinkProvider userApiLinkProvider;
 
-    public ApiRootController(ProgramApiLinkProvider programApiLinkProvider, AuthenticationApiLinkProvider authApiLinkProvider, ProgramSessionApiLinkProvider programSessionApiLinkProvider, CourseApiLinkProvider courseApiLinkProvider) {
-        this.programApiLinkProvider = programApiLinkProvider;
-        this.authApiLinkProvider = authApiLinkProvider;
-        this.programSessionApiLinkProvider = programSessionApiLinkProvider;
-        this.courseApiLinkProvider = courseApiLinkProvider;
-    }
-
-
-    @SneakyThrows
     @GetMapping(path = "")
     public ResponseEntity getLinks(
             HttpServletRequest httpRequest
@@ -41,10 +34,11 @@ public class ApiRootController {
         EntityModel<ApiDataResponse> response = EntityModel.of(
                         ApiDataResponse.builder().version("1.0.0").build())
                 .add(Link.of(httpRequest.getRequestURI()).withSelfRel())
-                .add(authApiLinkProvider.getAllLinks())
+                .add(authenticationApiLinkProvider.getAllLinks())
                 .add(programApiLinkProvider.getAllLinks())
                 .add(programSessionApiLinkProvider.getAllLinks())
-                .add(courseApiLinkProvider.getAllLinks());
+                .add(courseApiLinkProvider.getAllLinks())
+                .add(userApiLinkProvider.getAllLinks());
 
         return ResponseEntity.ok(response);
     }

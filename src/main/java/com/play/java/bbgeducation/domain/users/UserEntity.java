@@ -34,7 +34,7 @@ public class UserEntity implements UserDetails {
     private Long id;
 
     @Column(unique = true)
-    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
+    @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}")
     private String email;
 
     private String password;

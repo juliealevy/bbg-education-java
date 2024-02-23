@@ -17,32 +17,27 @@ import java.util.Optional;
 
 @Component
 public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<ProgramSessionController>> {
-    protected ProgramSessionApiLinkProvider(ApiLinkService apiLinkService) {
+    public ProgramSessionApiLinkProvider(ApiLinkService apiLinkService) {
         super(apiLinkService, ProgramSessionController.class);
     }
 
-    @SneakyThrows
     public Link getCreateApiLink() {
         return getApiLink(SessionLinkRelations.CREATE.value, ApiSessionRequest.getApiBody(),
                 "createSession", Long.class, SessionRequest.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getByIdApiLink() {
         return getApiLink(SessionLinkRelations.GET_BY_ID.value, "getById", Long.class, Long.class,HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getByProgramApiLink() {
         return getApiLink(SessionLinkRelations.GET_BY_PROGRAM.value, "getByProgram",Long.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getDeleteApiLink() {
         return getApiLink(SessionLinkRelations.DELETE.value, "deleteSession",Long.class, Long.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getUpdateApiLink() {
         return getApiLink(SessionLinkRelations.UPDATE.value, ApiSessionRequest.getApiBody(),
                 "updateSession", Long.class, Long.class, SessionRequest.class, HttpServletRequest.class);

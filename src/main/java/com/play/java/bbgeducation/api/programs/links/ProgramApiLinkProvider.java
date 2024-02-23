@@ -23,31 +23,26 @@ public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramCon
         super(apiLinkService, ProgramController.class);
     }
 
-    @SneakyThrows
     public Link getCreateApiLink() {
         return getApiLink(ProgramLinkRelations.CREATE.value, ApiProgramRequest.getApiBody(),
                 "createProgram", ProgramRequest.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getUpdateApiLink() {
         return getApiLink(ProgramLinkRelations.UPDATE.value, ApiProgramRequest.getApiBody(),
                 "updateProgram", Long.class, ProgramRequest.class, HttpServletRequest.class);
     }
 
-    @SneakyThrows
     public Link getDeleteApiLink() {
         return getApiLink(ProgramLinkRelations.DELETE.value, "deleteProgramById", Long.class, HttpServletRequest.class);
     }
 
 
-    @SneakyThrows
     public Link getByIdApiLink() {
         return getApiLink(ProgramLinkRelations.GET_BY_ID.value, "getById", Long.class, HttpServletRequest.class);
     }
 
 
-    @SneakyThrows
     public Link getAllApiLink() {
         return getApiLink(ProgramLinkRelations.GET_ALL.value, "getAll",HttpServletRequest.class);
     }
