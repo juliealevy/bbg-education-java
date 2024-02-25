@@ -4,7 +4,7 @@ This is a practice java app to track the course make-up and student progress in 
 
 This is very much an in progress project - in current development.
 
-Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, lombok, fluent-validator
+Tools:  Docker, PostgreSQL for dev, H2 for testing, Spring Boot, JPA, pipelinr, lombok, fluent-validator, redis for caching
 
 Documentation is in documents folder:  https://github.com/juliealevy/bbg-education-java/tree/main/src/main/documents
 
