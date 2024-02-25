@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.unit.application.sessions.delete;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
 import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteCommand;
 import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteCommandHandler;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -26,10 +28,12 @@ import static org.mockito.Mockito.when;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SessionDeleteCommandHandlerTests {
     private final SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
+    private final SessionCacheManager cacheManager = Mockito.mock(SessionCacheManager.class);
     private SessionDeleteCommandHandler underTest;
 
     public SessionDeleteCommandHandlerTests(){
-        underTest = new SessionDeleteCommandHandler(sessionRepository);
+        underTest = new SessionDeleteCommandHandler(
+                sessionRepository, cacheManager);
     }
 
     @Test
@@ -40,6 +44,7 @@ public class SessionDeleteCommandHandlerTests {
         when(sessionRepository.getByProgramIdAndId(command.getProgramId(), command.getSessionId()))
                 .thenReturn(Optional.of(session));
         doNothing().when(sessionRepository).delete(session);
+        doNothing().when(cacheManager).removeSession(any(Long.class), any(Long.class));
 
         OneOf2<Success, NotFound> result = underTest.handle(command);
 

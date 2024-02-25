@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name="session_course", uniqueConstraints = {@UniqueConstraint(name = "session_id_course_id_unique", columnNames = {"session_id", "course_id"})})
-public class SessionCourseEntity {
+public class SessionCourseEntity implements Serializable {
     @Id
     @SequenceGenerator(name = "session_course_id_seq", sequenceName = "SESSION_COURSE_ID_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "session_course_id_seq")

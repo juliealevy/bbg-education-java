@@ -6,6 +6,7 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.validation.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
@@ -19,11 +20,13 @@ import java.util.Optional;
 public class SessionCreateCommandHandler implements Command.Handler<SessionCreateCommand, OneOf3<SessionResult, NotFound, ValidationFailed>>{
 
     private final SessionRepository sessionRepository;
+    private final SessionCacheManager sessionCacheManager;
     private final ProgramRepository programRepository;
     private final Mapper<SessionEntity, SessionResult> mapper;
 
-    public SessionCreateCommandHandler(SessionRepository sessionRepository, ProgramRepository programRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public SessionCreateCommandHandler(SessionRepository sessionRepository, SessionCacheManager sessionCacheManager, ProgramRepository programRepository, Mapper<SessionEntity, SessionResult> mapper) {
         this.sessionRepository = sessionRepository;
+        this.sessionCacheManager = sessionCacheManager;
         this.programRepository = programRepository;
         this.mapper = mapper;
     }
@@ -40,6 +43,7 @@ public class SessionCreateCommandHandler implements Command.Handler<SessionCreat
         if (sessionRepository.existsByName(command.getName())){
             return OneOf3.fromOption3(new NameExistsValidationFailed("session"));
         }
+
         //do start and end date ranges need to not overlap??  might be configuration...
 
         SessionEntity session = SessionEntity.builder()
@@ -52,6 +56,10 @@ public class SessionCreateCommandHandler implements Command.Handler<SessionCreat
                         .build();
 
         SessionEntity saved = sessionRepository.save(session);
-        return OneOf3.fromOption1(mapper.mapTo(saved));
+        SessionResult sessionResult = mapper.mapTo(saved);
+        sessionCacheManager.cacheSession(sessionResult);
+
+
+        return OneOf3.fromOption1(sessionResult);
     }
 }

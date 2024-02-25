@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Data
@@ -17,7 +18,7 @@ import java.time.OffsetDateTime;
 @Builder
 @Entity
 @Table(name="class")
-public class ClassEntity {
+public class ClassEntity implements Serializable {
 
     @Id
     @SequenceGenerator(name = "class_id_seq", sequenceName = "CLASS_ID_SEQ", allocationSize = 1)

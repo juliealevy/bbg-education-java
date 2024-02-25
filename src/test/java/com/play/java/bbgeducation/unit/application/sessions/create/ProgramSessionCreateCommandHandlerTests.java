@@ -1,11 +1,13 @@
 package com.play.java.bbgeducation.unit.application.sessions.create;
 
+import com.play.java.bbgeducation.application.common.caching.RedisUtil;
+import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommandHandler;
-import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
@@ -26,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -35,16 +38,18 @@ public class ProgramSessionCreateCommandHandlerTests {
     private SessionCreateCommandHandler underTest;
     private ProgramRepository programRepository = Mockito.mock(ProgramRepository.class);
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
-    private final SessionResultMapper mapper;
+    private SessionCacheManager sessionCacheManager = Mockito.mock(SessionCacheManager.class);
+    private final Mapper<SessionEntity, SessionResult> mapper;
 
     @Autowired
-    public ProgramSessionCreateCommandHandlerTests(SessionResultMapper mapper) {
+    public ProgramSessionCreateCommandHandlerTests(Mapper<SessionEntity, SessionResult> mapper) {
         this.mapper = mapper;
     }
 
     @BeforeEach
     public void init(){
-        underTest = new SessionCreateCommandHandler(sessionRepository, programRepository, mapper);
+        underTest = new SessionCreateCommandHandler(
+                sessionRepository, sessionCacheManager, programRepository, mapper);
     }
 
     @Test
@@ -56,6 +61,7 @@ public class ProgramSessionCreateCommandHandlerTests {
         when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(program));
         when(sessionRepository.existsByName(any(String.class))).thenReturn(false);
         when(sessionRepository.save(any(SessionEntity.class))).then(returnsFirstArg());
+        doNothing().when(sessionCacheManager).cacheSession(any(SessionResult.class));
 
         OneOf3<SessionResult, NotFound, ValidationFailed> result = underTest.handle(cmd);
 

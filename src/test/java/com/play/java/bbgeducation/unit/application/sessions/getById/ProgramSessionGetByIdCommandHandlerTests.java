@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.unit.application.sessions.getById;
 
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
 import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommandHandler;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.when;
 public class ProgramSessionGetByIdCommandHandlerTests {
     private ProgramSessionGetByIdCommandHandler underTest;
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
+
+    private SessionCacheManager sessionCacheManager = Mockito.mock(SessionCacheManager.class);
     private final SessionResultMapper mapper;
 
     @Autowired
@@ -39,7 +42,8 @@ public class ProgramSessionGetByIdCommandHandlerTests {
 
     @BeforeEach
     public void init(){
-        underTest = new ProgramSessionGetByIdCommandHandler(sessionRepository, mapper);
+        underTest = new ProgramSessionGetByIdCommandHandler(
+                sessionCacheManager, sessionRepository, mapper);
     }
 
     @Test
@@ -47,6 +51,8 @@ public class ProgramSessionGetByIdCommandHandlerTests {
         ProgramSessionGetByIdCommand cmd = Instancio.create(ProgramSessionGetByIdCommand.class);
         SessionEntity session = Instancio.create(SessionEntity.class);
 
+        when(sessionCacheManager.getSession(cmd.getProgramId(), cmd.getSessionId()))
+                .thenReturn(Optional.empty());
         when(sessionRepository.getByProgramIdAndId(cmd.getProgramId(), cmd.getSessionId()))
                 .thenReturn(Optional.of(session));
 
@@ -67,6 +73,8 @@ public class ProgramSessionGetByIdCommandHandlerTests {
         ProgramSessionGetByIdCommand cmd = Instancio.create(ProgramSessionGetByIdCommand.class);
         SessionEntity session = Instancio.create(SessionEntity.class);
 
+        when(sessionCacheManager.getSession(cmd.getProgramId(), cmd.getSessionId()))
+                .thenReturn(Optional.empty());
         when(sessionRepository.getByProgramIdAndId(cmd.getProgramId(), cmd.getSessionId()))
                 .thenReturn(Optional.empty());
 

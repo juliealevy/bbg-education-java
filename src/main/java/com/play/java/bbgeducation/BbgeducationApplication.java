@@ -12,4 +12,5 @@ public class BbgeducationApplication {
 		SpringApplication.run(BbgeducationApplication.class, args);
 	}
 
+
 }

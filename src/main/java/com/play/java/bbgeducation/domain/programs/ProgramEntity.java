@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name="program")
-public class ProgramEntity {
+public class ProgramEntity implements Serializable {
 
     @Id
     @SequenceGenerator(name = "program_id_seq", sequenceName = "PROGRAM_ID_SEQ", allocationSize = 1)

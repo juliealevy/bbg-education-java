@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -17,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @Builder
 @Relation(collectionRelation="sessions")
-public class SessionResult {
+public class SessionResult implements Serializable {
     private static String DATE_PATTERN = "MM-dd-yyyy";
     private static DateTimeFormatter date_formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
@@ -25,9 +26,9 @@ public class SessionResult {
     private String name;
     private String description;
 
-    @JsonFormat(pattern="MM-dd-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="MM-dd-yyyy")
     private LocalDate startDate;
-    @JsonFormat(pattern="MM-dd-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="MM-dd-yyyy")
     private LocalDate endDate;
 
     private int practicumHours;

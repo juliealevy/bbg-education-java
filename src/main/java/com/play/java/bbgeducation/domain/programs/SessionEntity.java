@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.cglib.core.Local;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -26,7 +27,7 @@ import static jakarta.persistence.CascadeType.ALL;
 @Builder
 @Entity
 @Table(name="session")
-public class SessionEntity {
+public class SessionEntity implements Serializable {
     @Id
     @SequenceGenerator(name = "session_id_seq", sequenceName = "SESSION_ID_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "session_id_seq")

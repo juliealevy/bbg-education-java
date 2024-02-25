@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Data
@@ -16,7 +17,7 @@ import java.time.OffsetDateTime;
 @Builder
 @Entity
 @Table(name="course")
-public class CourseEntity {
+public class CourseEntity implements Serializable {
 
     public CourseEntity(){
         isPublic = true;

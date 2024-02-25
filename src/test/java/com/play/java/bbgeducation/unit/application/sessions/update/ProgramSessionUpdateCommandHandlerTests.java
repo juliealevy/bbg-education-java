@@ -1,9 +1,12 @@
 package com.play.java.bbgeducation.unit.application.sessions.update;
 
+import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.update.SessionUpdateCommand;
 import com.play.java.bbgeducation.application.sessions.update.SessionUpdateCommandHandler;
@@ -24,6 +27,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -32,10 +36,13 @@ import static org.mockito.Mockito.when;
 public class ProgramSessionUpdateCommandHandlerTests {
     private SessionUpdateCommandHandler underTest;
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
+    private SessionCacheManager cacheManager = Mockito.mock(SessionCacheManager.class);
+    private final Mapper<SessionEntity, SessionResult> mapper;
 
     @Autowired
-    public ProgramSessionUpdateCommandHandlerTests(SessionResultMapper mapper) {
-        underTest = new SessionUpdateCommandHandler(sessionRepository);
+    public ProgramSessionUpdateCommandHandlerTests(Mapper<SessionEntity, SessionResult> mapper) {
+        this.mapper = mapper;
+        underTest = new SessionUpdateCommandHandler(sessionRepository,cacheManager, mapper);
     }
 
     @Test
@@ -59,6 +66,7 @@ public class ProgramSessionUpdateCommandHandlerTests {
                 .thenReturn(Optional.of(session));
         when(sessionRepository.existsByName(any(String.class))).thenReturn(false);
         when(sessionRepository.save(any(SessionEntity.class))).then(returnsFirstArg());
+        doNothing().when(cacheManager).cacheSession(any(SessionResult.class));
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.handle(command);
 
