@@ -43,13 +43,13 @@ Some sample code in Java/Spring Boot to show the following:
   -   decided to go with Command Pattern
 - Added actuator for health check, metrics, etc.
 - implemented CRUD for Course using commands
+- added simple value caching fo Session in redis hosted in docker
     
 
 ## Coming soon
 - add some more workflow oriented calls for Session once Courses implemented
 - validation for services based entities (User/Auth)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
-- Caching of some data (maybe use Redis in Docker)
 - idempotent posts - caching (in memory vs distr (redus?))
 - Focus on more workflow oriented implementation for rest of entities/features/workflows  
   
