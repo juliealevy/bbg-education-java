@@ -91,6 +91,18 @@ public class SessionCacheManagerTests {
     }
 
     @Test
+    void removeSession_ShouldNotThrow_WhenKeyNotExists(){
+        Long programId = 100L;
+        Long sessionId = 100L;
+        Optional<SessionResult> fetchBeforeRemove = getCacheManager.getSession(programId, sessionId);
+        removeCacheManager.removeSession(programId, sessionId);
+        Optional<SessionResult> fetchAfterRemove = getCacheManager.getSession(programId, sessionId);
+
+        assertThat(fetchBeforeRemove).isEmpty();
+        assertThat(fetchAfterRemove).isEmpty();
+    }
+
+    @Test
     void removeAll_ShouldDeleteAllSessions(){
         SessionResult sessionResult = Instancio.create(SessionResult.class);
         cacheManager.cacheSession(sessionResult);
