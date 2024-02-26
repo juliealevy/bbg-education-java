@@ -8,10 +8,5 @@ import lombok.SneakyThrows;
 import java.util.Optional;
 
 public interface SessionCacheManager {
-
-    Optional<SessionResult> getSession(Long programId, Long sessionId);
     void cacheSession(SessionResult session);
-
-    void removeSession(Long programId, Long sessionId);
-
 }

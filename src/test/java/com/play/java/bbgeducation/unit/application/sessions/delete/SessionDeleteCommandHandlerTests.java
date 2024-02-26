@@ -4,6 +4,7 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.caching.SessionRemoveCacheManager;
 import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteCommand;
 import com.play.java.bbgeducation.application.sessions.delete.SessionDeleteCommandHandler;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SessionDeleteCommandHandlerTests {
     private final SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
-    private final SessionCacheManager cacheManager = Mockito.mock(SessionCacheManager.class);
+    private final SessionRemoveCacheManager cacheManager = Mockito.mock(SessionRemoveCacheManager.class);
     private SessionDeleteCommandHandler underTest;
 
     public SessionDeleteCommandHandlerTests(){

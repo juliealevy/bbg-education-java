@@ -7,10 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.play.java.bbgeducation.api.sessions.SessionRequest;
 import com.play.java.bbgeducation.application.programs.create.ProgramCreateCommand;
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
+import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.caching.SessionRemoveCacheManager;
 import com.play.java.bbgeducation.application.sessions.create.SessionCreateCommand;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,15 +44,17 @@ public class ProgramSessionControllerTests {
     private final WebApplicationContext webApplicationContext;
     private final ObjectMapper objectMapper;
     private final Pipeline pipeline;
+    private final SessionRemoveCacheManager sessionCacheManager;
 
     private static final String PROGRAM_SESSIONS_PATH = "/api/programs/%s/sessions";
     private static final String PROGRAM_SESSIONS_ID_PATH = "/api/programs/%s/sessions/%s";
     private static final String PROBLEM_JSON_TYPE = "application/problem+json";
 
     @Autowired
-    public ProgramSessionControllerTests(WebApplicationContext webApplicationContext, Pipeline pipeline) {
+    public ProgramSessionControllerTests(WebApplicationContext webApplicationContext, Pipeline pipeline, SessionRemoveCacheManager sessionCacheManager) {
         this.webApplicationContext = webApplicationContext;
         this.pipeline = pipeline;
+        this.sessionCacheManager = sessionCacheManager;
         this.objectMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
@@ -58,6 +63,11 @@ public class ProgramSessionControllerTests {
     @BeforeEach
     public void init(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        sessionCacheManager.removeAll();
     }
 
     @Test

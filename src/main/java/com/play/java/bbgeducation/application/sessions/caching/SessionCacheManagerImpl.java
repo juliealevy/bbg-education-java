@@ -8,7 +8,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class SessionCacheManagerImpl implements SessionCacheManager{
+public class SessionCacheManagerImpl
+        implements SessionCacheManager, SessionGetCacheManager, SessionRemoveCacheManager{
 
     private static final String SESSION = "SESSION_";
     private RedisUtil<SessionResult> redisUtilSession;
@@ -23,8 +24,16 @@ public class SessionCacheManagerImpl implements SessionCacheManager{
         return redisUtilSession.getValue(key);
     }
 
+    @Override
+    public int getSessionCount() {
+        return redisUtilSession.getCount();
+    }
+
 
     public void cacheSession(SessionResult session) {
+        if (session == null){
+            throw new IllegalArgumentException("Cannot cache a null session");
+        }
         redisUtilSession.putValueWithExpireTime(
                 buildCacheKey(session.getProgram().getId(), session.getId()),
                 session,
@@ -34,6 +43,11 @@ public class SessionCacheManagerImpl implements SessionCacheManager{
     @Override
     public void removeSession(Long programId, Long sessionId) {
         redisUtilSession.deleteValue(buildCacheKey(programId, sessionId));
+    }
+
+    @Override
+    public void removeAll() {
+        redisUtilSession.clearAll();
     }
 
     private String buildCacheKey(Long programId, Long sessionId){

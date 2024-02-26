@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.unit.application.sessions.getById;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.caching.SessionGetCacheManager;
 import com.play.java.bbgeducation.application.sessions.result.SessionResultMapper;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommand;
 import com.play.java.bbgeducation.application.sessions.getById.ProgramSessionGetByIdCommandHandler;
@@ -32,7 +33,7 @@ public class ProgramSessionGetByIdCommandHandlerTests {
     private ProgramSessionGetByIdCommandHandler underTest;
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
 
-    private SessionCacheManager sessionCacheManager = Mockito.mock(SessionCacheManager.class);
+    private SessionGetCacheManager sessionCacheManager = Mockito.mock(SessionGetCacheManager.class);
     private final SessionResultMapper mapper;
 
     @Autowired

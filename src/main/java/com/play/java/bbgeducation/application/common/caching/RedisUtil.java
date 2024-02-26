@@ -38,7 +38,18 @@ public class RedisUtil<T> {
     public void deleteValue(String key){
         redisTemplate.delete(key);
     }
+
+    public void clearAll(){
+        redisTemplate.keys("*").stream()
+                .forEach(k -> {
+                    redisTemplate.delete(k);
+                });
+    }
     public Boolean hasKey(String key){
         return redisTemplate.hasKey(key);
+    }
+
+    public int getCount() {
+        return redisTemplate.keys("*").size();
     }
 }

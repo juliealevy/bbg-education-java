@@ -5,6 +5,7 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.caching.SessionRemoveCacheManager;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.SessionRepository;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,9 @@ import java.util.Optional;
 public class SessionDeleteCommandHandler
         implements Command.Handler<SessionDeleteCommand, OneOf2<Success, NotFound>> {
     private final SessionRepository sessionRepository;
-    private final SessionCacheManager sessionCacheManager;
+    private final SessionRemoveCacheManager sessionCacheManager;
 
-    public SessionDeleteCommandHandler(SessionRepository sessionRepository, SessionCacheManager sessionCacheManager) {
+    public SessionDeleteCommandHandler(SessionRepository sessionRepository, SessionRemoveCacheManager sessionCacheManager) {
         this.sessionRepository = sessionRepository;
         this.sessionCacheManager = sessionCacheManager;
     }

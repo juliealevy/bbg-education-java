@@ -5,6 +5,7 @@ import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.sessions.caching.SessionCacheManager;
+import com.play.java.bbgeducation.application.sessions.caching.SessionGetCacheManager;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import com.play.java.bbgeducation.domain.programs.SessionEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.SessionRepository;
@@ -16,12 +17,12 @@ import java.util.Optional;
 public class ProgramSessionGetByIdCommandHandler implements Command.Handler<ProgramSessionGetByIdCommand,
         OneOf2<SessionResult, NotFound>>{
 
-    private final SessionCacheManager cacheManager;
+    private final SessionGetCacheManager cacheManager;
     private final SessionRepository sessionRepository;
     private final Mapper<SessionEntity, SessionResult> mapper;
 
 
-    public ProgramSessionGetByIdCommandHandler(SessionCacheManager cacheManager, SessionRepository sessionRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public ProgramSessionGetByIdCommandHandler(SessionGetCacheManager cacheManager, SessionRepository sessionRepository, Mapper<SessionEntity, SessionResult> mapper) {
         this.cacheManager = cacheManager;
         this.sessionRepository = sessionRepository;
         this.mapper = mapper;
