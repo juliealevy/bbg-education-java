@@ -1,13 +1,12 @@
 package com.play.java.bbgeducation.application.programs.create;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.validation.NameExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
-import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.ProgramRepository;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,11 +26,10 @@ public class ProgramCreateCommandHandler
             return OneOf2.fromOption2(new NameExistsValidationFailed("program"));
         }
 
+        ProgramEntity programEntity = ProgramEntity.create(
+                        createProgramCommand.getName(),
+                        createProgramCommand.getDescription());
 
-        ProgramEntity programEntity = ProgramEntity.builder()
-                .name(createProgramCommand.getName())
-                .description(createProgramCommand.getDescription())
-                .build();
         ProgramEntity newProgram = programRepository.save(programEntity);
 
         return OneOf2.fromOption1(ProgramResult.builder()

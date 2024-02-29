@@ -81,10 +81,9 @@ public class ProgramUpdateCommandHandlerTests {
     }
 
     private static ProgramEntity buildEntityFromCommand(ProgramUpdateCommand command) {
-        return ProgramEntity.builder()
-                .id(command.getId())
-                .name(command.getName())
-                .description(command.getDescription())
-                .build();
+        return ProgramEntity.build(
+                command.getId(),
+                command.getName(),
+                command.getDescription());
     }
 }

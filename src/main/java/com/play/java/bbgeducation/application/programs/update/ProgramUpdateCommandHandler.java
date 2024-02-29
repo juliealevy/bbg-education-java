@@ -37,11 +37,10 @@ public class ProgramUpdateCommandHandler implements Command.Handler<ProgramUpdat
                 return OneOf3.fromOption3(new NameExistsValidationFailed("program"));
             }
         }
-        ProgramEntity entityToSave = ProgramEntity.builder()
-                        .id(command.getId())
-                        .name(command.getName())
-                        .description(command.getDescription())
-                        .build();
+        ProgramEntity entityToSave = ProgramEntity.build(
+                command.getId(),
+                command.getName(),
+                command.getDescription());
 
         ProgramEntity saved = programRepository.save(entityToSave);
 

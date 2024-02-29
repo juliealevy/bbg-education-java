@@ -62,16 +62,15 @@ public class ProgramGetByIdCommandHandlerTests {
         assertThat(result.hasOption2()).isTrue();
     }
 
-    private Pair<ProgramGetByIdCommand, ProgramEntity> buildObjects(){
+    private Pair<ProgramGetByIdCommand, ProgramEntity> buildObjects() {
         ProgramGetByIdCommand cmd = ProgramGetByIdCommand.builder()
                 .id(1L)
                 .build();
 
-        ProgramEntity found = ProgramEntity.builder()
-                .id(cmd.getId())
-                .name("Program 1")
-                .description("This is program 1")
-                .build();
+        ProgramEntity found = ProgramEntity.build(
+                cmd.getId(),
+                "Program 1",
+                "This is program 1");
 
         return Pair.of(cmd, found);
     }

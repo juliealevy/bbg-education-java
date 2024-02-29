@@ -39,9 +39,7 @@ public class ProgramDeleteByIdCommandHandlerTests {
                 .id(1L)
                 .build();
 
-        ProgramEntity found = ProgramEntity.builder()
-                .id(cmd.getId())
-                .build();
+        ProgramEntity found = ProgramEntity.build(cmd.getId(),"","");
 
         when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(found));
         doNothing().when(programRepository).deleteById(any(Long.class));

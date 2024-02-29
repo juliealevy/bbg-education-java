@@ -1,25 +1,18 @@
 package com.play.java.bbgeducation.domain.programs;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.Session;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name="program")
 public class ProgramEntity implements Serializable {
@@ -49,6 +42,48 @@ public class ProgramEntity implements Serializable {
     @Column(name = "deactivated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime deactivatedDateTime;
 
+    public ProgramEntity(){
 
+    }
 
+    public static ProgramEntity create(String name, String description){
+        return ProgramEntity.build(null, name, description);
+    }
+
+    public static ProgramEntity build(Long id, String name, String description){
+        ProgramEntity programEntity = new ProgramEntity();
+        programEntity.setId(id);
+        programEntity.setName(name);
+        programEntity.setDescription(description);
+
+        return programEntity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProgramEntity other = (ProgramEntity) obj;
+        if (id == null) {
+            return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return 10;
+    }
+
+    @Override
+    public String toString() {
+        return "ProgramEntity{" +
+                "id=" + id +
+                '}';
+    }
 }

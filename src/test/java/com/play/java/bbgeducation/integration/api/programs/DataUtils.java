@@ -9,17 +9,15 @@ public final class DataUtils {
     private DataUtils(){}
 
     public static ProgramEntity buildProgramI(){
-            return  ProgramEntity.builder()
-                    .name("Horticultural Certificate Program I")
-                    .description("This is the blah blah program I")
-                    .build();
+            return  ProgramEntity.create(
+                    "Horticultural Certificate Program I",
+                    "This is the blah blah program I");
     }
 
     public static ProgramEntity buildProgramII(){
-        return  ProgramEntity.builder()
-                .name("Horticultural Certificate Program II")
-                .description("This is the blah blah program II")
-                .build();
+        return  ProgramEntity.create(
+                "Horticultural Certificate Program II",
+                "This is the blah blah program II");
     }
 
     public static ProgramCreateCommand buildCreateCommandI(){

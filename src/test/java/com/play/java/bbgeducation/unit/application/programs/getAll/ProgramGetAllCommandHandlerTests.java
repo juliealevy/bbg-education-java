@@ -52,11 +52,10 @@ public class ProgramGetAllCommandHandlerTests {
         assertThat(results.size()).isEqualTo(Iterables.size(entityList));
     }
 
-    private ProgramEntity buildProgramEntity(Long id){
-        return ProgramEntity.builder()
-                .id(id)
-                .name("Program " + id)
-                .description("I am program " + id)
-                .build();
+    private ProgramEntity buildProgramEntity(Long id) {
+        return ProgramEntity.build(
+                id,
+                "Program " + id,
+                "I am program " + id);
     }
 }
