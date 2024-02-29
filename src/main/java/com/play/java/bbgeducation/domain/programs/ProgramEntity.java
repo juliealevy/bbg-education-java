@@ -12,7 +12,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +35,7 @@ public class ProgramEntity implements Serializable {
     private String description;
 
     @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
-    private List<SessionEntity> sessions = new ArrayList<>();
+    private Set<SessionEntity> sessions = new HashSet<>();
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")

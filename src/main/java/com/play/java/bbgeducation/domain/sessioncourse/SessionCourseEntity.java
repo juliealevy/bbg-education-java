@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class SessionCourseEntity implements Serializable {
     private CourseEntity course;
 
     @OneToMany(mappedBy = "sessionCourse",fetch = FetchType.LAZY)
-    private List<ClassEntity> classes;
+    private Set<ClassEntity> classes;
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")

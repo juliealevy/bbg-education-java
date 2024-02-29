@@ -1,16 +1,18 @@
 package com.play.java.bbgeducation.domain.courses;
 
+import com.play.java.bbgeducation.domain.sessioncourse.SessionCourseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -44,6 +46,8 @@ public class CourseEntity implements Serializable {
     @Builder.Default
     private Boolean isOnline = false;
 
+    @OneToMany(mappedBy = "course")
+    Set<SessionCourseEntity> sessionCourses = new HashSet<>();
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")

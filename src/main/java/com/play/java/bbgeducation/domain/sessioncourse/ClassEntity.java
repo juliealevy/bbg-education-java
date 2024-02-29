@@ -25,15 +25,12 @@ public class ClassEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "class_id_seq")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "session_course_id", referencedColumnName = "id")
-    private SessionCourseEntity sessionCourse;
-
     @Column(name = "class_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime classDateTime;
 
-
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="session_course_id",referencedColumnName = "id")
+    private SessionCourseEntity sessionCourse;
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")

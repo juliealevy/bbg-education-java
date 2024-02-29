@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,8 +49,8 @@ public class SessionEntity implements Serializable {
     @JoinColumn(name = "program_id", referencedColumnName = "id")
     private ProgramEntity program;
 
-    @OneToMany(mappedBy="session", fetch = FetchType.LAZY)
-    private List<SessionCourseEntity> courses;
+    @OneToMany(mappedBy="session")
+    private Set<SessionCourseEntity> sessionCourses = new HashSet<>();
 
     //want to set as not insertable or updateable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
