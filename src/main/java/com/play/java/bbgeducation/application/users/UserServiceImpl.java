@@ -46,13 +46,9 @@ public class UserServiceImpl implements UserService{
         }
 
         try {
-            userRepository.save(UserEntity.builder()
-                    .id(id)
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .email(email)
-                    .isAdmin(found.get().getIsAdmin())   //no updating this via this call
-                    .build());
+            UserEntity userEntity =UserEntity.build(
+                    id, firstName, lastName, email, "", found.get().getIsAdmin());
+            userRepository.save(userEntity);
         }catch(TransactionSystemException cvex){
             logger.error("Error updating user", cvex);
             Throwable mostSpecificCause = cvex.getMostSpecificCause();

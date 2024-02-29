@@ -5,24 +5,12 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 
 public class DataUtils {
 
-    public static UserEntity buildUserEntity1(){
-        return UserEntity.builder()
-                .firstName("Julie")
-                .lastName("Levy")
-                .email("julie@testmail.com")
-                .password("123456")
-                .isAdmin(false)
-                .build();
-    }
-
-    public static UserEntity buildUserEntity2(){
-        return UserEntity.builder()
-                .firstName("Mary")
-                .lastName("Poppins")
-                .email("mary@flymail.com")
-                .password("123456")
-                .isAdmin(false)
-                .build();
+    public static UserEntity buildUserEntity(int index){
+        return UserEntity.create(
+                "testFirst_"+index,
+                "testLast_"+index,
+                "testemail_"+index+"@test.com",
+                "123456_"+index, false);
     }
 
     public static UpdateUserRequest buildUpdateUserRequest(){

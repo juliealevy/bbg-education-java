@@ -14,6 +14,7 @@ import com.play.java.bbgeducation.application.users.UserServiceImpl;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import com.play.java.bbgeducation.integration.api.users.DataUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -37,15 +38,20 @@ import static org.mockito.Mockito.when;
 public class UserServiceTests {
     private UserService underTest;
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private UserEntity userEntity;
 
     @Autowired
     public UserServiceTests(Mapper<UserEntity, UserResult> userMapper) {
         this.underTest = new UserServiceImpl(userRepository, userMapper);
     }
 
+    @BeforeEach
+    void setUp() {
+        userEntity = DataUtils.buildUserEntity(1);
+    }
+
     @Test
     public void UpdateUser_ShouldSucceed_WhenSameEmail(){
-        UserEntity userEntity = DataUtils.buildUserEntity1();
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
@@ -59,7 +65,6 @@ public class UserServiceTests {
 
     @Test
     public void UpdateUser_ShouldSucceed_WhenEmailChangeToUnusedEmail(){
-        UserEntity userEntity = DataUtils.buildUserEntity1();
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
@@ -86,7 +91,6 @@ public class UserServiceTests {
 
     @Test
     public void UpdateUser_ShouldFail_WhenEmailExists() {
-        UserEntity userEntity = DataUtils.buildUserEntity1();
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
@@ -114,9 +118,8 @@ public class UserServiceTests {
     @Test
     public void GetAll_ReturnsList() {
         List<UserEntity> userList = new ArrayList<>();
-        UserEntity user1 = DataUtils.buildUserEntity1();
-        userList.add(user1);
-        UserEntity user2 = DataUtils.buildUserEntity2();
+        userList.add(userEntity);
+        UserEntity user2 = DataUtils.buildUserEntity(2);
         userList.add(user2);
 
         when(userRepository.findAll()).thenReturn(userList);
@@ -128,15 +131,14 @@ public class UserServiceTests {
 
     @Test
     public void GetById_ReturnsUser_WhenIdExists(){
-        UserEntity user1 = DataUtils.buildUserEntity1();
-        user1.setId(100L);
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user1));
+        userEntity.setId(100L);
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
 
-        OneOf2<UserResult, NotFound> fetch = underTest.getById(user1.getId());
+        OneOf2<UserResult, NotFound> fetch = underTest.getById(userEntity.getId());
 
         assertThat(fetch).isNotNull();
         assertThat(fetch.hasOption1()).isTrue();
-        assertThat(fetch.asOption1().getEmail()).isEqualTo(user1.getEmail());
+        assertThat(fetch.asOption1().getEmail()).isEqualTo(userEntity.getEmail());
     }
 
     @Test
@@ -151,13 +153,12 @@ public class UserServiceTests {
 
     @Test
     public void Delete_ReturnsNoContent_WhenIdExists(){
-        UserEntity user1 = DataUtils.buildUserEntity1();
-        user1.setId(100L);
+        userEntity.setId(100L);
 
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user1));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
         doNothing().when(userRepository).deleteById(any(Long.class));
 
-        OneOf2<Success, NotFound> deleted = underTest.deleteUser(user1.getId());
+        OneOf2<Success, NotFound> deleted = underTest.deleteUser(userEntity.getId());
 
         assertThat(deleted).isNotNull();
         assertThat(deleted.hasOption1()).isTrue();

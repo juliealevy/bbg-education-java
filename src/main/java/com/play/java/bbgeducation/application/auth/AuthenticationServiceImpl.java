@@ -57,13 +57,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
         }
 
-        UserEntity userEntity = UserEntity.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .isAdmin(isAdmin)
-                .build();
+        UserEntity userEntity = UserEntity.create(
+                firstName,lastName,email,passwordEncoder.encode(password), isAdmin);
 
         try {
             UserEntity saved = userRepository.save(userEntity);

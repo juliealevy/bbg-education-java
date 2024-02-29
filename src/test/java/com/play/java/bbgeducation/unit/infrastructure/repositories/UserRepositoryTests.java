@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.unit.infrastructure.repositories;
 
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity1;
-import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity2;
+import static com.play.java.bbgeducation.integration.api.users.DataUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -21,17 +21,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserRepositoryTests {
 
     private final UserRepository underTest;
+    private UserEntity user1;
 
     @Autowired
     public UserRepositoryTests(UserRepository userRepository) {
         this.underTest = userRepository;
     }
 
+    @BeforeEach
+    void setUp() {
+        user1 = buildUserEntity(1);
+    }
+
     @Test
     public void FindUserByEmail_ShouldReturnTrue_WhenEmailFound(){
-        UserEntity user1 = buildUserEntity1();
+        UserEntity user1 = buildUserEntity(1);
         UserEntity saved1 = underTest.save(user1);
-        UserEntity user2 = buildUserEntity2();
+        UserEntity user2 = buildUserEntity(2);
         UserEntity saved2 = underTest.save(user2);
 
         boolean found = underTest.existsByEmail(saved1.getEmail());
@@ -40,9 +46,8 @@ public class UserRepositoryTests {
     }
     @Test
     public void FindUserByEmail_ShouldSucceed_WhenEmailExists(){
-        UserEntity user1 = buildUserEntity1();
         UserEntity saved1 = underTest.save(user1);
-        UserEntity user2 = buildUserEntity2();
+        UserEntity user2 = buildUserEntity(2);
         UserEntity saved2 = underTest.save(user2);
 
         Optional<UserEntity> fetched = underTest.findByEmail(saved1.getEmail());
@@ -54,7 +59,6 @@ public class UserRepositoryTests {
 
     @Test
     public void FindUserByEmail_ShouldReturnEmpty_WhenEmailNotExists(){
-        UserEntity user1 = buildUserEntity1();
         UserEntity saved1 = underTest.save(user1);
 
         Optional<UserEntity> fetched = underTest.findByEmail(saved1.getEmail() + " wrong");
@@ -64,7 +68,6 @@ public class UserRepositoryTests {
 
     @Test
     public void ExistsByEmail_ShouldReturnTrue_WhenEmailExists(){
-        UserEntity user1 = buildUserEntity1();
         UserEntity saved1 = underTest.save(user1);
 
         boolean result = underTest.existsByEmail(saved1.getEmail());
@@ -74,7 +77,6 @@ public class UserRepositoryTests {
 
     @Test
     public void ExistsByEmail_ShouldReturnFalse_WhenEmailNotExists(){
-        UserEntity user1 = buildUserEntity1();
         UserEntity saved1 = underTest.save(user1);
 
         boolean result = underTest.existsByEmail(saved1.getEmail() + " wrong");

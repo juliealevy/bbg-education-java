@@ -52,13 +52,13 @@ class AuthenticationServiceImplTests {
         passwordEncoder = new BCryptPasswordEncoder();
         underTest = new AuthenticationServiceImpl(authenticationManager, userRepository, authHeaderParser,
                 jwtService, passwordEncoder);
-        userEntity = UserEntity.builder()
-                .firstName("TestFirst")
-                .lastName("TestLast")
-                .email("test@test.com")
-                .password("123456")
-                .isAdmin(true)
-                .build();
+
+        userEntity = UserEntity.create(
+                "TestFirst",
+                "TestLast",
+                "test@test.com",
+                "123456",
+                true);
     }
 
     @AfterEach

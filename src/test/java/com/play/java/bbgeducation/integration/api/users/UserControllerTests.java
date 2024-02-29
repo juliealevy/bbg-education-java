@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity1;
-import static com.play.java.bbgeducation.integration.api.users.DataUtils.buildUserEntity2;
+import static com.play.java.bbgeducation.integration.api.users.DataUtils.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -177,12 +176,12 @@ public class UserControllerTests {
     }
 
     private UserEntity createAndSaveUser1(){
-        UserEntity user = buildUserEntity1();
+        UserEntity user = buildUserEntity(1);
         return userRepository.save(user);
     }
 
     private UserEntity createAndSaveUser2(){
-        UserEntity user = buildUserEntity2();
+        UserEntity user = buildUserEntity(2);
         return userRepository.save(user);
     }
 
