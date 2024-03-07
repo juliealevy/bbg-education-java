@@ -1,21 +1,16 @@
 package com.play.java.bbgeducation.domain.sessioncourse;
 
-import com.play.java.bbgeducation.domain.sessioncourse.SessionCourseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Setter
+@Getter
 @Entity
 @Table(name="class")
 public class ClassEntity implements Serializable {
@@ -40,6 +35,50 @@ public class ClassEntity implements Serializable {
     @Column(name = "updated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @UpdateTimestamp
     private OffsetDateTime updatedDateTime;
+
+    public ClassEntity(){
+
+    }
+
+    public static ClassEntity create(SessionCourseEntity sessionCourse, OffsetDateTime classDateTime){
+        return build(null,sessionCourse,classDateTime);
+    }
+
+    public static ClassEntity build(Long id, SessionCourseEntity sessionCourse, OffsetDateTime classDateTime){
+        ClassEntity classEntity = new ClassEntity();
+        classEntity.id = id;
+        classEntity.sessionCourse = sessionCourse;
+        classEntity.classDateTime = classDateTime;
+
+        return classEntity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()){
+            return false;
+        }
+        if (id == null){
+            return false;
+        }
+        ClassEntity that = (ClassEntity) obj;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(15);
+    }
+
+    @Override
+    public String toString() {
+        return "ClassEntity{" +
+                "id=" + id +
+                '}';
+    }
 }
 
 
