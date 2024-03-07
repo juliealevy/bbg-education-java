@@ -40,15 +40,14 @@ public class SessionUpdateCommandHandler implements Command.Handler<SessionUpdat
             return OneOf3.fromOption3(new NameExistsValidationFailed("session"));
         }
 
-        SessionEntity session = SessionEntity.builder()
-                .id(command.getId())
-                .name(command.getName())
-                .description(command.getDescription())
-                .startDate(command.getStartDate())
-                .endDate(command.getEndDate())
-                .practicumHours(command.getPracticumHours())
-                .program(found.get().getProgram())
-                .build();
+        SessionEntity session = SessionEntity.build(
+                command.getId(),
+                command.getName(),
+                command.getDescription(),
+                found.get().getProgram(),
+                command.getStartDate(),
+                command.getEndDate(),
+                command.getPracticumHours());
 
         sessionRepository.save(session);
         cacheManager.cacheSession(mapper.mapTo(session));

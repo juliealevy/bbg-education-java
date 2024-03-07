@@ -1,31 +1,21 @@
 package com.play.java.bbgeducation.domain.programs;
 
-import com.play.java.bbgeducation.domain.courses.CourseEntity;
-import com.play.java.bbgeducation.domain.programs.ProgramEntity;
 import com.play.java.bbgeducation.domain.sessioncourse.SessionCourseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.cglib.core.Local;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import static jakarta.persistence.CascadeType.ALL;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name="session")
 public class SessionEntity implements Serializable {
@@ -52,7 +42,7 @@ public class SessionEntity implements Serializable {
     @OneToMany(mappedBy="session")
     private Set<SessionCourseEntity> sessionCourses = new HashSet<>();
 
-    //want to set as not insertable or updateable, but then findById doesn't return the dates...
+    //want to set as not insertable or updatable, but then findById doesn't return the dates...
     @Column(name = "created_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @CreationTimestamp
     private OffsetDateTime createdDateTime;
@@ -63,4 +53,53 @@ public class SessionEntity implements Serializable {
 
     @Column(name = "deactivated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime deactivatedDateTime;
+
+    public SessionEntity(){
+
+    }
+    public static SessionEntity create(String name, String description, ProgramEntity program,
+                                       LocalDate startDate, LocalDate endDate, int practicumHours){
+        return build(null, name, description, program, startDate, endDate,practicumHours);
+    }
+    public static SessionEntity build(Long id, String name, String description, ProgramEntity program,
+                                      LocalDate startDate, LocalDate endDate, int practicumHours){
+        SessionEntity session = new SessionEntity();
+        session.id = id;
+        session.name = name;
+        session.description  = description;
+        session.program = program;
+        session.startDate = startDate;
+        session.endDate = endDate;
+        session.practicumHours = practicumHours;
+
+        return session;
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        if (id == null) {
+            return false;
+        }
+        SessionEntity other = (SessionEntity) obj;
+        return id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(11);
+    }
+
+    @Override
+    public String toString() {
+        return "SessionEntity{" +
+                "program=" + program +
+                '}';
+    }
 }

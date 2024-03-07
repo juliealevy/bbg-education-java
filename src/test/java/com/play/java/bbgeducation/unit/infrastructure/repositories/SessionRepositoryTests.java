@@ -163,24 +163,23 @@ public class SessionRepositoryTests {
 
 
     private SessionEntity buildSessionEntity(ProgramEntity program){
-        return SessionEntity.builder()
-                .program(program)
-                .name("Test SessionEntity")
-                .description("Test description")
-                .practicumHours(15)
-                .startDate(LocalDate.now().plusMonths(1))
-                .endDate(LocalDate.now().plusMonths(7))
-                .build();
+        return SessionEntity.create(
+                "Test SessionEntity",
+                "Test description",
+                program,
+                LocalDate.now().plusMonths(1),
+                LocalDate.now().plusMonths(7),
+                15);
+
     }
 
     private SessionEntity buildSessionEntity2(ProgramEntity program){
-        return SessionEntity.builder()
-                .program(program)
-                .name("Test SessionEntity Two")
-                .description("Test description two")
-                .practicumHours(20)
-                .startDate(LocalDate.now().plusMonths(5))
-                .endDate(LocalDate.now().plusMonths(10))
-                .build();
+        return SessionEntity.create(
+                "Test SessionEntity Two",
+                "Test description two",
+                program,
+                LocalDate.now().plusMonths(5),
+                LocalDate.now().plusMonths(10),
+                20);
     }
 }

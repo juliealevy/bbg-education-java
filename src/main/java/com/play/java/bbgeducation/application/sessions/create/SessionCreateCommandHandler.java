@@ -46,14 +46,13 @@ public class SessionCreateCommandHandler implements Command.Handler<SessionCreat
 
         //do start and end date ranges need to not overlap??  might be configuration...
 
-        SessionEntity session = SessionEntity.builder()
-                .program(program.get())
-                .name(command.getName())
-                .description(command.getDescription())
-                .startDate(command.getStartDate())
-                .endDate(command.getEndDate())
-                .practicumHours(command.getPracticumHours())
-                        .build();
+        SessionEntity session = SessionEntity.create(
+                command.getName(),
+                command.getDescription(),
+                program.get(),
+                command.getStartDate(),
+                command.getEndDate(),
+                command.getPracticumHours());
 
         SessionEntity saved = sessionRepository.save(session);
         SessionResult sessionResult = mapper.mapTo(saved);
