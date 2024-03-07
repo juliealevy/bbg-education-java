@@ -42,11 +42,10 @@ public class CourseRepositoryTests {
     }
 
     private CourseEntity buildCourseEntity(int count){
-        return CourseEntity.builder()
-                .name("Test course" + count)
-                .description("Test description")
-                .isPublic(true)
-                .isOnline(false)
-                .build();
+        return CourseEntity.create(
+                "Test course" + count,
+                "Test description",
+                true,
+                false);
     }
 }

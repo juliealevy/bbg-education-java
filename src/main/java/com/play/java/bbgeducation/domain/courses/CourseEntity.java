@@ -3,20 +3,18 @@ package com.play.java.bbgeducation.domain.courses;
 import com.play.java.bbgeducation.domain.sessioncourse.SessionCourseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name="course")
 public class CourseEntity implements Serializable {
@@ -38,12 +36,10 @@ public class CourseEntity implements Serializable {
 
     @NotNull
     @Column(columnDefinition ="BOOLEAN DEFAULT TRUE" )
-    @Builder.Default
     private Boolean isPublic = true;
 
     @NotNull
     @Column(columnDefinition ="BOOLEAN DEFAULT FALSE")
-    @Builder.Default
     private Boolean isOnline = false;
 
     @OneToMany(mappedBy = "course")
@@ -60,4 +56,47 @@ public class CourseEntity implements Serializable {
 
     @Column(name = "inactivated_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime inactivatedDateTime;
+
+    public static CourseEntity create(String name, String description, Boolean isPublic, Boolean isOnline){
+        return build(null, name, description,isPublic,isOnline);
+    }
+
+    public static CourseEntity build(Long id, String name, String description, Boolean isPublic, Boolean isOnline){
+        CourseEntity course = new CourseEntity();
+        course.id = id;
+        course.name = name;
+        course.description = description;
+        course.isPublic = isPublic;
+        course.isOnline = isOnline;
+
+        return course;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        if (id == null){
+            return false;
+        }
+        CourseEntity that = (CourseEntity) obj;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(12);
+    }
+
+    @Override
+    public String toString() {
+        return "CourseEntity{" +
+                "id=" + id +
+                '}';
+    }
 }

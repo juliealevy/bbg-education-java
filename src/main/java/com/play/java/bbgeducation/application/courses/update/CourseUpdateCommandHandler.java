@@ -33,13 +33,12 @@ public class CourseUpdateCommandHandler implements Command.Handler<CourseUpdateC
             return OneOf3.fromOption3(new NameExistsValidationFailed("course"));
         }
 
-        CourseEntity courseToUpdate = CourseEntity.builder()
-                .id(command.getId())
-                .name(command.getName())
-                .description(command.getDescription())
-                .isOnline(command.isOnline())
-                .isPublic(command.isPublic())
-                .build();
+        CourseEntity courseToUpdate = CourseEntity.build(
+                command.getId(),
+                command.getName(),
+                command.getDescription(),
+                command.isPublic(),
+                command.isOnline());
 
         courseRepository.save(courseToUpdate);
         return OneOf3.fromOption1(new Success());

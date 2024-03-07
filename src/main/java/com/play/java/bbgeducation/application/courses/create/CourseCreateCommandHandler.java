@@ -27,12 +27,12 @@ public class CourseCreateCommandHandler implements Command.Handler<CourseCreateC
             return OneOf2.fromOption2(new NameExistsValidationFailed("course"));
         }
 
-        CourseEntity courseToCreate = CourseEntity.builder()
-                .name(command.getName())
-                .description(command.getDescription())
-                .isOnline(command.isOnline())
-                .isPublic(command.isPublic())
-                .build();
+        CourseEntity courseToCreate = CourseEntity.create(
+                command.getName(),
+                command.getDescription(),
+                command.isOnline(),
+                command.isPublic());
+
 
         CourseEntity saved = courseRepository.save(courseToCreate);
         return OneOf2.fromOption1(mapper.mapTo(saved));
