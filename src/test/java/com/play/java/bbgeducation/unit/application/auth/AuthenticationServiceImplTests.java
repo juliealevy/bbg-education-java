@@ -7,7 +7,9 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.ValidationErrorType;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.exceptions.InvalidEmailFormatException;
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
@@ -56,7 +58,7 @@ class AuthenticationServiceImplTests {
         userEntity = UserEntity.create(
                 "TestFirst",
                 "TestLast",
-                "test@test.com",
+                EmailAddress.from("test@test.com"),
                 "123456",
                 true);
     }
@@ -71,7 +73,7 @@ class AuthenticationServiceImplTests {
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(false);
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
-        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getEmail(), userEntity.getPassword(), userEntity.getFirstName(),
+        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getUsername(), userEntity.getPassword(), userEntity.getFirstName(),
                 userEntity.getLastName(), userEntity.getIsAdmin());
 
         assertThat(result.hasOption1()).isTrue();
@@ -83,21 +85,31 @@ class AuthenticationServiceImplTests {
 
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(true);
 
-        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getEmail(), userEntity.getPassword(), userEntity.getFirstName(),
+        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getUsername(), userEntity.getPassword(), userEntity.getFirstName(),
                 userEntity.getLastName(), userEntity.getIsAdmin());
 
         assertThat(result.hasOption2()).isTrue();
     }
 
     @Test
+    void registerUser_shouldThrow_whenEmailInvalid() {
+
+        when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(false);
+
+        assertThatThrownBy(() -> underTest.register(userEntity.getUsername() + "invalid", userEntity.getPassword(), userEntity.getFirstName(),
+                userEntity.getLastName(), userEntity.getIsAdmin()))
+                .isInstanceOf(InvalidEmailFormatException.class);
+    }
+
+    @Test
     void authenticateUser_shouldReturnTokens_whenInputValid() {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
         when(jwtService.generateAccessToken(ArgumentMatchers.any(),  any(UserDetails.class))).thenReturn("12345");
         when(jwtService.generateRefreshToken(any(UserDetails.class))).thenReturn("54321");
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getUsername(), userEntity.getPassword());
 
         assertThat(result.hasOption1()).isTrue();
         assertThat(result.asOption1().getAccessToken()).isEqualTo("12345");
@@ -110,9 +122,9 @@ class AuthenticationServiceImplTests {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getUsername(), userEntity.getPassword());
 
         assertThat(result.hasOption2()).isTrue();
 
@@ -121,8 +133,8 @@ class AuthenticationServiceImplTests {
     @Test
     void refreshToken_ShouldReturnTokens_whenInputValid() throws IOException {
         when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
-        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getEmail());
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.of(userEntity));
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
         when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
         when(jwtService.generateAccessToken(any(UserDetails.class))).thenReturn("678910");
 
@@ -157,8 +169,8 @@ class AuthenticationServiceImplTests {
     @Test
     void refreshToken_ShouldThrow_whenUserEmailNotExists() throws IOException {
         when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
-        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getEmail());
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> underTest.refreshToken(httpRequest))
                 .isInstanceOf(BadCredentialsException.class);
@@ -168,8 +180,8 @@ class AuthenticationServiceImplTests {
     @Test
     void refreshToken_ShouldReturnUnauthorized_whenRefreshTokenIsExpired() throws IOException {
         when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
-        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getEmail());
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.of(userEntity));
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
         when(jwtService.isTokenExpired(any(String.class))).thenReturn(true);
 
         OneOf2<AuthenticationResult, ValidationFailed> result = underTest.refreshToken(httpRequest);

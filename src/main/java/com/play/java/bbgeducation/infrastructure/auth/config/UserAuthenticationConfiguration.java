@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.infrastructure.auth.config;
 
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class UserAuthenticationConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return userName -> userRepository.findByEmail(userName)
+        return userName -> userRepository.findByEmail(EmailAddress.from(userName))
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
     }
 

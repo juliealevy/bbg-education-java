@@ -1,5 +1,7 @@
 package com.play.java.bbgeducation.domain.users;
 
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddressAttributeConverter;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -27,11 +29,11 @@ public class UserEntity implements UserDetails {
         isAdmin = false;
     }
 
-    public static UserEntity create(String firstName, String lastName, String email, String password, Boolean isAdmin){
+    public static UserEntity create(String firstName, String lastName, EmailAddress email, String password, Boolean isAdmin){
         return UserEntity.build(null, firstName,lastName,email,password, isAdmin);
     }
 
-    public static UserEntity build(Long id, String firstName, String lastName, String email, String password, Boolean isAdmin){
+    public static UserEntity build(Long id, String firstName, String lastName, EmailAddress email, String password, Boolean isAdmin){
         UserEntity newUser = new UserEntity();
         newUser.setId(id);
         newUser.setFirstName(firstName);
@@ -48,8 +50,9 @@ public class UserEntity implements UserDetails {
     private Long id;
 
     @Column(unique = true)
-    @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}")
-    private String email;
+   // @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}")
+    @Convert(converter= EmailAddressAttributeConverter.class)
+    private EmailAddress email;
 
     private String password;
     private String firstName;
@@ -80,7 +83,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return email.toString();
     }
 
     @Override

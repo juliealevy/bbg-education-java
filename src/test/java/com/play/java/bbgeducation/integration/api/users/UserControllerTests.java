@@ -47,7 +47,7 @@ public class UserControllerTests {
         UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
                 .firstName(created.getFirstName())
                 .lastName(created.getLastName() + " updated")
-                .email(created.getEmail())
+                .email(created.getUsername())
                 .build();
 
 
@@ -88,7 +88,7 @@ public class UserControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.lastName").value(created.getLastName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.email").value(created.getEmail())
+                MockMvcResultMatchers.jsonPath("$.email").value(created.getUsername())
         );
     }
 
@@ -130,7 +130,7 @@ public class UserControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(created.getLastName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(created.getEmail())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(created.getUsername())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[1].id").value(created2.getId())
         ).andExpect(
@@ -138,7 +138,7 @@ public class UserControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[1].lastName").value(created2.getLastName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].email").value(created2.getEmail())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].email").value(created2.getUsername())
         );
     }
 

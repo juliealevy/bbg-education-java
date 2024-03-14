@@ -1,24 +1,29 @@
 package com.play.java.bbgeducation.api.common;
 
 import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
+import com.play.java.bbgeducation.application.exceptions.InvalidEmailFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
-import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.security.auth.login.CredentialNotFoundException;
 
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
     Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
+
+    @ExceptionHandler(InvalidEmailFormatException.class)
+    ProblemDetail handleInvalidEmailFormatException(InvalidEmailFormatException ex){
+        logger.trace("Invalid email format: " +  ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problemDetail.setTitle("Invalid Email Format");
+        return problemDetail;
+    }
     @ExceptionHandler(AccessDeniedException.class)
     ProblemDetail handleAccessDeniedException(AccessDeniedException ex){
         logger.trace("Access Denied: " +  ex.getMessage());

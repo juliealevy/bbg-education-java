@@ -11,6 +11,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -44,7 +45,7 @@ public class UserController {
                 id,
                 userRequest.getFirstName(),
                 userRequest.getLastName(),
-                userRequest.getEmail());
+                EmailAddress.from(userRequest.getEmail()));
 
         return updated.match(
                 success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())

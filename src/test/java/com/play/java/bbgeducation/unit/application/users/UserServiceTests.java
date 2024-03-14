@@ -8,10 +8,12 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.exceptions.InvalidEmailFormatException;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.application.users.UserServiceImpl;
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import com.play.java.bbgeducation.integration.api.users.DataUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -68,10 +71,10 @@ public class UserServiceTests {
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
-        when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
+        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(false);
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail() + "updated");
+                EmailAddress.from("unused@blah.com"));
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
@@ -83,7 +86,7 @@ public class UserServiceTests {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(100L, userRequest.getFirstName(), userRequest.getLastName(),
-                userRequest.getEmail());
+                EmailAddress.from(userRequest.getEmail()));
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption2()).isTrue();
@@ -94,14 +97,27 @@ public class UserServiceTests {
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
-        when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
+        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(true);
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail() + "updated");
+                EmailAddress.from("updated@blah.com"));
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption3()).isTrue();
         assertThat(result.asOption3().getClass()).isEqualTo(EmailExistsValidationFailed.class);
+    }
+
+    @Test
+    public void UpdateUser_ShouldThrow_WhenEmailInvalid() {
+        userEntity.setId(100L);
+
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
+        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(false);
+
+        assertThatThrownBy(() ->
+                underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
+                    EmailAddress.from("unused@blah.cominvalid")))
+                .isInstanceOf(InvalidEmailFormatException.class);
     }
 
     @Test
@@ -138,7 +154,7 @@ public class UserServiceTests {
 
         assertThat(fetch).isNotNull();
         assertThat(fetch.hasOption1()).isTrue();
-        assertThat(fetch.asOption1().getEmail()).isEqualTo(userEntity.getEmail());
+        assertThat(fetch.asOption1().getEmail()).isEqualTo(userEntity.getEmail().toString());
     }
 
     @Test

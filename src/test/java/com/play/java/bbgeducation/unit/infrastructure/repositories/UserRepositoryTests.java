@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.unit.infrastructure.repositories;
 
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,7 @@ public class UserRepositoryTests {
     public void FindUserByEmail_ShouldReturnEmpty_WhenEmailNotExists(){
         UserEntity saved1 = underTest.save(user1);
 
-        Optional<UserEntity> fetched = underTest.findByEmail(saved1.getEmail() + " wrong");
+        Optional<UserEntity> fetched = underTest.findByEmail(EmailAddress.from("wrong" + saved1.getEmail()));
 
         assertThat(fetched).isEmpty();
     }
@@ -79,7 +80,7 @@ public class UserRepositoryTests {
     public void ExistsByEmail_ShouldReturnFalse_WhenEmailNotExists(){
         UserEntity saved1 = underTest.save(user1);
 
-        boolean result = underTest.existsByEmail(saved1.getEmail() + " wrong");
+        boolean result = underTest.existsByEmail(EmailAddress.from("wrong" + saved1.getEmail()));
 
         assertThat(result).isFalse();
     }

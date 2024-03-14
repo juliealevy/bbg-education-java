@@ -5,11 +5,12 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 
 import java.util.List;
 
 public interface UserService {
-    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, String email);
+    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, EmailAddress email);
 
     OneOf2<Success, NotFound> deleteUser(Long id);
 

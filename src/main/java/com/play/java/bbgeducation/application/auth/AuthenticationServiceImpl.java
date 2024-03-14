@@ -8,6 +8,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.domain.users.UserEntity;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
@@ -53,12 +54,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public OneOf2<Success, ValidationFailed> register(String email, String password, String firstName, String lastName, boolean isAdmin) {
 
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(EmailAddress.from(email))) {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
         }
 
         UserEntity userEntity = UserEntity.create(
-                firstName,lastName,email,passwordEncoder.encode(password), isAdmin);
+                firstName,lastName, EmailAddress.from(email),passwordEncoder.encode(password), isAdmin);
 
         try {
             UserEntity saved = userRepository.save(userEntity);
@@ -87,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
         }
 
-        Optional<UserEntity> user = userRepository.findByEmail(email);
+        Optional<UserEntity> user = userRepository.findByEmail(EmailAddress.from(email));
         if (user.isEmpty()) {
             //don't want to return info to the user whether email or password was the problem
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Bad Credentials"));
@@ -118,7 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (Strings.isNullOrEmpty(userEmail)) {
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Invalid authorization provided"));
         }
-        UserEntity userDetails = this.userRepository.findByEmail(userEmail)
+        UserEntity userDetails = this.userRepository.findByEmail(EmailAddress.from(userEmail))
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
         if (jwtService.isTokenExpired(refreshToken)) {
