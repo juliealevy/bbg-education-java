@@ -3,6 +3,7 @@ package com.play.java.bbgeducation.api.common;
 import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -26,6 +27,13 @@ public class ExceptionHandlerController {
         return problemDetail;
     }
 
+    @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
+    ProblemDetail handleInvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException ex){
+        logger.trace("Data access error: " +  ex.getMessage(),ex);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "See log for details");
+        problemDetail.setTitle("Data Access Error");
+        return problemDetail;
+    }
     @ExceptionHandler(BadCredentialsException.class)
     ProblemDetail BadCredentialsException(BadCredentialsException ex){
         logger.trace(ex.getMessage());
@@ -53,7 +61,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(RuntimeException.class)
     ProblemDetail handleRuntimeException(RuntimeException ex){
         logger.error("Internal Service Error: " +  ex.getMessage(), ex);
-        ProblemDetail problemDetail =  ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        ProblemDetail problemDetail =  ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "See server log for details");
         problemDetail.setTitle("Internal Error");
         return problemDetail;
     }
