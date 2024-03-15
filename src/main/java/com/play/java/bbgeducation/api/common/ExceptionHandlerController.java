@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.common;
 
 import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
 import com.play.java.bbgeducation.application.exceptions.InvalidEmailFormatException;
+import com.play.java.bbgeducation.application.exceptions.InvalidPasswordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -24,6 +25,15 @@ public class ExceptionHandlerController {
         problemDetail.setTitle("Invalid Email Format");
         return problemDetail;
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    ProblemDetail handleInvalidPasswordException(InvalidPasswordException ex){
+        logger.trace("Invalid password: " +  ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problemDetail.setTitle("Invalid Password");
+        return problemDetail;
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     ProblemDetail handleAccessDeniedException(AccessDeniedException ex){
         logger.trace("Access Denied: " +  ex.getMessage());

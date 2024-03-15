@@ -10,6 +10,7 @@ import com.play.java.bbgeducation.application.common.validation.ValidationFailed
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -180,7 +181,7 @@ public class AuthenticationControllerTests {
         registerUser(regRequest);
 
         OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
-                EmailAddress.from(regRequest.getEmail()), regRequest.getPassword());
+                EmailAddress.from(regRequest.getEmail()), Password.from(regRequest.getPassword()));
 
         mockMvc.perform(MockMvcRequestBuilders.post(AUTH_PATH + "/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -196,7 +197,7 @@ public class AuthenticationControllerTests {
     private void registerUser(RegisterRequest regRequest){
         authenticationService.register(
                 EmailAddress.from(regRequest.getEmail()),
-                regRequest.getPassword(),
+                Password.from(regRequest.getPassword()),
                 FirstName.from(regRequest.getFirstName()),
                 LastName.from(regRequest.getLastName()),
                 regRequest.getIsAdmin());

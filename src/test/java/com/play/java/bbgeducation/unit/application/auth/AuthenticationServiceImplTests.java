@@ -12,6 +12,7 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
@@ -61,7 +62,7 @@ class AuthenticationServiceImplTests {
                 FirstName.from("TestFirst"),
                 LastName.from("TestLast"),
                 EmailAddress.from("test@test.com"),
-                "123456",
+                Password.from("123456"),
                 true);
     }
 
@@ -77,7 +78,7 @@ class AuthenticationServiceImplTests {
 
         OneOf2<Success, ValidationFailed> result = underTest.register(
                 userEntity.getEmail(),
-                userEntity.getPassword(),
+                userEntity.getPasswordObject(),
                 userEntity.getFirstName(),
                 userEntity.getLastName(),
                 userEntity.getIsAdmin());
@@ -92,7 +93,7 @@ class AuthenticationServiceImplTests {
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(true);
 
         OneOf2<Success, ValidationFailed> result = underTest.register(
-                userEntity.getEmail(), userEntity.getPassword(), userEntity.getFirstName(),
+                userEntity.getEmail(), userEntity.getPasswordObject(), userEntity.getFirstName(),
                 userEntity.getLastName(), userEntity.getIsAdmin());
 
         assertThat(result.hasOption2()).isTrue();
@@ -105,7 +106,7 @@ class AuthenticationServiceImplTests {
 
         assertThatThrownBy(() -> underTest.register(
                     EmailAddress.from(userEntity.getUsername() + "invalid"),
-                    userEntity.getPassword(), userEntity.getFirstName(),
+                    userEntity.getPasswordObject(), userEntity.getFirstName(),
                     userEntity.getLastName(), userEntity.getIsAdmin()))
                 .isInstanceOf(InvalidEmailFormatException.class);
     }
@@ -118,7 +119,7 @@ class AuthenticationServiceImplTests {
         when(jwtService.generateAccessToken(ArgumentMatchers.any(),  any(UserDetails.class))).thenReturn("12345");
         when(jwtService.generateRefreshToken(any(UserDetails.class))).thenReturn("54321");
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPasswordObject());
 
         assertThat(result.hasOption1()).isTrue();
         assertThat(result.asOption1().getAccessToken()).isEqualTo("12345");
@@ -133,7 +134,7 @@ class AuthenticationServiceImplTests {
 
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPasswordObject());
 
         assertThat(result.hasOption2()).isTrue();
 

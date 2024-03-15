@@ -9,6 +9,7 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
@@ -47,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public OneOf2<Success, ValidationFailed> register(EmailAddress email, String password, FirstName firstName, LastName lastName, boolean isAdmin) {
+    public OneOf2<Success, ValidationFailed> register(EmailAddress email, Password password, FirstName firstName, LastName lastName, boolean isAdmin) {
 
         if (userRepository.existsByEmail(email)) {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
@@ -55,7 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserEntity userEntity = UserEntity.create(
                 firstName,lastName, email,
-                passwordEncoder.encode(password), isAdmin);
+                Password.from(passwordEncoder.encode(password.toString())), isAdmin);
 
         try {
             UserEntity saved = userRepository.save(userEntity);
@@ -72,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @SneakyThrows
     @Override
-    public OneOf2<AuthenticationResult, ValidationFailed> authenticate(EmailAddress email, String password) {
+    public OneOf2<AuthenticationResult, ValidationFailed> authenticate(EmailAddress email, Password password) {
 
         try {
             authenticationManager.authenticate(

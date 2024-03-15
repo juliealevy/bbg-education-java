@@ -6,9 +6,10 @@ import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstNameAttributeConverter;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastNameAttributeConverter;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
+import com.play.java.bbgeducation.domain.valueobjects.password.PasswordAttributeConverter;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,15 +30,15 @@ import java.util.List;
 @Table(name="user_details")
 public class UserEntity implements UserDetails {
 
-    public UserEntity(){
+    public UserEntity() {
         isAdmin = false;
     }
 
-    public static UserEntity create(FirstName firstName, LastName lastName, EmailAddress email, String password, Boolean isAdmin){
-        return UserEntity.build(null, firstName,lastName,email,password, isAdmin);
+    public static UserEntity create(FirstName firstName, LastName lastName, EmailAddress email, Password password, Boolean isAdmin) {
+        return UserEntity.build(null, firstName, lastName, email, password, isAdmin);
     }
 
-    public static UserEntity build(Long id, FirstName firstName, LastName lastName, EmailAddress email, String password, Boolean isAdmin){
+    public static UserEntity build(Long id, FirstName firstName, LastName lastName, EmailAddress email, Password password, Boolean isAdmin) {
         UserEntity newUser = new UserEntity();
         newUser.setId(id);
         newUser.setFirstName(firstName);
@@ -54,17 +55,18 @@ public class UserEntity implements UserDetails {
     private Long id;
 
     @Column(unique = true)
-   // @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}")
-    @Convert(converter= EmailAddressAttributeConverter.class)
+    // @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}")
+    @Convert(converter = EmailAddressAttributeConverter.class)
     private EmailAddress email;
 
-    private String password;
-    @Convert(converter= FirstNameAttributeConverter.class)
+    @Convert(converter = PasswordAttributeConverter.class)
+    private Password password;
+    @Convert(converter = FirstNameAttributeConverter.class)
     private FirstName firstName;
-    @Convert(converter= LastNameAttributeConverter.class)
+    @Convert(converter = LastNameAttributeConverter.class)
     private LastName lastName;
 
-    @Column(columnDefinition ="BOOLEAN DEFAULT FALSE")
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     @NotNull
     private Boolean isAdmin = false;
 
@@ -80,9 +82,9 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority("ROLE_"+ Roles.USER));
-        if (isAdmin){
-            roles.add(new SimpleGrantedAuthority("ROLE_"+ Roles.ADMIN));
+        roles.add(new SimpleGrantedAuthority("ROLE_" + Roles.USER));
+        if (isAdmin) {
+            roles.add(new SimpleGrantedAuthority("ROLE_" + Roles.ADMIN));
         }
         return roles;
     }
@@ -90,6 +92,15 @@ public class UserEntity implements UserDetails {
     @Override
     public String getUsername() {
         return email.toString();
+    }
+
+    @Override
+    public String getPassword() {
+        return password.toString();
+    }
+
+    public Password getPasswordObject() {
+        return password;
     }
 
     @Override
@@ -113,12 +124,12 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 42;
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)

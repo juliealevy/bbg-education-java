@@ -12,6 +12,7 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.hateoas.EntityModel;
@@ -42,7 +43,7 @@ public class AuthenticationController {
 
         OneOf2<Success, ValidationFailed> newUser = authenticationService.register(
                 EmailAddress.from(request.getEmail()),
-                request.getPassword(),
+                Password.from(request.getPassword()),
                 FirstName.from(request.getFirstName()),
                 LastName.from(request.getLastName()),
                 request.getIsAdmin());
@@ -66,7 +67,7 @@ public class AuthenticationController {
         OneOf2<AuthenticationResult, ValidationFailed> loginResult =
                 authenticationService.authenticate(
                         EmailAddress.from(request.getEmail()),
-                        request.getPassword());
+                        Password.from(request.getPassword()));
 
         return loginResult.match(
                 login -> ResponseEntity.ok(EntityModel.of(login)

@@ -5,6 +5,7 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 
 public class DataUtils {
 
@@ -13,7 +14,7 @@ public class DataUtils {
                 FirstName.from("testFirst_"+index),
                 LastName.from("testLast_"+index),
                 EmailAddress.from("testemail_"+index+"@test.com"),
-                "123456_"+index, false);
+                Password.from("123456_"+index), false);
     }
 
     public static UpdateUserRequest buildUpdateUserRequest(){

@@ -11,6 +11,7 @@ import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService{
 
         try {
             UserEntity userEntity =UserEntity.build(
-                    id, firstName, lastName, email, "", found.get().getIsAdmin());
+                    id, firstName, lastName, email, Password.empty(), found.get().getIsAdmin());
             userRepository.save(userEntity);
         }catch(TransactionSystemException cvex){
             logger.error("Error updating user", cvex);
