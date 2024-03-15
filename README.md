@@ -10,12 +10,12 @@ Documentation is in documents folder:  https://github.com/juliealevy/bbg-educati
 
 ## What's in it
 Some sample code in Java/Spring Boot to show the following:
-- Vertical Slice ish
 - Architecture Boundaries/Packages:
   - api (rest api controllers)
   - application (business logic commands/services, etc)
   - domain (domain entities)
   - infrastructure (DB repositories, auth, etc)
+- Vertical Slice ish (within boundaries, will probably update to real vertical slices at some point - or modular monolith)
 - First domain CRUD implementation:  BBGProgram with commands
 - Integration Testing of controllers and command pipelines
 - Unit Testing of commands, services, repositories
@@ -43,11 +43,15 @@ Some sample code in Java/Spring Boot to show the following:
   -   decided to go with Command Pattern
 - Added actuator for health check, metrics, etc.
 - implemented CRUD for Course using commands
-- added simple value caching fo Session in redis hosted in docker
+- added simple value caching for Session in redis hosted in docker, more to come
+- fixed some lombok/hibernate issues in the entities
+- trying out value objects for email, password, firstname, lastname in user entity
     
 
 ## Coming soon
+- add email update and password update workflows
 - add some more workflow oriented calls for Session once Courses implemented
+- caching of a list of data once more workflows implemented
 - validation for services based entities (User/Auth)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
 - idempotent posts - caching (in memory vs distr (redus?))
@@ -197,8 +201,7 @@ https://localhost:8080/api
             "httpMethod": "PUT",
             "body": {
                 "firstName": "string",
-                "lastName": "string",
-                "email": "string"
+                "lastName": "string"
             },
             "templated": true
         },
