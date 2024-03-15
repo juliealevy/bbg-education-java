@@ -45,8 +45,8 @@ public class UserControllerTests {
         UserEntity created = createAndSaveUser1();
 
         UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
-                .firstName(created.getFirstName())
-                .lastName(created.getLastName() + " updated")
+                .firstName(created.getFirstName().toString())
+                .lastName(created.getLastName().toString() + " updated")
                 .email(created.getUsername())
                 .build();
 
@@ -84,9 +84,9 @@ public class UserControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").value(created.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.firstName").value(created.getFirstName())
+                MockMvcResultMatchers.jsonPath("$.firstName").value(created.getFirstName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.lastName").value(created.getLastName())
+                MockMvcResultMatchers.jsonPath("$.lastName").value(created.getLastName().toString())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.email").value(created.getUsername())
         );
@@ -126,17 +126,17 @@ public class UserControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[0].id").value(created.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].firstName").value(created.getFirstName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].firstName").value(created.getFirstName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(created.getLastName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(created.getLastName().toString())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(created.getUsername())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[1].id").value(created2.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].firstName").value(created2.getFirstName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].firstName").value(created2.getFirstName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].lastName").value(created2.getLastName())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[1].lastName").value(created2.getLastName().toString())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[1].email").value(created2.getUsername())
         );

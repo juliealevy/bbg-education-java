@@ -2,6 +2,10 @@ package com.play.java.bbgeducation.domain.users;
 
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddressAttributeConverter;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstNameAttributeConverter;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastNameAttributeConverter;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -29,11 +33,11 @@ public class UserEntity implements UserDetails {
         isAdmin = false;
     }
 
-    public static UserEntity create(String firstName, String lastName, EmailAddress email, String password, Boolean isAdmin){
+    public static UserEntity create(FirstName firstName, LastName lastName, EmailAddress email, String password, Boolean isAdmin){
         return UserEntity.build(null, firstName,lastName,email,password, isAdmin);
     }
 
-    public static UserEntity build(Long id, String firstName, String lastName, EmailAddress email, String password, Boolean isAdmin){
+    public static UserEntity build(Long id, FirstName firstName, LastName lastName, EmailAddress email, String password, Boolean isAdmin){
         UserEntity newUser = new UserEntity();
         newUser.setId(id);
         newUser.setFirstName(firstName);
@@ -55,8 +59,10 @@ public class UserEntity implements UserDetails {
     private EmailAddress email;
 
     private String password;
-    private String firstName;
-    private String lastName;
+    @Convert(converter= FirstNameAttributeConverter.class)
+    private FirstName firstName;
+    @Convert(converter= LastNameAttributeConverter.class)
+    private LastName lastName;
 
     @Column(columnDefinition ="BOOLEAN DEFAULT FALSE")
     @NotNull

@@ -5,7 +5,6 @@ import com.play.java.bbgeducation.domain.valueobjects.ValueObject;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailAddress implements ValueObject {

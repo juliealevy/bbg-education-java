@@ -11,8 +11,8 @@ public class UserResultMapper implements Mapper<UserEntity, UserResult> {
     public UserResult mapTo(UserEntity userEntity) {
         return UserResult.builder()
                 .id(userEntity.getId())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
+                .firstName(userEntity.getFirstName().toString())
+                .lastName(userEntity.getLastName().toString())
                 .email(userEntity.getUsername())
                 .isAdmin(userEntity.getIsAdmin())
                 .build();

@@ -1,34 +1,29 @@
 package com.play.java.bbgeducation.application.auth;
 
 import an.awesome.pipelinr.repack.com.google.common.base.Strings;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
-import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.application.common.validation.EmailExistsValidationFailed;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -52,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public OneOf2<Success, ValidationFailed> register(String email, String password, String firstName, String lastName, boolean isAdmin) {
+    public OneOf2<Success, ValidationFailed> register(String email, String password, FirstName firstName, LastName lastName, boolean isAdmin) {
 
         if (userRepository.existsByEmail(EmailAddress.from(email))) {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
@@ -96,8 +91,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("authorities", user.get().getAuthorities());
-        extraClaims.put("firstName", user.get().getFirstName());
-        extraClaims.put("lastName", user.get().getLastName());
+        extraClaims.put("firstName", user.get().getFirstName().toString());
+        extraClaims.put("lastName", user.get().getLastName().toString());
         String accessToken = jwtService.generateAccessToken(extraClaims, user.get());
         String refreshToken = jwtService.generateRefreshToken(user.get());
 

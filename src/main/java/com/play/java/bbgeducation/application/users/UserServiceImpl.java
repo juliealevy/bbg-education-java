@@ -9,6 +9,8 @@ import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -35,7 +37,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, String firstName, String lastName, EmailAddress email) {
+    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, FirstName firstName, LastName lastName, EmailAddress email) {
 
         Optional<UserEntity> found = userRepository.findById(id);
         if (found.isEmpty()) {

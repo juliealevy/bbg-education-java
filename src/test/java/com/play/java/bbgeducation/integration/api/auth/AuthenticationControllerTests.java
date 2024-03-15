@@ -7,6 +7,8 @@ import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -191,7 +193,7 @@ public class AuthenticationControllerTests {
     }
 
     private void registerUser(RegisterRequest regRequest){
-        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), regRequest.getFirstName(),
-                regRequest.getLastName(),regRequest.getIsAdmin());
+        authenticationService.register(regRequest.getEmail(), regRequest.getPassword(), FirstName.from(regRequest.getFirstName()),
+                LastName.from(regRequest.getLastName()),regRequest.getIsAdmin());
     }
 }

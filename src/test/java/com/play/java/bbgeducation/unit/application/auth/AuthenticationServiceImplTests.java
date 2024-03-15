@@ -10,6 +10,8 @@ import com.play.java.bbgeducation.application.common.validation.ValidationFailed
 import com.play.java.bbgeducation.application.exceptions.InvalidEmailFormatException;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.infrastructure.auth.AuthHeaderParser;
 import com.play.java.bbgeducation.infrastructure.auth.JwtService;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
@@ -56,8 +58,8 @@ class AuthenticationServiceImplTests {
                 jwtService, passwordEncoder);
 
         userEntity = UserEntity.create(
-                "TestFirst",
-                "TestLast",
+                FirstName.from("TestFirst"),
+                LastName.from("TestLast"),
                 EmailAddress.from("test@test.com"),
                 "123456",
                 true);

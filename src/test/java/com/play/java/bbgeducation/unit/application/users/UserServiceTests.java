@@ -14,6 +14,8 @@ import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.application.users.UserServiceImpl;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
 import com.play.java.bbgeducation.integration.api.users.DataUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +87,8 @@ public class UserServiceTests {
         UpdateUserRequest userRequest = DataUtils.buildUpdateUserRequest();
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(100L, userRequest.getFirstName(), userRequest.getLastName(),
+        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(
+                100L, FirstName.from(userRequest.getFirstName()), LastName.from(userRequest.getLastName()),
                 EmailAddress.from(userRequest.getEmail()));
 
         assertThat(result).isNotNull();

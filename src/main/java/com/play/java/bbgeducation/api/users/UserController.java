@@ -12,6 +12,8 @@ import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
+import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
+import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -43,8 +45,8 @@ public class UserController {
 
         OneOf3<Success, NotFound, ValidationFailed> updated = userService.updateUser(
                 id,
-                userRequest.getFirstName(),
-                userRequest.getLastName(),
+                FirstName.from(userRequest.getFirstName()),
+                LastName.from(userRequest.getLastName()),
                 EmailAddress.from(userRequest.getEmail()));
 
         return updated.match(
