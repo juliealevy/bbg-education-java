@@ -75,8 +75,12 @@ class AuthenticationServiceImplTests {
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(false);
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
-        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getUsername(), userEntity.getPassword(), userEntity.getFirstName(),
-                userEntity.getLastName(), userEntity.getIsAdmin());
+        OneOf2<Success, ValidationFailed> result = underTest.register(
+                userEntity.getEmail(),
+                userEntity.getPassword(),
+                userEntity.getFirstName(),
+                userEntity.getLastName(),
+                userEntity.getIsAdmin());
 
         assertThat(result.hasOption1()).isTrue();
     }
@@ -87,7 +91,8 @@ class AuthenticationServiceImplTests {
 
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(true);
 
-        OneOf2<Success, ValidationFailed> result = underTest.register(userEntity.getUsername(), userEntity.getPassword(), userEntity.getFirstName(),
+        OneOf2<Success, ValidationFailed> result = underTest.register(
+                userEntity.getEmail(), userEntity.getPassword(), userEntity.getFirstName(),
                 userEntity.getLastName(), userEntity.getIsAdmin());
 
         assertThat(result.hasOption2()).isTrue();
@@ -98,8 +103,10 @@ class AuthenticationServiceImplTests {
 
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(false);
 
-        assertThatThrownBy(() -> underTest.register(userEntity.getUsername() + "invalid", userEntity.getPassword(), userEntity.getFirstName(),
-                userEntity.getLastName(), userEntity.getIsAdmin()))
+        assertThatThrownBy(() -> underTest.register(
+                    EmailAddress.from(userEntity.getUsername() + "invalid"),
+                    userEntity.getPassword(), userEntity.getFirstName(),
+                    userEntity.getLastName(), userEntity.getIsAdmin()))
                 .isInstanceOf(InvalidEmailFormatException.class);
     }
 
@@ -111,7 +118,7 @@ class AuthenticationServiceImplTests {
         when(jwtService.generateAccessToken(ArgumentMatchers.any(),  any(UserDetails.class))).thenReturn("12345");
         when(jwtService.generateRefreshToken(any(UserDetails.class))).thenReturn("54321");
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getUsername(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
 
         assertThat(result.hasOption1()).isTrue();
         assertThat(result.asOption1().getAccessToken()).isEqualTo("12345");
@@ -126,7 +133,7 @@ class AuthenticationServiceImplTests {
 
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
 
-        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getUsername(), userEntity.getPassword());
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPassword());
 
         assertThat(result.hasOption2()).isTrue();
 

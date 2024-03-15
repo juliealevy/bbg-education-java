@@ -47,14 +47,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public OneOf2<Success, ValidationFailed> register(String email, String password, FirstName firstName, LastName lastName, boolean isAdmin) {
+    public OneOf2<Success, ValidationFailed> register(EmailAddress email, String password, FirstName firstName, LastName lastName, boolean isAdmin) {
 
-        if (userRepository.existsByEmail(EmailAddress.from(email))) {
+        if (userRepository.existsByEmail(email)) {
             return OneOf2.fromOption2(new EmailExistsValidationFailed());
         }
 
         UserEntity userEntity = UserEntity.create(
-                firstName,lastName, EmailAddress.from(email),passwordEncoder.encode(password), isAdmin);
+                firstName,lastName, email,
+                passwordEncoder.encode(password), isAdmin);
 
         try {
             UserEntity saved = userRepository.save(userEntity);
@@ -71,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @SneakyThrows
     @Override
-    public OneOf2<AuthenticationResult, ValidationFailed> authenticate(String email, String password) {
+    public OneOf2<AuthenticationResult, ValidationFailed> authenticate(EmailAddress email, String password) {
 
         try {
             authenticationManager.authenticate(
@@ -83,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
         }
 
-        Optional<UserEntity> user = userRepository.findByEmail(EmailAddress.from(email));
+        Optional<UserEntity> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
             //don't want to return info to the user whether email or password was the problem
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Bad Credentials"));

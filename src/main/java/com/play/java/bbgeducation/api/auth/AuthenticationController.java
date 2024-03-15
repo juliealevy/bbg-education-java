@@ -9,6 +9,7 @@ import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class AuthenticationController {
             HttpServletRequest httpRequest){
 
         OneOf2<Success, ValidationFailed> newUser = authenticationService.register(
-                request.getEmail(),
+                EmailAddress.from(request.getEmail()),
                 request.getPassword(),
                 FirstName.from(request.getFirstName()),
                 LastName.from(request.getLastName()),
@@ -63,7 +64,9 @@ public class AuthenticationController {
             HttpServletRequest httpRequest) {
 
         OneOf2<AuthenticationResult, ValidationFailed> loginResult =
-                authenticationService.authenticate(request.getEmail(), request.getPassword());
+                authenticationService.authenticate(
+                        EmailAddress.from(request.getEmail()),
+                        request.getPassword());
 
         return loginResult.match(
                 login -> ResponseEntity.ok(EntityModel.of(login)

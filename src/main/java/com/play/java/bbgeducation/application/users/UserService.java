@@ -19,5 +19,6 @@ public interface UserService {
     List<UserResult> getAll();
 
     OneOf2<UserResult, NotFound> getById(Long id);
+    OneOf2<UserResult, NotFound> getByEmail(EmailAddress emailAddress);
 }
 

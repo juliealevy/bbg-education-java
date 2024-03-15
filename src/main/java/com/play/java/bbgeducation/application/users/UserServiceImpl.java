@@ -87,4 +87,12 @@ public class UserServiceImpl implements UserService{
                 userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
                 .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
     }
+
+    @Override
+    public OneOf2<UserResult, NotFound> getByEmail(EmailAddress emailAddress) {
+        Optional<UserEntity> foundUser = userRepository.findByEmail(emailAddress);
+        return foundUser.<OneOf2<UserResult, NotFound>>map(
+                        userEntity -> OneOf2.fromOption1(userMapper.mapTo(userEntity)))
+                .orElseGet(() -> OneOf2.fromOption2(new NotFound()));
+    }
 }

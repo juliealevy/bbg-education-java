@@ -1,10 +1,12 @@
 package com.play.java.bbgeducation.integration.api.users;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.play.java.bbgeducation.api.users.GetUserByEmailRequest;
 import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.domain.users.UserEntity;
 import com.play.java.bbgeducation.infrastructure.auth.Roles;
 import com.play.java.bbgeducation.infrastructure.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,9 @@ public class UserControllerTests {
     private ObjectMapper objectMapper;
 
     private static final String USERS_PATH = "/api/users";
+    private static final String USERS_EMAIL_PATH = "/api/users/email";
     private static final String PROBLEM_JSON_TYPE = "application/problem+json";
+    private UserEntity createdUser;
     @Autowired
     public UserControllerTests(MockMvc mockMvc, UserRepository userRepository) {
         this.underTest = mockMvc;
@@ -39,21 +43,25 @@ public class UserControllerTests {
         this.objectMapper = new ObjectMapper();
     }
 
+    @BeforeEach
+    void setUp() {
+        createdUser = createAndSaveUser1();
+    }
+
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN})
-    public void UserUpdate_ShouldReturn200_WhenInputValid() throws Exception {
-        UserEntity created = createAndSaveUser1();
+    public void UserUpdate_ShouldReturn200_WhenInputValid() throws Exception {       
 
         UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
-                .firstName(created.getFirstName().toString())
-                .lastName(created.getLastName().toString() + " updated")
-                .email(created.getUsername())
+                .firstName(createdUser.getFirstName().toString())
+                .lastName(createdUser.getLastName().toString() + " updated")
+                .email(createdUser.getUsername())
                 .build();
 
 
         String requestJson = objectMapper.writeValueAsString(updatedRequest);
 
-        underTest.perform(MockMvcRequestBuilders.put(getPath(created.getId()))
+        underTest.perform(MockMvcRequestBuilders.put(getPath(createdUser.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         ).andExpect(
@@ -64,9 +72,8 @@ public class UserControllerTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
     public void UserGetById_Returns200_WhenIdExists() throws Exception {
-        UserEntity created = createAndSaveUser1();
-
-        underTest.perform(MockMvcRequestBuilders.get(getPath(created.getId()))
+       
+        underTest.perform(MockMvcRequestBuilders.get(getPath(createdUser.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
@@ -76,19 +83,18 @@ public class UserControllerTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
     public void UserGetById_ReturnsUser_WhenIdExists() throws Exception {
-        UserEntity created = createAndSaveUser1();
-
-        underTest.perform(MockMvcRequestBuilders.get(getPath(created.getId()))
+      
+        underTest.perform(MockMvcRequestBuilders.get(getPath(createdUser.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(created.getId())
+                MockMvcResultMatchers.jsonPath("$.id").value(createdUser.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.firstName").value(created.getFirstName().toString())
+                MockMvcResultMatchers.jsonPath("$.firstName").value(createdUser.getFirstName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.lastName").value(created.getLastName().toString())
+                MockMvcResultMatchers.jsonPath("$.lastName").value(createdUser.getLastName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.email").value(created.getUsername())
+                MockMvcResultMatchers.jsonPath("$.email").value(createdUser.getUsername())
         );
     }
 
@@ -98,6 +104,65 @@ public class UserControllerTests {
 
         underTest.perform(MockMvcRequestBuilders.get(getPath(100L))
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void UserGetByEmail_Returns200_WhenEmailExists() throws Exception {
+       
+        GetUserByEmailRequest emailRequest = GetUserByEmailRequest.builder()
+                .email(createdUser.getEmail().toString())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(emailRequest);
+
+        underTest.perform(MockMvcRequestBuilders.get(USERS_EMAIL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void UserGetByEmail_ReturnsUser_WhenEmailExists() throws Exception {
+      
+        GetUserByEmailRequest emailRequest = GetUserByEmailRequest.builder()
+                .email(createdUser.getEmail().toString())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(emailRequest);
+        underTest.perform(MockMvcRequestBuilders.get(USERS_EMAIL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(createdUser.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.firstName").value(createdUser.getFirstName().toString())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.lastName").value(createdUser.getLastName().toString())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.email").value(createdUser.getUsername())
+        );
+    }
+
+    @Test
+    @WithMockUser(username="test", roles = {Roles.USER})
+    public void UserGetByEmail_Returns404_WhenEmailNotExists() throws Exception {
+
+        GetUserByEmailRequest emailRequest = GetUserByEmailRequest.builder()
+                .email("test@blah.com")
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(emailRequest);
+        underTest.perform(MockMvcRequestBuilders.get(USERS_EMAIL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         );
@@ -117,20 +182,19 @@ public class UserControllerTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
     public void GetAll_ReturnsList_WhenSuccess() throws Exception {
-        UserEntity created = createAndSaveUser1();
         UserEntity created2 = createAndSaveUser2();
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(MockMvcResultHandlers.print()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].id").value(created.getId())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].id").value(createdUser.getId())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].firstName").value(created.getFirstName().toString())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].firstName").value(createdUser.getFirstName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(created.getLastName().toString())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].lastName").value(createdUser.getLastName().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(created.getUsername())
+                MockMvcResultMatchers.jsonPath("$._embedded.users.[0].email").value(createdUser.getUsername())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$._embedded.users.[1].id").value(created2.getId())
         ).andExpect(
@@ -145,9 +209,8 @@ public class UserControllerTests {
     @Test
     @WithMockUser(username="test", roles = {Roles.ADMIN})
     public void UserDelete_ShouldReturnOkWithLinks_WhenIdExists() throws Exception {
-        UserEntity created = createAndSaveUser1();
 
-        underTest.perform(MockMvcRequestBuilders.delete(getPath(created.getId()))
+        underTest.perform(MockMvcRequestBuilders.delete(getPath(createdUser.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()

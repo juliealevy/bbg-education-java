@@ -171,6 +171,28 @@ public class UserServiceTests {
     }
 
     @Test
+    public void GetByEmail_ReturnsUser_WhenExists(){
+        userEntity.setId(100L);
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
+
+        OneOf2<UserResult, NotFound> fetch = underTest.getByEmail(userEntity.getEmail());
+
+        assertThat(fetch).isNotNull();
+        assertThat(fetch.hasOption1()).isTrue();
+        assertThat(fetch.asOption1().getEmail()).isEqualTo(userEntity.getEmail().toString());
+    }
+
+    @Test
+    public void GetByEmail_ReturnsNotFound_WhenNotExists(){
+        when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
+
+        OneOf2<UserResult, NotFound> fetch = underTest.getByEmail(EmailAddress.from("blah@blah.com"));
+
+        assertThat(fetch).isNotNull();
+        assertThat(fetch.hasOption2()).isTrue();
+    }
+
+    @Test
     public void Delete_ReturnsNoContent_WhenIdExists(){
         userEntity.setId(100L);
 

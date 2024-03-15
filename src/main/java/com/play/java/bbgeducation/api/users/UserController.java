@@ -8,7 +8,6 @@ import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
-import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
@@ -17,12 +16,9 @@ import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
@@ -80,6 +76,20 @@ public class UserController {
 
     }
 
+    @GetMapping(path="email")
+    public ResponseEntity getByEmail(
+            @RequestBody GetUserByEmailRequest getByFilterRequest
+    ) {
+        OneOf2<UserResult, NotFound> result = userService.getByEmail(
+                EmailAddress.from(getByFilterRequest.getEmail()));
+
+        return result.match(
+                user -> ResponseEntity.ok(buildEntityModelUserItem(user)),
+                notfound ->  ResponseEntity.notFound().build()
+        );
+
+    }
+
     @DeleteMapping(path="{id}")
     public ResponseEntity deleteById(
             @PathVariable("id") Long id,
@@ -87,7 +97,6 @@ public class UserController {
     ) {
         OneOf2<Success, NotFound> result = userService.deleteUser(id);
 
-        //TODO:  need links
         return result.match(
                 success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())
                         .add(userLinkProvider.getSelfLink(httpRequest))
