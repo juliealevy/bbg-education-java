@@ -12,7 +12,7 @@ import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import java.util.List;
 
 public interface UserService {
-    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, FirstName firstName, LastName lastName, EmailAddress email);
+    OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, FirstName firstName, LastName lastName);
 
     OneOf2<Success, NotFound> deleteUser(Long id);
 

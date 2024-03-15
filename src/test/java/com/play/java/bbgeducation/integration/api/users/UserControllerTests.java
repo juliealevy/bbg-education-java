@@ -55,7 +55,6 @@ public class UserControllerTests {
         UpdateUserRequest updatedRequest = UpdateUserRequest.builder()
                 .firstName(createdUser.getFirstName().toString())
                 .lastName(createdUser.getLastName().toString() + " updated")
-                .email(createdUser.getUsername())
                 .build();
 
 

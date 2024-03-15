@@ -21,7 +21,6 @@ public class DataUtils {
         return UpdateUserRequest.builder()
                 .firstName("Julie")
                 .lastName("Levy")
-                .email("julie@testmail.com")
                 .build();
     }
 

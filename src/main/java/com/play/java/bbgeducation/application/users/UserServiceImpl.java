@@ -38,21 +38,23 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, FirstName firstName, LastName lastName, EmailAddress email) {
+    public OneOf3<Success, NotFound, ValidationFailed> updateUser(Long id, FirstName firstName, LastName lastName) {
 
         Optional<UserEntity> found = userRepository.findById(id);
         if (found.isEmpty()) {
             return OneOf3.fromOption2(new NotFound());
         }
 
-        if (!found.get().getEmail().equals(email) && userRepository.existsByEmail(email)) {
-            return OneOf3.fromOption3(new EmailExistsValidationFailed());
-        }
+//        if (!found.get().getEmail().equals(email) && userRepository.existsByEmail(email)) {
+//            return OneOf3.fromOption3(new EmailExistsValidationFailed());
+//        }
 
         try {
-            UserEntity userEntity =UserEntity.build(
-                    id, firstName, lastName, email, Password.empty(), found.get().getIsAdmin());
-            userRepository.save(userEntity);
+            UserEntity updatedUser = found.get();
+            updatedUser.setFirstName(firstName);
+            updatedUser.setLastName(lastName);
+
+            userRepository.save(updatedUser);
         }catch(TransactionSystemException cvex){
             logger.error("Error updating user", cvex);
             Throwable mostSpecificCause = cvex.getMostSpecificCause();

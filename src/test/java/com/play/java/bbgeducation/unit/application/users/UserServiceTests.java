@@ -61,22 +61,8 @@ public class UserServiceTests {
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
 
-        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                userEntity.getEmail());
-
-        assertThat(result).isNotNull();
-        assertThat(result.hasOption1()).isTrue();
-    }
-
-    @Test
-    public void UpdateUser_ShouldSucceed_WhenEmailChangeToUnusedEmail(){
-        userEntity.setId(100L);
-
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
-        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(false);
-
-        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                EmailAddress.from("unused@blah.com"));
+        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(
+                userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName());
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption1()).isTrue();
@@ -88,39 +74,10 @@ public class UserServiceTests {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(
-                100L, FirstName.from(userRequest.getFirstName()), LastName.from(userRequest.getLastName()),
-                EmailAddress.from(userRequest.getEmail()));
+                100L, FirstName.from(userRequest.getFirstName()), LastName.from(userRequest.getLastName()));
 
         assertThat(result).isNotNull();
         assertThat(result.hasOption2()).isTrue();
-    }
-
-    @Test
-    public void UpdateUser_ShouldFail_WhenEmailExists() {
-        userEntity.setId(100L);
-
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
-        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(true);
-
-        OneOf3<Success, NotFound, ValidationFailed> result = underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                EmailAddress.from("updated@blah.com"));
-
-        assertThat(result).isNotNull();
-        assertThat(result.hasOption3()).isTrue();
-        assertThat(result.asOption3().getClass()).isEqualTo(EmailExistsValidationFailed.class);
-    }
-
-    @Test
-    public void UpdateUser_ShouldThrow_WhenEmailInvalid() {
-        userEntity.setId(100L);
-
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
-        when(userRepository.existsByEmail(any(EmailAddress.class))).thenReturn(false);
-
-        assertThatThrownBy(() ->
-                underTest.updateUser(userEntity.getId(), userEntity.getFirstName(), userEntity.getLastName(),
-                    EmailAddress.from("unused@blah.cominvalid")))
-                .isInstanceOf(InvalidEmailFormatException.class);
     }
 
     @Test

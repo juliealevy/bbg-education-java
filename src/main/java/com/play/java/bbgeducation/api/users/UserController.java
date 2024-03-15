@@ -42,8 +42,7 @@ public class UserController {
         OneOf3<Success, NotFound, ValidationFailed> updated = userService.updateUser(
                 id,
                 FirstName.from(userRequest.getFirstName()),
-                LastName.from(userRequest.getLastName()),
-                EmailAddress.from(userRequest.getEmail()));
+                LastName.from(userRequest.getLastName()));
 
         return updated.match(
                 success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())

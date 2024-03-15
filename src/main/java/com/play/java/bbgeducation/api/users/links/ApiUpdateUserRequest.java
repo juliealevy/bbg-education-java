@@ -10,7 +10,6 @@ public class ApiUpdateUserRequest extends UpdateUserRequest {
         return UpdateUserRequest.builder()
                 .firstName(stringType)
                 .lastName(stringType)
-                .email(stringType)
                 .build();
     }
 }
