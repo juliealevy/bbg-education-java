@@ -55,12 +55,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         UserEntity userEntity = UserEntity.create(
-                firstName,lastName, email,
+                firstName, lastName, email,
                 Password.from(passwordEncoder.encode(password.toString())), isAdmin);
 
         try {
             UserEntity saved = userRepository.save(userEntity);
-        }catch(TransactionSystemException cvex){
+        } catch (TransactionSystemException cvex) {
             logger.error("Error updating user", cvex);
             Throwable mostSpecificCause = cvex.getMostSpecificCause();
             return OneOf2.fromOption2(ValidationFailed.Conflict("", mostSpecificCause.getMessage()));
@@ -70,6 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return OneOf2.fromOption1(new Success());
 
     }
+
 
     @SneakyThrows
     @Override
@@ -91,37 +92,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Bad Credentials"));
         }
 
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("authorities", user.get().getAuthorities());
-        extraClaims.put("firstName", user.get().getFirstName().toString());
-        extraClaims.put("lastName", user.get().getLastName().toString());
-        String accessToken = jwtService.generateAccessToken(extraClaims, user.get());
-        String refreshToken = jwtService.generateRefreshToken(user.get());
-
-        return OneOf2.fromOption1(AuthenticationResult.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build());
+        return OneOf2.fromOption1(buildAuthenticationResult(user.get()));
     }
 
     @Override
     public OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest request) {
-        final String userEmail;
+
         final String refreshToken = authHeaderParser.getAuthToken(request);
-        if (Strings.isNullOrEmpty(refreshToken)) {
-            return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Invalid or no authorization provided"));
+        OneOf2<EmailAddress, ValidationFailed> validatedRequest = validateRequest(request);
+        if (validatedRequest.hasOption2()){
+            return OneOf2.fromOption2(validatedRequest.asOption2());
         }
+        EmailAddress currentEmail = validatedRequest.asOption1();
 
-        userEmail = jwtService.extractUserName(refreshToken);
-        if (Strings.isNullOrEmpty(userEmail)) {
-            return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Invalid authorization provided"));
-        }
-        UserEntity userDetails = this.userRepository.findByEmail(EmailAddress.from(userEmail))
+        UserEntity userDetails = this.userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
-
-        if (jwtService.isTokenExpired(refreshToken)) {
-            return OneOf2.fromOption2(ValidationFailed.Unauthorized("","Authorization is expired"));
-        }
 
         String newAccessToken = jwtService.generateAccessToken(userDetails);
         AuthenticationResult authResponse = AuthenticationResult.builder()
@@ -133,4 +118,99 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
+    public OneOf2<AuthenticationResult, ValidationFailed> updateUserName(HttpServletRequest request, EmailAddress newUserName) {
+
+        OneOf2<EmailAddress, ValidationFailed> validatedRequest = validateRequest(request);
+        if (validatedRequest.hasOption2()){
+            return OneOf2.fromOption2(validatedRequest.asOption2());
+        }
+
+        try {
+            EmailAddress currentUserEmail = validatedRequest.asOption1();
+            UserEntity userDetails = this.userRepository.findByEmail(currentUserEmail)
+                    .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+
+            //validate new username
+            if (newUserName.isEmpty()){
+                return OneOf2.fromOption2(ValidationFailed.Conflict("email", "New email address must have a value"));
+            }
+            if (!newUserName.equals(currentUserEmail) && userRepository.findByEmail(newUserName).isPresent()){
+                return OneOf2.fromOption2(new EmailExistsValidationFailed());
+            }
+            //save it
+            userDetails.setEmail(newUserName);
+            userRepository.save(userDetails);
+            //Todo: revoke token?  (requires persisting tokens in DB)
+            return OneOf2.fromOption1(buildAuthenticationResult(userDetails));
+        } catch (TransactionSystemException ex) {
+            logger.error("Error updating username/email", ex);
+            Throwable mostSpecificCause = ex.getMostSpecificCause();
+            return OneOf2.fromOption2(ValidationFailed.Conflict("", mostSpecificCause.getMessage()));
+        }
+
+
+
+    }
+
+    @Override
+    public OneOf2<Success, ValidationFailed> updatePassword(HttpServletRequest request, Password oldPassword, Password newPassword) {
+
+        OneOf2<EmailAddress, ValidationFailed> validatedRequest = validateRequest(request);
+        if (validatedRequest.hasOption2()){
+            return OneOf2.fromOption2(validatedRequest.asOption2());
+        }
+
+        try {
+            EmailAddress currentUserEmail = validatedRequest.asOption1();
+            UserEntity userDetails = this.userRepository.findByEmail(currentUserEmail)
+                    .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+
+            if (!passwordEncoder.matches(oldPassword.toString(), userDetails.getPassword())) {
+                return OneOf2.fromOption2(ValidationFailed.Conflict("password", "Existing password is incorrect"));
+            }
+            userDetails.setPassword(Password.from(passwordEncoder.encode(newPassword.toString())));
+            userRepository.save(userDetails);
+            //TODO:  revoke token??  (requires persisting tokens to DB)
+        }catch(TransactionSystemException ex){
+            logger.error("Error updating user password", ex);
+            Throwable mostSpecificCause = ex.getMostSpecificCause();
+            return OneOf2.fromOption2(ValidationFailed.Conflict("", mostSpecificCause.getMessage()));
+        }
+        return OneOf2.fromOption1(new Success());
+    }
+
+    private OneOf2<EmailAddress, ValidationFailed> validateRequest(HttpServletRequest request){
+        final String token = authHeaderParser.getAuthToken(request);
+        if (Strings.isNullOrEmpty(token)) {
+            return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Invalid or no authorization provided"));
+        }
+        if (jwtService.isTokenExpired(token)) {
+            return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Authorization is expired"));
+        }
+
+        final String userEmail = jwtService.extractUserName(token);
+        if (Strings.isNullOrEmpty(userEmail)) {
+            return OneOf2.fromOption2(ValidationFailed.Unauthorized("", "Invalid authorization provided"));
+        }
+        return OneOf2.fromOption1(EmailAddress.from(userEmail));
+    }
+
+    private AuthenticationResult buildAuthenticationResult(UserEntity user){
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("authorities", user.getAuthorities());
+        extraClaims.put("firstName", user.getFirstName().toString());
+        extraClaims.put("lastName", user.getLastName().toString());
+        String accessToken = jwtService.generateAccessToken(extraClaims, user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        return AuthenticationResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }
+
+
+
+

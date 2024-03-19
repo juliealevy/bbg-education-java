@@ -3,11 +3,11 @@ package com.play.java.bbgeducation.api.users;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.users.links.UserLinkProvider;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.application.users.UserResult;
 import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
@@ -67,7 +67,6 @@ public class UserController {
     ) {
         OneOf2<UserResult, NotFound> result = userService.getById(id);
 
-        //TODO:  need links
         return result.match(
                 user -> ResponseEntity.ok(buildEntityModelUserItem(user)),
                 notfound ->  ResponseEntity.notFound().build()

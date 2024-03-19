@@ -3,10 +3,13 @@ package com.play.java.bbgeducation.integration.api.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
+import com.play.java.bbgeducation.api.auth.UpdatePasswordRequest;
+import com.play.java.bbgeducation.api.auth.UpdateUserNameRequest;
 import com.play.java.bbgeducation.application.auth.AuthenticationResult;
 import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.users.UserService;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
@@ -23,12 +26,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.play.java.bbgeducation.integration.api.auth.DataUtils.buildLoginRequest1;
-import static com.play.java.bbgeducation.integration.api.auth.DataUtils.buildRegisterRequest1;
+import static com.play.java.bbgeducation.integration.api.auth.DataUtils.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
@@ -40,20 +43,25 @@ public class AuthenticationControllerTests {
     private WebApplicationContext webApplicationContext;
     private ObjectMapper objectMapper;
     private AuthenticationService authenticationService;
+    private UserServiceTest userService;
     private static final String PROBLEM_JSON_TYPE = "application/problem+json";
 
     private static final String AUTH_PATH = "/api/auth";
 
     @Autowired
-    public AuthenticationControllerTests(WebApplicationContext webApplicationContext, AuthenticationService authenticationService) {
+    public AuthenticationControllerTests(WebApplicationContext webApplicationContext, AuthenticationService authenticationService, UserServiceTest userService) {
         this.webApplicationContext = webApplicationContext;
         this.authenticationService = authenticationService;
+        this.userService = userService;
         this.objectMapper = new ObjectMapper();
     }
 
     @BeforeEach
     public void init(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+        //some of these tests fail on verify, although they run just fine by themselves.   For now deleting users before
+        //each test until i can figure out what's happening.
+        this.userService.deleteAllUsers();
     }
 
     @Test
@@ -192,6 +200,135 @@ public class AuthenticationControllerTests {
                 MockMvcResultMatchers.jsonPath("$.refresh_token").isString()
         );
 
+    }
+
+    @Test
+    public void UpdateUserName_ShouldSucceed_WhenValid() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
+                EmailAddress.from(regRequest.getEmail()), Password.from(regRequest.getPassword()));
+
+        UpdateUserNameRequest updateRequest = UpdateUserNameRequest.builder()
+                .email("updated" + regRequest.getEmail())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(AUTH_PATH + "/update/username")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void UpdateUserName_ShouldFail_WhenFormatInValid() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
+                EmailAddress.from(regRequest.getEmail()), Password.from(regRequest.getPassword()));
+
+        UpdateUserNameRequest updateRequest = UpdateUserNameRequest.builder()
+                .email(regRequest.getEmail() + "updated")
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(AUTH_PATH + "/update/username")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isConflict()
+        ).andExpect(
+                MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
+        );
+    }
+
+    @Test
+    public void UpdateUserName_ShouldFail_WhenEmailExists() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        RegisterRequest regRequest2 = buildRegisterRequest2();
+        registerUser(regRequest2);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
+                EmailAddress.from(regRequest2.getEmail()), Password.from(regRequest2.getPassword()));
+
+        UpdateUserNameRequest updateRequest = UpdateUserNameRequest.builder()
+                .email(regRequest.getEmail())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(AUTH_PATH + "/update/username")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isConflict()
+        ).andExpect(
+                MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
+        );
+    }
+
+    @Test
+    public void UpdatePassword_ShouldSucceed_WhenValid() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
+                EmailAddress.from(regRequest.getEmail()), Password.from(regRequest.getPassword()));
+
+        UpdatePasswordRequest updateRequest = UpdatePasswordRequest.builder()
+                .oldPassword(regRequest.getPassword())
+                .newPassword("77777")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(AUTH_PATH + "/update/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void UpdatePassword_ShouldFail_WhenOldIsInvalid() throws Exception {
+        RegisterRequest regRequest = buildRegisterRequest1();
+        registerUser(regRequest);
+
+        OneOf2<AuthenticationResult, ValidationFailed> authenticated = authenticationService.authenticate(
+                EmailAddress.from(regRequest.getEmail()), Password.from(regRequest.getPassword()));
+
+        UpdatePasswordRequest updateRequest = UpdatePasswordRequest.builder()
+                .oldPassword(regRequest.getPassword() + "123")
+                .newPassword("77777")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(AUTH_PATH + "/update/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authenticated.asOption1().getAccessToken())
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.status().isConflict()
+        ).andExpect(
+                MockMvcResultMatchers.content().contentType(PROBLEM_JSON_TYPE)
+        );
     }
 
     private void registerUser(RegisterRequest regRequest){

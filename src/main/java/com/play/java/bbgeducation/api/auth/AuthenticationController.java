@@ -14,10 +14,8 @@ import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
 import com.play.java.bbgeducation.domain.valueobjects.password.Password;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,5 +92,43 @@ public class AuthenticationController {
 
     }
 
-    //TODO:  change password
+    @PutMapping(path="update/username")
+    public ResponseEntity<?> updateUserName(
+            @RequestBody UpdateUserNameRequest updateRequest,
+            HttpServletRequest httpRequest
+    ) {
+
+        OneOf2<AuthenticationResult, ValidationFailed> result = authenticationService.updateUserName(httpRequest, EmailAddress.from(updateRequest.getEmail()));
+
+        return result.match(
+                authResult -> ResponseEntity.ok(EntityModel.of(authResult)
+                        .add(authLinkProvider.getSelfLink(httpRequest))
+                        .add(authLinkProvider.getLoginLink())
+                ),
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error updating username"))
+                        .build()
+        );
+    }
+    @PutMapping(path="update/password")
+    public ResponseEntity<?> updatePassword(
+            @RequestBody UpdatePasswordRequest updateRequest,
+            HttpServletRequest httpRequest
+    ) {
+
+        OneOf2<Success, ValidationFailed> result = authenticationService.updatePassword(httpRequest,
+                Password.from(updateRequest.getOldPassword()),
+                Password.from(updateRequest.getNewPassword())
+        );
+
+        return result.match(
+                success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())
+                        .add(authLinkProvider.getSelfLink(httpRequest))
+                        .add(authLinkProvider.getLoginLink())
+                ),
+                fail -> ResponseEntity.of(fail.toProblemDetail("Error updating password"))
+                        .build()
+        );
+    }
+
+
 }

@@ -17,4 +17,9 @@ public interface AuthenticationService {
     OneOf2<Success, ValidationFailed> register(EmailAddress email, Password password, FirstName firstName, LastName lastName, boolean isAdmin);
 
     OneOf2<AuthenticationResult, ValidationFailed> refreshToken(HttpServletRequest httpRequest) throws IOException;
+
+    OneOf2<AuthenticationResult, ValidationFailed> updateUserName(HttpServletRequest request, EmailAddress newUserName);
+
+    OneOf2<Success, ValidationFailed> updatePassword(HttpServletRequest request, Password oldPassword, Password newPassword);
+
 }

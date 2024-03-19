@@ -34,7 +34,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class AuthenticationServiceImplTests {
@@ -46,11 +48,15 @@ class AuthenticationServiceImplTests {
     private AuthenticationManager authenticationManager = Mockito.mock(AuthenticationManager.class);
 
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private JwtService  jwtService = Mockito.mock(JwtService.class);
+    private JwtService jwtService = Mockito.mock(JwtService.class);
     private AuthHeaderParser authHeaderParser = Mockito.mock(AuthHeaderParser.class);
     private PasswordEncoder passwordEncoder;
     private HttpServletRequest httpRequest = Mockito.mock(HttpServletRequest.class);
-
+    private final String userPassword = "123456";
+    private final Password updatedPassword = Password.from("654321");
+    private final EmailAddress userEmail = EmailAddress.from("test@test.com");
+    private final EmailAddress updatedEmail = EmailAddress.from("blah@blah.com");
+    private final String mockToken = "12345";
 
     @BeforeEach
     void setUp() {
@@ -61,13 +67,13 @@ class AuthenticationServiceImplTests {
         userEntity = UserEntity.create(
                 FirstName.from("TestFirst"),
                 LastName.from("TestLast"),
-                EmailAddress.from("test@test.com"),
-                Password.from("123456"),
+                userEmail,
+                Password.from(passwordEncoder.encode(userPassword)),
                 true);
     }
 
     @AfterEach
-    void tearDown()  {
+    void tearDown() {
     }
 
     @Test
@@ -105,9 +111,9 @@ class AuthenticationServiceImplTests {
         when(userRepository.existsByEmail(userEntity.getEmail())).thenReturn(false);
 
         assertThatThrownBy(() -> underTest.register(
-                    EmailAddress.from(userEntity.getUsername() + "invalid"),
-                    userEntity.getPasswordObject(), userEntity.getFirstName(),
-                    userEntity.getLastName(), userEntity.getIsAdmin()))
+                EmailAddress.from(userEntity.getUsername() + "invalid"),
+                userEntity.getPasswordObject(), userEntity.getFirstName(),
+                userEntity.getLastName(), userEntity.getIsAdmin()))
                 .isInstanceOf(InvalidEmailFormatException.class);
     }
 
@@ -116,13 +122,13 @@ class AuthenticationServiceImplTests {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
-        when(jwtService.generateAccessToken(ArgumentMatchers.any(),  any(UserDetails.class))).thenReturn("12345");
+        when(jwtService.generateAccessToken(ArgumentMatchers.any(), any(UserDetails.class))).thenReturn(mockToken);
         when(jwtService.generateRefreshToken(any(UserDetails.class))).thenReturn("54321");
 
         OneOf2<AuthenticationResult, ValidationFailed> result = underTest.authenticate(userEntity.getEmail(), userEntity.getPasswordObject());
 
         assertThat(result.hasOption1()).isTrue();
-        assertThat(result.asOption1().getAccessToken()).isEqualTo("12345");
+        assertThat(result.asOption1().getAccessToken()).isEqualTo(mockToken);
         assertThat(result.asOption1().getRefreshToken()).isEqualTo("54321");
 
     }
@@ -142,7 +148,7 @@ class AuthenticationServiceImplTests {
 
     @Test
     void refreshToken_ShouldReturnTokens_whenInputValid() throws IOException {
-        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
         when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
         when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
@@ -152,7 +158,7 @@ class AuthenticationServiceImplTests {
 
         assertThat(result.hasOption1()).isTrue();
         assertThat(result.asOption1().getAccessToken()).isEqualTo("678910");
-        assertThat(result.asOption1().getRefreshToken()).isEqualTo("12345");
+        assertThat(result.asOption1().getRefreshToken()).isEqualTo(mockToken);
     }
 
     @Test
@@ -167,7 +173,7 @@ class AuthenticationServiceImplTests {
 
     @Test
     void refreshToken_ShouldReturnUnAuthorized_whenEmailMissing() throws IOException {
-        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
         when(jwtService.extractUserName(any(String.class))).thenReturn("");
 
         OneOf2<AuthenticationResult, ValidationFailed> result = underTest.refreshToken(httpRequest);
@@ -177,8 +183,8 @@ class AuthenticationServiceImplTests {
     }
 
     @Test
-    void refreshToken_ShouldThrow_whenUserEmailNotExists() throws IOException {
-        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
+    void refreshToken_ShouldThrow_whenUserEmailNotExists() {
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
         when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.empty());
 
@@ -189,7 +195,7 @@ class AuthenticationServiceImplTests {
 
     @Test
     void refreshToken_ShouldReturnUnauthorized_whenRefreshTokenIsExpired() throws IOException {
-        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("12345");
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
         when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
         when(userRepository.findByEmail(any(EmailAddress.class))).thenReturn(Optional.of(userEntity));
         when(jwtService.isTokenExpired(any(String.class))).thenReturn(true);
@@ -201,4 +207,183 @@ class AuthenticationServiceImplTests {
     }
 
 
+    @Test
+    void updateUserName_ShouldReturnSuccess_whenInputValid() {
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        //existing email/username
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
+        //new email/username
+        when(userRepository.findByEmail(updatedEmail)).thenReturn(Optional.empty());
+        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
+
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.updateUserName(httpRequest, updatedEmail);
+
+
+        assertThat(result.hasOption1()).isTrue();
+
+    }
+
+    @Test
+    void updateUserName_ShouldFail_whenTokenMissing() {
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("");
+
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.updateUserName(httpRequest, updatedEmail);
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
+
+    @Test
+    void updateUserName_ShouldFail_whenRequestEmailNotExists() {
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        //existing email/username
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> underTest.updateUserName(httpRequest, updatedEmail))
+                .isInstanceOf(BadCredentialsException.class);
+    }
+
+    @Test
+    void updateUserName_ShouldFail_whenNewEmailEmpty() {
+        final EmailAddress newUserName = EmailAddress.empty();
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        //existing email/username
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
+
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.updateUserName(httpRequest, newUserName);
+
+        assertThat(result.hasOption2()).isTrue();
+    }
+
+    @Test
+    void updateUserName_ShouldFail_whenNewEmailExists() {
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        //existing email/username
+        //existing email/username
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
+        //new email/username
+        when(userRepository.findByEmail(updatedEmail)).thenReturn(Optional.of(userEntity));
+
+        OneOf2<AuthenticationResult, ValidationFailed> result = underTest.updateUserName(httpRequest, updatedEmail);
+
+        assertThat(result.hasOption2()).isTrue();
+    }
+
+    @Test
+    void updatePassword_ShouldReturnSuccess_whenInputValid() {
+
+        userEntity.setId(100L);
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        //existing email/username
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
+        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword), updatedPassword);
+
+        assertThat(result.hasOption1()).isTrue();
+
+    }
+
+    @Test
+    void updatePassword_ShouldFail_whenOldPasswordWrong() {
+
+        userEntity.setId(100L);
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn(userEntity.getUsername());
+
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
+        when(userRepository.save(any(UserEntity.class))).then(returnsFirstArg());
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword + "xyz"), updatedPassword);
+
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
+
+    @Test
+    void updatePassword_ShouldFail_whenAuthTokenMissing() {
+
+        userEntity.setId(100L);
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn("");
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword), updatedPassword);
+
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
+
+    @Test
+    void updatePassword_ShouldFail_whenAuthTokenExpired() {
+
+        userEntity.setId(100L);
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(true);
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword), updatedPassword);
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
+
+    @Test
+    void updatePassword_ShouldFail_whenEmailMissing() {
+
+        userEntity.setId(100L);
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn("");
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword), updatedPassword);
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
+
+    @Test
+    void updatePassword_ShouldFail_whenUserNameNotExists() {
+
+        userEntity.setId(100L);
+
+        when(authHeaderParser.getAuthToken(any(HttpServletRequest.class))).thenReturn(mockToken);
+        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
+        when(jwtService.extractUserName(any(String.class))).thenReturn("");
+
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.empty());
+
+        OneOf2<Success, ValidationFailed> result = underTest.updatePassword(httpRequest,
+                Password.from(userPassword), updatedPassword);
+
+        assertThat(result.hasOption2()).isTrue();
+
+    }
 }

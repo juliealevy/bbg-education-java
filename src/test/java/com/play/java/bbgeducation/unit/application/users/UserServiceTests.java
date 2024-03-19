@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -56,7 +57,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void UpdateUser_ShouldSucceed_WhenSameEmail(){
+    public void UpdateUser_ShouldSucceed_WhenAllValid(){
         userEntity.setId(100L);
 
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(userEntity));
