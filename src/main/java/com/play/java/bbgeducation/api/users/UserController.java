@@ -47,7 +47,8 @@ public class UserController {
         return updated.match(
                 success -> ResponseEntity.ok(EntityModel.of(new NoDataResponse())
                         .add(userLinkProvider.getSelfLink(httpRequest))
-                        .add(userLinkProvider.getByIdLink(id, false))),
+                        .add(userLinkProvider.getByIdLink(id, false))
+                ),
                 notfound -> ResponseEntity.notFound().build(),
                 fail ->  ResponseEntity.of(fail.toProblemDetail("Error updating user"))
                         .build()
@@ -75,14 +76,20 @@ public class UserController {
     }
 
     @GetMapping(path="email")
-    public ResponseEntity getByEmail(
-            @RequestBody GetUserByEmailRequest getByFilterRequest
+    public ResponseEntity<?> getByEmail(
+            @RequestBody GetUserByEmailRequest getByEmailRequest,
+            HttpServletRequest httpRequest
     ) {
         OneOf2<UserResult, NotFound> result = userService.getByEmail(
-                EmailAddress.from(getByFilterRequest.getEmail()));
+                EmailAddress.from(getByEmailRequest.getEmail()));
 
         return result.match(
-                user -> ResponseEntity.ok(buildEntityModelUserItem(user)),
+                user -> ResponseEntity.ok(EntityModel.of(user)
+                        .add(userLinkProvider.getSelfLink(httpRequest))
+                        .add(userLinkProvider.getUpdateLink(user.getId()))
+                        .add(userLinkProvider.getDeleteLink(user.getId()))
+                        .add(userLinkProvider.getAllLink())
+                ),
                 notfound ->  ResponseEntity.notFound().build()
         );
 

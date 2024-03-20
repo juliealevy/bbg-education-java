@@ -31,6 +31,11 @@ public class UserLinkProvider extends LinkProviderBase<Class<UserController>> {
                 .getById(userId)).withRel(asSelf? IanaLinkRelations.SELF_VALUE: UserLinkRelations.GET_BY_ID.value);
     }
 
+    public Link getByEmailLink(){
+        return linkTo(methodOn(getController())
+                .getByEmail(null, null)).withRel(UserLinkRelations.GET_BY_EMAIL.value);
+    }
+
     public Link getDeleteLink(Long userId){
         return linkTo(methodOn(getController())
                 .deleteById(userId, null)).withRel(UserLinkRelations.DELETE.value);

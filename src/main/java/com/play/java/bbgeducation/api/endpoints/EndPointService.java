@@ -1,17 +1,16 @@
 package com.play.java.bbgeducation.api.endpoints;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -21,9 +20,14 @@ public class EndPointService {
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private Map<String, List<EndPointData>> endpointsByController = new HashMap<>();
 
-    public EndPointService(ApplicationContext applicationContext) {
+    private final HttpServletRequest httpRequest;
+
+    public EndPointService(ApplicationContext applicationContext, HttpServletRequest httpServletRequest) {
+
         this.requestMappingHandlerMapping = applicationContext
                 .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
+        this.requestMappingHandlerMapping.getUrlPathHelper().setAlwaysUseFullPath(true);
+        this.httpRequest = httpServletRequest;
 
     }
 
@@ -49,7 +53,7 @@ public class EndPointService {
                                 return EndPointData.builder()
                                         .controllerName(entry.getValue().getBean().toString().toLowerCase())
                                         .methodName(entry.getValue().getMethod().getName())
-                                        .href(pathPatterns.iterator().next().getPatternString())
+                                        .href(buildHref(pathPatterns.iterator().next().getPatternString()))
                                         .httpMethod(httpMethods.iterator().next().name())
                                         .build();
                             }
@@ -59,6 +63,20 @@ public class EndPointService {
         }
     }
 
+    private String buildHref(String path) {
+        try {
+            //using this builder so url doesn't get encoded..this is for hal api
+            return UriComponentsBuilder.fromPath(path)
+                    .scheme(httpRequest.getScheme())
+                    .host(httpRequest.getServerName())
+                    .port(httpRequest.getServerPort())
+                    .build()
+                    .toString();
+        } catch (Exception ex) {
+            return path;
+        }
+
+    }
     private void logEndpoints() {
         endpointsByController.forEach((key, valueList) -> {
             logger.info("Endpoints for " + key);

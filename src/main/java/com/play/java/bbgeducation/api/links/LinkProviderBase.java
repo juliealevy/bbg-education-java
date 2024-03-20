@@ -17,6 +17,6 @@ public abstract class LinkProviderBase<T extends Class<?>> {
     }
 
     public Link getSelfLink(HttpServletRequest request){
-        return Link.of(request.getRequestURI()).withSelfRel();
+        return Link.of(request.getRequestURL().toString()).withSelfRel();
     }
 }

@@ -33,7 +33,7 @@ public class ApiRootController {
 
         EntityModel<ApiDataResponse> response = EntityModel.of(
                         ApiDataResponse.builder().version("1.0.0").build())
-                .add(Link.of(httpRequest.getRequestURI()).withSelfRel())
+                .add(Link.of(httpRequest.getRequestURL().toString()).withSelfRel())
                 .add(authenticationApiLinkProvider.getAllLinks())
                 .add(programApiLinkProvider.getAllLinks())
                 .add(programSessionApiLinkProvider.getAllLinks())

@@ -35,7 +35,7 @@ public class UserApiLinkProvider extends ApiLinkProviderBase<Class<UserControlle
 
     public Link getByEmailApiLink(){
         return getApiLink(UserLinkRelations.GET_BY_EMAIL.value,ApiGetUserByEmailRequest.getApiBody(),
-                "getByEmail", GetUserByEmailRequest.class);
+                "getByEmail", GetUserByEmailRequest.class, HttpServletRequest.class);
     }
 
     public Link getDeleteApiLink(){

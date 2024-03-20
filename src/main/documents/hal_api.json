@@ -2,10 +2,10 @@
     "version": "1.0.0",
     "_links": {
         "self": {
-            "href": "/api"
+            "href": "http://localhost:8080/api"
         },
         "auth:register": {
-            "href": "/api/auth/register",
+            "href": "http://localhost:8080/api/auth/register",
             "httpMethod": "POST",
             "body": {
                 "email": "string",
@@ -16,7 +16,7 @@
             }
         },
         "auth:login": {
-            "href": "/api/auth/login",
+            "href": "http://localhost:8080/api/auth/login",
             "httpMethod": "POST",
             "body": {
                 "email": "string",
@@ -24,18 +24,18 @@
             }
         },
         "auth:refresh": {
-            "href": "/api/auth/refresh",
+            "href": "http://localhost:8080/api/auth/refresh",
             "httpMethod": "POST"
         },
         "auth:update-username": {
-            "href": "/api/auth/update/username",
+            "href": "http://localhost:8080/api/auth/update/username",
             "httpMethod": "PUT",
             "body": {
                 "email": "string"
             }
         },
         "auth:update-password": {
-            "href": "/api/auth/update/password",
+            "href": "http://localhost:8080/api/auth/update/password",
             "httpMethod": "PUT",
             "body": {
                 "oldPassword": "string",
@@ -43,7 +43,7 @@
             }
         },
         "program:create": {
-            "href": "/api/programs",
+            "href": "http://localhost:8080/api/programs",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
@@ -51,7 +51,7 @@
             }
         },
         "program:update": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -60,21 +60,21 @@
             "templated": true
         },
         "program:delete": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "program:get-by-id": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "GET",
             "templated": true
         },
         "program:get-all": {
-            "href": "/api/programs",
+            "href": "http://localhost:8080/api/programs",
             "httpMethod": "GET"
         },
         "session:create": {
-            "href": "/api/programs/{pid}/sessions",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
@@ -86,22 +86,22 @@
             "templated": true
         },
         "session:get-by-id": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "GET",
             "templated": true
         },
         "session:get-by-program": {
-            "href": "/api/programs/{pid}/sessions",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions",
             "httpMethod": "GET",
             "templated": true
         },
         "session:delete": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "session:update": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -113,7 +113,7 @@
             "templated": true
         },
         "course:create": {
-            "href": "/api/courses",
+            "href": "http://localhost:8080/api/courses",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
@@ -123,7 +123,7 @@
             }
         },
         "course:update": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -134,21 +134,21 @@
             "templated": true
         },
         "course:delete": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "course:get-by-id": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "GET",
             "templated": true
         },
         "course:get-all": {
-            "href": "/api/courses",
+            "href": "http://localhost:8080/api/courses",
             "httpMethod": "GET"
         },
         "user:update": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "PUT",
             "body": {
                 "firstName": "string",
@@ -157,23 +157,23 @@
             "templated": true
         },
         "user:get-all": {
-            "href": "/api/users",
+            "href": "http://localhost:8080/api/users",
             "httpMethod": "GET"
         },
         "user:get-by-id": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "GET",
             "templated": true
         },
         "user:get-by-email": {
-            "href": "/api/users/email",
+            "href": "http://localhost:8080/api/users/email",
             "httpMethod": "GET",
             "body": {
                 "email": "string"
             }
         },
         "user:delete": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "DELETE",
             "templated": true
         }
