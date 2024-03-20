@@ -169,7 +169,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
-    public void ProgramGetAll_Returns200_WhenSuccess() throws Exception {
+    public void UserGetAll_Returns200_WhenSuccess() throws Exception {
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -180,7 +180,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(username="test", roles = {Roles.USER})
-    public void GetAll_ReturnsList_WhenSuccess() throws Exception {
+    public void UserGetAll_ReturnsList_WhenSuccess() throws Exception {
         UserEntity created2 = createAndSaveUser2();
 
         underTest.perform(MockMvcRequestBuilders.get(USERS_PATH)
