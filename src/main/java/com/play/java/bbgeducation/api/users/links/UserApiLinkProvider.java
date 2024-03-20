@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.users.links;
 
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
+import com.play.java.bbgeducation.api.users.GetUserByEmailRequest;
 import com.play.java.bbgeducation.api.users.UpdateUserRequest;
 import com.play.java.bbgeducation.api.users.UserController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +33,11 @@ public class UserApiLinkProvider extends ApiLinkProviderBase<Class<UserControlle
                 "getById", Long.class);
     }
 
+    public Link getByEmailApiLink(){
+        return getApiLink(UserLinkRelations.GET_BY_EMAIL.value,ApiGetUserByEmailRequest.getApiBody(),
+                "getByEmail", GetUserByEmailRequest.class);
+    }
+
     public Link getDeleteApiLink(){
         return getApiLink(UserLinkRelations.DELETE.value,
                 "deleteById", Long.class,HttpServletRequest.class);
@@ -42,6 +48,7 @@ public class UserApiLinkProvider extends ApiLinkProviderBase<Class<UserControlle
                 getUpdateApiLink(),
                 getAllApiLink(),
                 getByIdApiLink(),
+                getByEmailApiLink(),
                 getDeleteApiLink()
         );
     }

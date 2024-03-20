@@ -1,16 +1,16 @@
 package com.play.java.bbgeducation.api.courses.links;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.play.java.bbgeducation.api.common.ApiBodyType;
 import com.play.java.bbgeducation.api.courses.CourseRequest;
 
 public class ApiCourseRequest extends CourseRequest {
-    private static final String stringType = String.class.getSimpleName().toLowerCase();
 
     @JsonProperty("isPublic")
-    private String isPublicString = Boolean.class.getSimpleName().toLowerCase();
+    private String isPublicString = ApiBodyType.BOOLEAN.value;
 
     @JsonProperty("isOnline")
-    private String isOnlineString = Boolean.class.getSimpleName().toLowerCase();
+    private String isOnlineString = ApiBodyType.BOOLEAN.value;;
 
     public String getIsPublicString(){
         return isPublicString;
@@ -23,8 +23,8 @@ public class ApiCourseRequest extends CourseRequest {
 
     public static CourseRequest getApiBody(){
         ApiCourseRequest request = new ApiCourseRequest();
-        request.setName(stringType);
-        request.setDescription(stringType);
+        request.setName(ApiBodyType.STRING.value);
+        request.setDescription(ApiBodyType.STRING.value);
         request.setIsOnline(null);
         request.setIsPublic(null);
         return request;

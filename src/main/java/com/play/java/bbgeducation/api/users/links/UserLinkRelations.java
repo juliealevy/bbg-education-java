@@ -5,6 +5,7 @@ public enum UserLinkRelations {
     UPDATE ("user:update"),
     DELETE("user:delete"),
     GET_BY_ID("user:get-by-id"),
+    GET_BY_EMAIL("user:get-by-email"),
     GET_ALL("user:get-all");
 
     public final String value;

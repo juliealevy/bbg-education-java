@@ -434,6 +434,66 @@
                 }
             }
         },
+        "/api/auth/update/username": {
+            "put": {
+                "tags": [
+                    "authentication-controller"
+                ],
+                "operationId": "updateUserName",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserNameRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/update/password": {
+            "put": {
+                "tags": [
+                    "authentication-controller"
+                ],
+                "operationId": "updatePassword",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePasswordRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/programs": {
             "get": {
                 "tags": [
@@ -719,6 +779,36 @@
                     }
                 }
             }
+        },
+        "/api/users/email": {
+            "get": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "getByEmail",
+                "parameters": [
+                    {
+                        "name": "getByFilterRequest",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/GetUserByEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -730,9 +820,6 @@
                         "type": "string"
                     },
                     "lastName": {
-                        "type": "string"
-                    },
-                    "email": {
                         "type": "string"
                     }
                 }
@@ -788,6 +875,25 @@
                     }
                 }
             },
+            "UpdateUserNameRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdatePasswordRequest": {
+                "type": "object",
+                "properties": {
+                    "oldPassword": {
+                        "type": "string"
+                    },
+                    "newPassword": {
+                        "type": "string"
+                    }
+                }
+            },
             "RegisterRequest": {
                 "type": "object",
                 "properties": {
@@ -815,6 +921,14 @@
                         "type": "string"
                     },
                     "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GetUserByEmailRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
                         "type": "string"
                     }
                 }

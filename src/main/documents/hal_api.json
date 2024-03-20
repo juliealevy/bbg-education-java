@@ -27,6 +27,21 @@
             "href": "/api/auth/refresh",
             "httpMethod": "POST"
         },
+        "auth:update-username": {
+            "href": "/api/auth/update/username",
+            "httpMethod": "PUT",
+            "body": {
+                "email": "string"
+            }
+        },
+        "auth:update-password": {
+            "href": "/api/auth/update/password",
+            "httpMethod": "PUT",
+            "body": {
+                "oldPassword": "string",
+                "newPassword": "string"
+            }
+        },
         "program:create": {
             "href": "/api/programs",
             "httpMethod": "POST",
@@ -66,7 +81,7 @@
                 "description": "string",
                 "startDate": "MM-dd-yyyy",
                 "endDate": "MM-dd-yyyy",
-                "practicumHours": "Integer"
+                "practicumHours": "integer"
             },
             "templated": true
         },
@@ -93,7 +108,7 @@
                 "description": "string",
                 "startDate": "MM-dd-yyyy",
                 "endDate": "MM-dd-yyyy",
-                "practicumHours": "Integer"
+                "practicumHours": "integer"
             },
             "templated": true
         },
@@ -137,8 +152,7 @@
             "httpMethod": "PUT",
             "body": {
                 "firstName": "string",
-                "lastName": "string",
-                "email": "string"
+                "lastName": "string"
             },
             "templated": true
         },
@@ -150,6 +164,13 @@
             "href": "/api/users/{id}",
             "httpMethod": "GET",
             "templated": true
+        },
+        "user:get-by-email": {
+            "href": "/api/users/email",
+            "httpMethod": "GET",
+            "body": {
+                "email": "string"
+            }
         },
         "user:delete": {
             "href": "/api/users/{id}",
