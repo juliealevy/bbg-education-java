@@ -30,6 +30,18 @@ public class AuthenticationLinkProvider extends LinkProviderBase<Class<Authentic
                 .refreshToken(null)).withRel(AuthLinkRelations.REFRESH.value);
     }
 
+    @SneakyThrows
+    public Link getUpdateUserNameLink()  {
+        return linkTo(methodOn(getController())
+                .updateUserName(null, null)).withRel(AuthLinkRelations.UPDATE_USERNAME.value);
+    }
+
+    @SneakyThrows
+    public Link getUpdatePasswordLink()  {
+        return linkTo(methodOn(getController())
+                .updatePassword(null, null)).withRel(AuthLinkRelations.UPDATE_PASSWORD.value);
+    }
+
 
 
     public Link getRegisterLink(boolean asSelf){

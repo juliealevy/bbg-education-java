@@ -1,4 +1,4 @@
-package com.play.java.bbgeducation.api.auth.links;
+package com.play.java.bbgeducation.api.auth.links.api;
 
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 

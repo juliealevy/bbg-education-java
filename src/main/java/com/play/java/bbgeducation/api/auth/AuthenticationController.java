@@ -69,8 +69,10 @@ public class AuthenticationController {
 
         return loginResult.match(
                 login -> ResponseEntity.ok(EntityModel.of(login)
-                                .add(authLinkProvider.getSelfLink(httpRequest))
-                                .add(authLinkProvider.getRefreshLink())
+                        .add(authLinkProvider.getSelfLink(httpRequest))
+                        .add(authLinkProvider.getRefreshLink())
+                        .add(authLinkProvider.getUpdateUserNameLink())
+                        .add(authLinkProvider.getUpdatePasswordLink())
                 ),
                 fail -> ResponseEntity.of(fail.toProblemDetail("Error authenticating"))
                         .build()
