@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.sessions;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
@@ -20,22 +21,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestResource
 @RequestMapping("api/programs/{pid}/sessions")
 @HasApiEndpoints
-public class ProgramSessionController {
+public class ProgramSessionResource {
 
     private final Pipeline pipeline;
     private final ProgramSessionLinkProvider programSessionLinkProvider;
     private final ProgramLinkProvider programLinkProvider;
 
-    public ProgramSessionController(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider, ProgramLinkProvider programLinkProvider) {
+    public ProgramSessionResource(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider, ProgramLinkProvider programLinkProvider) {
         this.pipeline = pipeline;
         this.programSessionLinkProvider = programSessionLinkProvider;
         this.programLinkProvider = programLinkProvider;

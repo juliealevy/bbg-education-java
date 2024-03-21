@@ -1,26 +1,22 @@
 package com.play.java.bbgeducation.api.programs.links;
 
-import com.play.java.bbgeducation.api.links.ApiLink;
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
-import com.play.java.bbgeducation.api.endpoints.InvalidApiEndpointLinkException;
-import com.play.java.bbgeducation.api.programs.ProgramController;
+import com.play.java.bbgeducation.api.programs.ProgramResource;
 import com.play.java.bbgeducation.api.programs.ProgramRequest;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
-public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramController>> {
+public class ProgramApiLinkProvider extends ApiLinkProviderBase<Class<ProgramResource>> {
 
 
     protected ProgramApiLinkProvider(ApiLinkService apiLinkService) {
-        super(apiLinkService, ProgramController.class);
+        super(apiLinkService, ProgramResource.class);
     }
 
     public Link getCreateApiLink() {

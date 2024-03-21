@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.api.courses;
 
 import an.awesome.pipelinr.Pipeline;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.courses.links.CourseLinkProvider;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
@@ -19,20 +20,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestResource
 @RequestMapping("api/courses")
 @HasApiEndpoints
-public class CourseController {
+public class CourseResource {
     private final Pipeline pipeline;
     private final CourseLinkProvider courseLinkProvider;
 
-    public CourseController(Pipeline pipeline, CourseLinkProvider courseLinkProvider) {
+    public CourseResource(Pipeline pipeline, CourseLinkProvider courseLinkProvider) {
         this.pipeline = pipeline;
         this.courseLinkProvider = courseLinkProvider;
     }

@@ -1,9 +1,9 @@
 package com.play.java.bbgeducation.api.root;
 
+import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.links.ApiLinkProvider;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.SneakyThrows;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestResource
 @RequestMapping("api")
-public class ApiRootController {
+public class ApiRootResource {
 
     @Resource
     private ApiLinkProvider programApiLinkProvider;

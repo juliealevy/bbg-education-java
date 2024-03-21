@@ -4,7 +4,7 @@ import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
 import com.play.java.bbgeducation.api.users.GetUserByEmailRequest;
 import com.play.java.bbgeducation.api.users.UpdateUserRequest;
-import com.play.java.bbgeducation.api.users.UserController;
+import com.play.java.bbgeducation.api.users.UserResource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class UserApiLinkProvider extends ApiLinkProviderBase<Class<UserController>> {
+public class UserApiLinkProvider extends ApiLinkProviderBase<Class<UserResource>> {
     public UserApiLinkProvider(ApiLinkService apiLinkService){
-        super(apiLinkService, UserController.class);
+        super(apiLinkService, UserResource.class);
 
     }
 

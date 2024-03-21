@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.api.courses.links;
 
-import com.play.java.bbgeducation.api.courses.CourseController;
+import com.play.java.bbgeducation.api.courses.CourseResource;
 import com.play.java.bbgeducation.api.courses.CourseRequest;
 import com.play.java.bbgeducation.api.links.ApiLinkProviderBase;
 import com.play.java.bbgeducation.api.links.ApiLinkService;
@@ -8,13 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseController>> {
+public class CourseApiLinkProvider extends ApiLinkProviderBase<Class<CourseResource>> {
     protected CourseApiLinkProvider(ApiLinkService apiLinkService) {
-        super(apiLinkService, CourseController.class);
+        super(apiLinkService, CourseResource.class);
     }
 
     public Link getCreateApiLink() {

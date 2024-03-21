@@ -1,8 +1,7 @@
 package com.play.java.bbgeducation.api.sessions.links;
 
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
-import com.play.java.bbgeducation.api.sessions.ProgramSessionController;
-import org.apache.commons.lang3.NotImplementedException;
+import com.play.java.bbgeducation.api.sessions.ProgramSessionResource;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -11,9 +10,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class ProgramSessionLinkProvider extends LinkProviderBase<Class<ProgramSessionController>> {
+public class ProgramSessionLinkProvider extends LinkProviderBase<Class<ProgramSessionResource>> {
     public ProgramSessionLinkProvider() {
-        super(ProgramSessionController.class);
+        super(ProgramSessionResource.class);
     }
 
     public Link getCreateLink(){

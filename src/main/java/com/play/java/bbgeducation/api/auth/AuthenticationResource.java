@@ -1,14 +1,14 @@
 package com.play.java.bbgeducation.api.auth;
 
-
 import com.play.java.bbgeducation.api.auth.links.AuthenticationLinkProvider;
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
-import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.auth.AuthenticationResult;
-import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
+import com.play.java.bbgeducation.application.auth.AuthenticationService;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.Success;
+import com.play.java.bbgeducation.application.common.validation.ValidationFailed;
 import com.play.java.bbgeducation.domain.valueobjects.emailaddress.EmailAddress;
 import com.play.java.bbgeducation.domain.valueobjects.firstname.FirstName;
 import com.play.java.bbgeducation.domain.valueobjects.lastname.LastName;
@@ -17,19 +17,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
-@RestController
+@RestResource
 @RequestMapping("api/auth")
 @HasApiEndpoints
-public class AuthenticationController {
+public class AuthenticationResource {
 
     private final AuthenticationService authenticationService;
     private final AuthenticationLinkProvider authLinkProvider;
 
-    public AuthenticationController(AuthenticationService authenticationService, AuthenticationLinkProvider authenticationLinkProvider) {
+    public AuthenticationResource(AuthenticationService authenticationService, AuthenticationLinkProvider authenticationLinkProvider) {
         this.authenticationService = authenticationService;
         this.authLinkProvider = authenticationLinkProvider;
     }

@@ -1,6 +1,6 @@
 package com.play.java.bbgeducation.api.courses.links;
 
-import com.play.java.bbgeducation.api.courses.CourseController;
+import com.play.java.bbgeducation.api.courses.CourseResource;
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
@@ -10,10 +10,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
-public class CourseLinkProvider extends LinkProviderBase<Class<CourseController>> {
+public class CourseLinkProvider extends LinkProviderBase<Class<CourseResource>> {
 
     public CourseLinkProvider() {
-        super(CourseController.class);
+        super(CourseResource.class);
     }
 
     public Link getCreateLink(){

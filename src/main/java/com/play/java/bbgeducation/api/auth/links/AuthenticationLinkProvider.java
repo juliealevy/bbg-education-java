@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.api.auth.links;
 
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
-import com.play.java.bbgeducation.api.auth.AuthenticationController;
+import com.play.java.bbgeducation.api.auth.AuthenticationResource;
 import com.play.java.bbgeducation.api.auth.LoginRequest;
 import com.play.java.bbgeducation.api.auth.RegisterRequest;
 import lombok.SneakyThrows;
@@ -12,9 +12,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class AuthenticationLinkProvider extends LinkProviderBase<Class<AuthenticationController>> {
+public class AuthenticationLinkProvider extends LinkProviderBase<Class<AuthenticationResource>> {
     protected AuthenticationLinkProvider() {
-        super(AuthenticationController.class);
+        super(AuthenticationResource.class);
     }
 
     public Link getLoginLink() {

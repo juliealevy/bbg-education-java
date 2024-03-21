@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.api.users.links;
 
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
-import com.play.java.bbgeducation.api.users.UserController;
+import com.play.java.bbgeducation.api.users.UserResource;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -10,9 +10,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class UserLinkProvider extends LinkProviderBase<Class<UserController>> {
+public class UserLinkProvider extends LinkProviderBase<Class<UserResource>> {
     protected UserLinkProvider() {
-        super(UserController.class);
+        super(UserResource.class);
     }
 
     public Link getUpdateLink(Long userId){

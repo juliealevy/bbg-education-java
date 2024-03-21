@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<AuthenticationController>> {
+public class AuthenticationApiLinkProvider extends ApiLinkProviderBase<Class<AuthenticationResource>> {
 
     public AuthenticationApiLinkProvider(ApiLinkService apiLinkService) {
-        super(apiLinkService, AuthenticationController.class);
+        super(apiLinkService, AuthenticationResource.class);
     }
 
     public Link getLoginApiLink() {

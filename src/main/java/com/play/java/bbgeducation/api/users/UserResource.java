@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.api.users;
 
 import com.play.java.bbgeducation.api.common.NoDataResponse;
+import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.users.links.UserLinkProvider;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
@@ -21,14 +22,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestResource
 @RequestMapping("api/users")
 @HasApiEndpoints
-public class UserController {
+public class UserResource {
     private final UserService userService;
     private final UserLinkProvider userLinkProvider;
 
-    public UserController(UserService userService, UserLinkProvider userLinkProvider) {
+    public UserResource(UserService userService, UserLinkProvider userLinkProvider) {
         this.userService = userService;
         this.userLinkProvider = userLinkProvider;
     }

@@ -1,7 +1,7 @@
 package com.play.java.bbgeducation.api.programs.links;
 
 import com.play.java.bbgeducation.api.links.LinkProviderBase;
-import com.play.java.bbgeducation.api.programs.ProgramController;
+import com.play.java.bbgeducation.api.programs.ProgramResource;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -10,10 +10,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class ProgramLinkProvider extends LinkProviderBase<Class<ProgramController>> {
+public class ProgramLinkProvider extends LinkProviderBase<Class<ProgramResource>> {
 
     public ProgramLinkProvider() {
-        super(ProgramController.class);
+        super(ProgramResource.class);
     }
 
     public Link getCreateLink(){
