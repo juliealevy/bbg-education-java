@@ -46,10 +46,11 @@ Some sample code in Java/Spring Boot to show the following:
 - added simple value caching for Session in redis hosted in docker, more to come
 - fixed some lombok/hibernate issues in the entities
 - trying out value objects for email, password, firstname, lastname in user entity
-    
+- added email update and password update workflows
+- updated all hal links to be full urls
+- updated name of controllers to resources
 
 ## Coming soon
-- add email update and password update workflows
 - add some more workflow oriented calls for Session once Courses implemented
 - caching of a list of data once more workflows implemented
 - validation for services based entities (User/Auth)
@@ -66,10 +67,10 @@ https://localhost:8080/api
     "version": "1.0.0",
     "_links": {
         "self": {
-            "href": "/api"
+            "href": "http://localhost:8080/api"
         },
         "auth:register": {
-            "href": "/api/auth/register",
+            "href": "http://localhost:8080/api/auth/register",
             "httpMethod": "POST",
             "body": {
                 "email": "string",
@@ -80,7 +81,7 @@ https://localhost:8080/api
             }
         },
         "auth:login": {
-            "href": "/api/auth/login",
+            "href": "http://localhost:8080/api/auth/login",
             "httpMethod": "POST",
             "body": {
                 "email": "string",
@@ -88,11 +89,26 @@ https://localhost:8080/api
             }
         },
         "auth:refresh": {
-            "href": "/api/auth/refresh",
+            "href": "http://localhost:8080/api/auth/refresh",
             "httpMethod": "POST"
         },
+        "auth:update-username": {
+            "href": "http://localhost:8080/api/auth/update/username",
+            "httpMethod": "PUT",
+            "body": {
+                "email": "string"
+            }
+        },
+        "auth:update-password": {
+            "href": "http://localhost:8080/api/auth/update/password",
+            "httpMethod": "PUT",
+            "body": {
+                "oldPassword": "string",
+                "newPassword": "string"
+            }
+        },
         "program:create": {
-            "href": "/api/programs",
+            "href": "http://localhost:8080/api/programs",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
@@ -100,7 +116,7 @@ https://localhost:8080/api
             }
         },
         "program:update": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -109,60 +125,60 @@ https://localhost:8080/api
             "templated": true
         },
         "program:delete": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "program:get-by-id": {
-            "href": "/api/programs/{pid}",
+            "href": "http://localhost:8080/api/programs/{pid}",
             "httpMethod": "GET",
             "templated": true
         },
         "program:get-all": {
-            "href": "/api/programs",
+            "href": "http://localhost:8080/api/programs",
             "httpMethod": "GET"
         },
         "session:create": {
-            "href": "/api/programs/{pid}/sessions",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
                 "description": "string",
                 "startDate": "MM-dd-yyyy",
                 "endDate": "MM-dd-yyyy",
-                "practicumHours": "Integer"
+                "practicumHours": "integer"
             },
             "templated": true
         },
         "session:get-by-id": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "GET",
             "templated": true
         },
         "session:get-by-program": {
-            "href": "/api/programs/{pid}/sessions",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions",
             "httpMethod": "GET",
             "templated": true
         },
         "session:delete": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "session:update": {
-            "href": "/api/programs/{pid}/sessions/{sid}",
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
                 "description": "string",
                 "startDate": "MM-dd-yyyy",
                 "endDate": "MM-dd-yyyy",
-                "practicumHours": "Integer"
+                "practicumHours": "integer"
             },
             "templated": true
         },
         "course:create": {
-            "href": "/api/courses",
+            "href": "http://localhost:8080/api/courses",
             "httpMethod": "POST",
             "body": {
                 "name": "string",
@@ -172,7 +188,7 @@ https://localhost:8080/api
             }
         },
         "course:update": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "PUT",
             "body": {
                 "name": "string",
@@ -183,21 +199,21 @@ https://localhost:8080/api
             "templated": true
         },
         "course:delete": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "DELETE",
             "templated": true
         },
         "course:get-by-id": {
-            "href": "/api/courses/{cid}",
+            "href": "http://localhost:8080/api/courses/{cid}",
             "httpMethod": "GET",
             "templated": true
         },
         "course:get-all": {
-            "href": "/api/courses",
+            "href": "http://localhost:8080/api/courses",
             "httpMethod": "GET"
         },
         "user:update": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "PUT",
             "body": {
                 "firstName": "string",
@@ -206,16 +222,23 @@ https://localhost:8080/api
             "templated": true
         },
         "user:get-all": {
-            "href": "/api/users",
+            "href": "http://localhost:8080/api/users",
             "httpMethod": "GET"
         },
         "user:get-by-id": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "GET",
             "templated": true
         },
+        "user:get-by-email": {
+            "href": "http://localhost:8080/api/users/email",
+            "httpMethod": "GET",
+            "body": {
+                "email": "string"
+            }
+        },
         "user:delete": {
-            "href": "/api/users/{id}",
+            "href": "http://localhost:8080/api/users/{id}",
             "httpMethod": "DELETE",
             "templated": true
         }
