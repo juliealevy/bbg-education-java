@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.unit.application.sessions.create;
 
 import com.play.java.bbgeducation.application.common.caching.RedisUtil;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -39,10 +40,10 @@ public class ProgramSessionCreateCommandHandlerTests {
     private ProgramRepository programRepository = Mockito.mock(ProgramRepository.class);
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
     private SessionCacheManager sessionCacheManager = Mockito.mock(SessionCacheManager.class);
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
     @Autowired
-    public ProgramSessionCreateCommandHandlerTests(Mapper<SessionEntity, SessionResult> mapper) {
+    public ProgramSessionCreateCommandHandlerTests(MapTo<SessionEntity, SessionResult> mapper) {
         this.mapper = mapper;
     }
 

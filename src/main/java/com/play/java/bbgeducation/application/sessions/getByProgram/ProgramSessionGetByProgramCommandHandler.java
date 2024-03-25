@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.application.sessions.getByProgram;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -18,9 +19,9 @@ public class ProgramSessionGetByProgramCommandHandler implements Command.Handler
 
     private final SessionRepository sessionRepository;
     private final ProgramRepository programRepository;
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
-    public ProgramSessionGetByProgramCommandHandler(SessionRepository sessionRepository, ProgramRepository programRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public ProgramSessionGetByProgramCommandHandler(SessionRepository sessionRepository, ProgramRepository programRepository, MapTo<SessionEntity, SessionResult> mapper) {
         this.sessionRepository = sessionRepository;
         this.programRepository = programRepository;
         this.mapper = mapper;

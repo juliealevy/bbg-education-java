@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.application.sessions.update;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -20,9 +21,9 @@ public class SessionUpdateCommandHandler implements Command.Handler<SessionUpdat
 
     private final SessionRepository sessionRepository;
     private final SessionCacheManager cacheManager;
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
-    public SessionUpdateCommandHandler(SessionRepository sessionRepository, SessionCacheManager cacheManager, Mapper<SessionEntity, SessionResult> mapper) {
+    public SessionUpdateCommandHandler(SessionRepository sessionRepository, SessionCacheManager cacheManager, MapTo<SessionEntity, SessionResult> mapper) {
         this.sessionRepository = sessionRepository;
         this.cacheManager = cacheManager;
         this.mapper = mapper;

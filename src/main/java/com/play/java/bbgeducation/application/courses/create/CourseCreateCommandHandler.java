@@ -30,8 +30,8 @@ public class CourseCreateCommandHandler implements Command.Handler<CourseCreateC
         CourseEntity courseToCreate = CourseEntity.create(
                 command.getName(),
                 command.getDescription(),
-                command.isOnline(),
-                command.isPublic());
+                command.isPublic(),
+                command.isOnline());
 
 
         CourseEntity saved = courseRepository.save(courseToCreate);

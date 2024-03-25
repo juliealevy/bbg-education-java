@@ -6,12 +6,14 @@ import com.play.java.bbgeducation.application.sessions.caching.SessionRemoveCach
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -32,6 +34,30 @@ public class SessionCacheManagerTests {
         this.cacheManager = sessionCacheManager;
         this.removeCacheManager = removeCacheManager;
         this.getCacheManager = getCacheManager;
+    }
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(cacheManager, "cacheIsEnabled", true);
+    }
+
+    @Test
+    void cacheSession_ShouldBeDisabled_WhenPropertySetToFalse(){
+        ReflectionTestUtils.setField(cacheManager, "cacheIsEnabled", false);
+
+        SessionResult sessionResult = Instancio.create(SessionResult.class);
+        cacheManager.cacheSession(sessionResult);
+
+        assertThat(getCacheManager.getSessionCount()).isEqualTo(0);
+    }
+
+    @Test
+    void cacheSession_ShouldBeEnabled_WhenPropertySetToTrue(){
+
+        SessionResult sessionResult = Instancio.create(SessionResult.class);
+        cacheManager.cacheSession(sessionResult);
+
+        assertThat(getCacheManager.getSessionCount()).isEqualTo(1);
     }
 
     @Test

@@ -39,6 +39,7 @@ public class ProgramSessionApiLinkProvider extends ApiLinkProviderBase<Class<Pro
                 "updateSession", Long.class, Long.class, SessionRequest.class, HttpServletRequest.class);
     }
 
+
     @Override
     public List<Link> getAllLinks() {
         List<Link> links = new ArrayList<>();

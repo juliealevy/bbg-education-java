@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.application.sessions.create;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -22,9 +23,9 @@ public class SessionCreateCommandHandler implements Command.Handler<SessionCreat
     private final SessionRepository sessionRepository;
     private final SessionCacheManager sessionCacheManager;
     private final ProgramRepository programRepository;
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
-    public SessionCreateCommandHandler(SessionRepository sessionRepository, SessionCacheManager sessionCacheManager, ProgramRepository programRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public SessionCreateCommandHandler(SessionRepository sessionRepository, SessionCacheManager sessionCacheManager, ProgramRepository programRepository, MapTo<SessionEntity, SessionResult> mapper) {
         this.sessionRepository = sessionRepository;
         this.sessionCacheManager = sessionCacheManager;
         this.programRepository = programRepository;

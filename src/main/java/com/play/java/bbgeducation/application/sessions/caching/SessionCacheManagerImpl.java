@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.application.sessions.caching;
 
 import com.play.java.bbgeducation.application.common.caching.RedisUtil;
 import com.play.java.bbgeducation.application.sessions.result.SessionResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -12,6 +13,9 @@ public class SessionCacheManagerImpl
         implements SessionCacheManager, SessionGetCacheManager, SessionRemoveCacheManager{
 
     private static final String SESSION = "SESSION_";
+    @Value("${bbg.cache.enable-session}")
+    private boolean cacheIsEnabled;
+
     private RedisUtil<SessionResult> redisUtilSession;
 
     public SessionCacheManagerImpl(RedisUtil<SessionResult> redisUtilSession) {
@@ -25,19 +29,26 @@ public class SessionCacheManagerImpl
     }
 
     @Override
+    public void clearSession(Long programId, Long sessionId) {
+        removeSession(programId, sessionId);
+    }
+
+    @Override
     public int getSessionCount() {
         return redisUtilSession.getCount();
     }
 
 
     public void cacheSession(SessionResult session) {
-        if (session == null){
-            throw new IllegalArgumentException("Cannot cache a null session");
+        if (cacheIsEnabled) {
+            if (session == null) {
+                throw new IllegalArgumentException("Cannot cache a null session");
+            }
+            redisUtilSession.putValueWithExpireTime(
+                    buildCacheKey(session.getProgram().getId(), session.getId()),
+                    session,
+                    1, TimeUnit.HOURS);
         }
-        redisUtilSession.putValueWithExpireTime(
-                buildCacheKey(session.getProgram().getId(), session.getId()),
-                session,
-                1, TimeUnit.HOURS);
     }
 
     @Override

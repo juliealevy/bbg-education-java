@@ -1,5 +1,6 @@
 package com.play.java.bbgeducation.unit.application.sessions.update;
 
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -37,10 +38,10 @@ public class ProgramSessionUpdateCommandHandlerTests {
     private SessionUpdateCommandHandler underTest;
     private SessionRepository sessionRepository = Mockito.mock(SessionRepository.class);
     private SessionCacheManager cacheManager = Mockito.mock(SessionCacheManager.class);
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
     @Autowired
-    public ProgramSessionUpdateCommandHandlerTests(Mapper<SessionEntity, SessionResult> mapper) {
+    public ProgramSessionUpdateCommandHandlerTests(MapTo<SessionEntity, SessionResult> mapper) {
         this.mapper = mapper;
         underTest = new SessionUpdateCommandHandler(sessionRepository,cacheManager, mapper);
     }

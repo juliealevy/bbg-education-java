@@ -5,6 +5,8 @@ import com.play.java.bbgeducation.api.common.NoDataResponse;
 import com.play.java.bbgeducation.api.common.RestResource;
 import com.play.java.bbgeducation.api.endpoints.HasApiEndpoints;
 import com.play.java.bbgeducation.api.programs.links.ProgramLinkProvider;
+import com.play.java.bbgeducation.api.sessioncourses.SessionCourseResource;
+import com.play.java.bbgeducation.api.sessioncourses.links.SessionCourseLinkProvider;
 import com.play.java.bbgeducation.api.sessions.links.ProgramSessionLinkProvider;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.OneOf3;
@@ -20,10 +22,12 @@ import com.play.java.bbgeducation.application.sessions.update.SessionUpdateComma
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestResource
@@ -33,11 +37,13 @@ public class ProgramSessionResource {
 
     private final Pipeline pipeline;
     private final ProgramSessionLinkProvider programSessionLinkProvider;
+    private final SessionCourseLinkProvider sessionCourseLinkProvider;
     private final ProgramLinkProvider programLinkProvider;
 
-    public ProgramSessionResource(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider, ProgramLinkProvider programLinkProvider) {
+    public ProgramSessionResource(Pipeline pipeline, ProgramSessionLinkProvider programSessionLinkProvider, SessionCourseLinkProvider sessionCourseLinkProvider, ProgramLinkProvider programLinkProvider) {
         this.pipeline = pipeline;
         this.programSessionLinkProvider = programSessionLinkProvider;
+        this.sessionCourseLinkProvider = sessionCourseLinkProvider;
         this.programLinkProvider = programLinkProvider;
     }
 

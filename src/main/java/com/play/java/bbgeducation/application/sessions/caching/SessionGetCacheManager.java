@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface SessionGetCacheManager extends SessionCacheManager {
     Optional<SessionResult> getSession(Long programId, Long sessionId);
+   void clearSession(Long programId, Long sessionId);
     int getSessionCount();
 }

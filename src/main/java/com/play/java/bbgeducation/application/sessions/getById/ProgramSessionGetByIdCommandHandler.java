@@ -1,6 +1,8 @@
 package com.play.java.bbgeducation.application.sessions.getById;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.mapping.MapFrom;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -19,10 +21,10 @@ public class ProgramSessionGetByIdCommandHandler implements Command.Handler<Prog
 
     private final SessionGetCacheManager cacheManager;
     private final SessionRepository sessionRepository;
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
 
-    public ProgramSessionGetByIdCommandHandler(SessionGetCacheManager cacheManager, SessionRepository sessionRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public ProgramSessionGetByIdCommandHandler(SessionGetCacheManager cacheManager, SessionRepository sessionRepository, MapTo<SessionEntity, SessionResult> mapper) {
         this.cacheManager = cacheManager;
         this.sessionRepository = sessionRepository;
         this.mapper = mapper;

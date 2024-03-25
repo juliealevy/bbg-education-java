@@ -2,6 +2,7 @@ package com.play.java.bbgeducation.application.sessions.result;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.play.java.bbgeducation.application.courses.results.CourseResult;
 import com.play.java.bbgeducation.application.programs.result.ProgramResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.springframework.hateoas.server.core.Relation;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +36,8 @@ public class SessionResult implements Serializable {
     private int practicumHours;
 
     private ProgramResult program;
+    private Set<CourseResult> courses;
+
 
 
     @JsonIgnore

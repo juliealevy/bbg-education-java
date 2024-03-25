@@ -1,6 +1,7 @@
 package com.play.java.bbgeducation.application.sessions.getById;
 
 import an.awesome.pipelinr.Command;
+import com.play.java.bbgeducation.application.common.mapping.MapTo;
 import com.play.java.bbgeducation.application.common.mapping.Mapper;
 import com.play.java.bbgeducation.application.common.oneof.OneOf2;
 import com.play.java.bbgeducation.application.common.oneof.oneoftypes.NotFound;
@@ -15,9 +16,9 @@ import java.util.Optional;
 public class SessionGetByIdCommandHandler implements Command.Handler<SessionGetByIdCommand, OneOf2<SessionResult, NotFound>> {
 
     private final SessionRepository sessionRepository;
-    private final Mapper<SessionEntity, SessionResult> mapper;
+    private final MapTo<SessionEntity, SessionResult> mapper;
 
-    public SessionGetByIdCommandHandler(SessionRepository sessionRepository, Mapper<SessionEntity, SessionResult> mapper) {
+    public SessionGetByIdCommandHandler(SessionRepository sessionRepository, MapTo<SessionEntity, SessionResult> mapper) {
         this.sessionRepository = sessionRepository;
         this.mapper = mapper;
     }
