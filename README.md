@@ -44,14 +44,15 @@ Some sample code in Java/Spring Boot to show the following:
 - Added actuator for health check, metrics, etc.
 - implemented CRUD for Course using commands
 - added simple value caching for Session in redis hosted in docker, more to come
+  - added property to enable
 - fixed some lombok/hibernate issues in the entities
 - trying out value objects for email, password, firstname, lastname in user entity
 - added email update and password update workflows
 - updated all hal links to be full urls
 - updated name of controllers to resources
+- sessioncourse workflows/apis: in progress
 
 ## Coming soon
-- add some more workflow oriented calls for Session once Courses implemented
 - caching of a list of data once more workflows implemented
 - validation for services based entities (User/Auth)
 - Auth: consider implementing revoke feature (with DB persistance of tokens)
@@ -107,6 +108,41 @@ https://localhost:8080/api
                 "newPassword": "string"
             }
         },
+        "course:create": {
+            "href": "http://localhost:8080/api/courses",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            }
+        },
+        "course:update": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            },
+            "templated": true
+        },
+        "course:delete": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "course:get-by-id": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "course:get-all": {
+            "href": "http://localhost:8080/api/courses",
+            "httpMethod": "GET"
+        },
         "program:create": {
             "href": "http://localhost:8080/api/programs",
             "httpMethod": "POST",
@@ -137,6 +173,11 @@ https://localhost:8080/api
         "program:get-all": {
             "href": "http://localhost:8080/api/programs",
             "httpMethod": "GET"
+        },
+        "session:add-course": {
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}/courses/{cid}",
+            "httpMethod": "POST",
+            "templated": true
         },
         "session:create": {
             "href": "http://localhost:8080/api/programs/{pid}/sessions",
@@ -176,41 +217,6 @@ https://localhost:8080/api
                 "practicumHours": "integer"
             },
             "templated": true
-        },
-        "course:create": {
-            "href": "http://localhost:8080/api/courses",
-            "httpMethod": "POST",
-            "body": {
-                "name": "string",
-                "description": "string",
-                "isPublic": "boolean",
-                "isOnline": "boolean"
-            }
-        },
-        "course:update": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "PUT",
-            "body": {
-                "name": "string",
-                "description": "string",
-                "isPublic": "boolean",
-                "isOnline": "boolean"
-            },
-            "templated": true
-        },
-        "course:delete": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "DELETE",
-            "templated": true
-        },
-        "course:get-by-id": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "GET",
-            "templated": true
-        },
-        "course:get-all": {
-            "href": "http://localhost:8080/api/courses",
-            "httpMethod": "GET"
         },
         "user:update": {
             "href": "http://localhost:8080/api/users/{id}",
