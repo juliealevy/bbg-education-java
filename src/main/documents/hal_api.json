@@ -42,6 +42,41 @@
                 "newPassword": "string"
             }
         },
+        "course:create": {
+            "href": "http://localhost:8080/api/courses",
+            "httpMethod": "POST",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            }
+        },
+        "course:update": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "PUT",
+            "body": {
+                "name": "string",
+                "description": "string",
+                "isPublic": "boolean",
+                "isOnline": "boolean"
+            },
+            "templated": true
+        },
+        "course:delete": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "DELETE",
+            "templated": true
+        },
+        "course:get-by-id": {
+            "href": "http://localhost:8080/api/courses/{cid}",
+            "httpMethod": "GET",
+            "templated": true
+        },
+        "course:get-all": {
+            "href": "http://localhost:8080/api/courses",
+            "httpMethod": "GET"
+        },
         "program:create": {
             "href": "http://localhost:8080/api/programs",
             "httpMethod": "POST",
@@ -72,6 +107,11 @@
         "program:get-all": {
             "href": "http://localhost:8080/api/programs",
             "httpMethod": "GET"
+        },
+        "session:add-course": {
+            "href": "http://localhost:8080/api/programs/{pid}/sessions/{sid}/courses/{cid}",
+            "httpMethod": "POST",
+            "templated": true
         },
         "session:create": {
             "href": "http://localhost:8080/api/programs/{pid}/sessions",
@@ -111,41 +151,6 @@
                 "practicumHours": "integer"
             },
             "templated": true
-        },
-        "course:create": {
-            "href": "http://localhost:8080/api/courses",
-            "httpMethod": "POST",
-            "body": {
-                "name": "string",
-                "description": "string",
-                "isPublic": "boolean",
-                "isOnline": "boolean"
-            }
-        },
-        "course:update": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "PUT",
-            "body": {
-                "name": "string",
-                "description": "string",
-                "isPublic": "boolean",
-                "isOnline": "boolean"
-            },
-            "templated": true
-        },
-        "course:delete": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "DELETE",
-            "templated": true
-        },
-        "course:get-by-id": {
-            "href": "http://localhost:8080/api/courses/{cid}",
-            "httpMethod": "GET",
-            "templated": true
-        },
-        "course:get-all": {
-            "href": "http://localhost:8080/api/courses",
-            "httpMethod": "GET"
         },
         "user:update": {
             "href": "http://localhost:8080/api/users/{id}",
